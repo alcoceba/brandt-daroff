@@ -15,3 +15,9 @@ export function getDayNumber(startDate: string, totalDays: number): number {
   const day = Math.floor((today - start) / 86_400_000) + 1;
   return Math.min(Math.max(day, 1), totalDays);
 }
+
+export function addDays(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return toDateISO(d);
+}

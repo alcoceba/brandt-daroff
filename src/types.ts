@@ -12,6 +12,7 @@ export interface TreatmentConfig {
   restBetweenCycles: number;
   sessionsPerDay: number;
   totalDays: number;
+  cyclesPerSession: number;
 }
 
 export interface Settings {

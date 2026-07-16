@@ -19,24 +19,8 @@ export const Logo = memo(function Logo({ size = MARK, showWordmark = true }: Log
         role="img"
         aria-label={t('app.name')}
       >
-        <circle cx="48" cy="48" r="42" fill="none" stroke="#1e293b" strokeWidth="8" />
-        <circle
-          cx="48"
-          cy="48"
-          r="42"
-          fill="none"
-          stroke="#22c55e"
-          strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray={2 * Math.PI * 42}
-          strokeDashoffset={2 * Math.PI * 42 * 0.25}
-          transform="rotate(-90 48 48)"
-        />
-        <path
-          d="M34 50 q-6 0 -6 8 v6 h40 v-6 q0 -8 -6 -8 z"
-          fill="#e2e8f0"
-        />
-        <circle cx="48" cy="36" r="9" fill="#f59e0b" />
+        <circle cx="48" cy="48" r="42" fill="none" stroke="#22c55e" strokeWidth="8" />
+        <circle cx="48" cy="48" r="6" fill="#f8fafc" />
       </svg>
       {showWordmark && (
         <div className="text-center leading-tight">

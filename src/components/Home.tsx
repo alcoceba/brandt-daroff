@@ -1,10 +1,11 @@
-import { memo } from 'react';
-import { Info, Settings as SettingsIcon } from 'lucide-react';
+import { memo, useState } from 'react';
+import { Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSessionSlots } from '@/data/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { getDayNumber, todayISO } from '@/utils/date';
+import { addDays, getDayNumber, todayISO } from '@/utils/date';
 import { Calendar } from '@/components/Calendar';
+import { ConfirmDialog } from '@/components/Modal';
 import type { SessionStatus } from '@/types';
 
 interface HomeProps {
@@ -21,23 +22,68 @@ const STATUS_STYLE: Record<SessionStatus, { dot: string; label: string }> = {
 
 export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenInfo }: HomeProps) {
   const { t } = useTranslation();
-  const { config, sessions, startDate } = useTreatmentStore((s) => ({
+  const {
+    config,
+    sessions,
+    startDate,
+    setSessionStatus,
+    clearSessionProgress,
+    setConfig,
+    resetTreatment,
+  } = useTreatmentStore((s) => ({
     config: s.config,
     sessions: s.sessions,
     startDate: s.startDate,
+    setSessionStatus: s.setSessionStatus,
+    clearSessionProgress: s.clearSessionProgress,
+    setConfig: s.setConfig,
+    resetTreatment: s.resetTreatment,
   }));
+
+  const [restartSlot, setRestartSlot] = useState<string | null>(null);
+  const [finishOpen, setFinishOpen] = useState(false);
 
   const slots = getSessionSlots(config.sessionsPerDay);
   const today = todayISO();
   const dayNumber = startDate ? getDayNumber(startDate, config.totalDays) : 1;
+  const rawDayNumber = startDate
+    ? Math.floor(
+        (new Date(`${today}T00:00:00`).getTime() - new Date(`${startDate}T00:00:00`).getTime()) /
+          86_400_000,
+      ) + 1
+    : 1;
+  const isTreatmentComplete = startDate
+    ? slots.every((slot) =>
+        Array.from({ length: config.totalDays }, (_, dayIdx) => {
+          const iso = addDays(startDate, dayIdx);
+          return (sessions[iso] ?? {})[slot.id] === 'completed';
+        }).every(Boolean),
+      )
+    : false;
   const todaySessions = sessions[today] ?? {};
   const totalSessions = config.sessionsPerDay * config.totalDays;
   const completedCount = Object.values(sessions).reduce(
     (acc, day) => acc + Object.values(day).filter((s) => s === 'completed').length,
     0,
   );
-  const pctDone = totalSessions ? Math.round((completedCount / totalSessions) * 100) : 0;
-  const finished = dayNumber > config.totalDays;
+  const finished = rawDayNumber > config.totalDays || isTreatmentComplete;
+
+  const confirmRestart = () => {
+    if (!restartSlot) return;
+    setSessionStatus(today, restartSlot, 'pending');
+    clearSessionProgress(today, restartSlot);
+    onStartSession(restartSlot);
+    setRestartSlot(null);
+  };
+
+  const handleExtend = () => {
+    setConfig({ totalDays: config.totalDays + 1 });
+  };
+
+  const handleFinish = () => {
+    setFinishOpen(false);
+    resetTreatment();
+  };
 
   return (
     <div className="flex min-h-dvh flex-col gap-4 p-5">
@@ -53,48 +99,83 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
               </span>
             )}
           </div>
-          <div className="mt-1 flex items-center justify-between text-sm">
-            <span className="text-slate-300">
-              {t('home.progressValue', { done: completedCount, total: totalSessions })}
-            </span>
-            <span className="font-bold tabular-nums text-state-done">{pctDone}%</span>
-          </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-700">
-            <div
-              className="h-full bg-state-done transition-all"
-              style={{ width: `${pctDone}%` }}
-            />
-          </div>
         </div>
       </header>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold text-slate-300">{t('home.todaysSessions')}</h2>
-        {slots.map((slot) => {
-          const status: SessionStatus = todaySessions[slot.id] ?? 'pending';
-          const style = STATUS_STYLE[status];
-          const label = t(slot.labelKey, slot.id.includes('-') ? { n: Number(slot.id.split('-')[1]) } : undefined);
-          const done = status === 'completed';
-          return (
-            <div
-              key={slot.id}
-              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-4"
+      {finished ? (
+        <section className="flex flex-col items-center gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center">
+          <Trophy className="h-16 w-16 text-state-done" strokeWidth={1.5} />
+          <div>
+            <h2 className="text-2xl font-bold text-white">{t('home.treatmentComplete')}</h2>
+            <p className="mt-1 text-lg font-semibold text-brand-500">
+              {t('home.summarySessions', { completed: completedCount, total: totalSessions })}
+            </p>
+            <p className="mt-2 text-sm text-slate-300">{t('home.summaryMessage')}</p>
+          </div>
+          <div className="mt-2 flex w-full flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setFinishOpen(true)}
+              className="min-h-touch flex-1 rounded-xl bg-state-done text-lg font-bold text-white"
             >
-              <span className={`h-3 w-3 shrink-0 rounded-full ${style.dot}`} />
-              <span className="flex-1 text-lg font-semibold text-white">{label}</span>
-              <span className="text-sm text-slate-400">{t(style.label)}</span>
-              <button
-                type="button"
-                disabled={done}
-                onClick={() => onStartSession(slot.id)}
-                className="min-h-touch rounded-lg bg-brand-600 px-5 font-bold text-white disabled:opacity-40"
-              >
-                {status === 'in-progress' ? t('home.resume') : t('home.start')}
-              </button>
-            </div>
-          );
-        })}
-      </section>
+              {t('home.finish')}
+            </button>
+            <button
+              type="button"
+              onClick={handleExtend}
+              className="min-h-touch flex-1 rounded-xl border border-slate-600 text-lg font-semibold text-slate-200"
+            >
+              {t('home.extendOneDay')}
+            </button>
+          </div>
+        </section>
+      ) : (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-sm font-semibold text-slate-300">{t('home.todaysSessions')}</h2>
+          {slots.map((slot) => {
+            const status: SessionStatus = todaySessions[slot.id] ?? 'pending';
+            const style = STATUS_STYLE[status];
+            const label = t(slot.labelKey, slot.id.includes('-') ? { n: Number(slot.id.split('-')[1]) } : undefined);
+            return (
+              <div
+              key={slot.id}
+              className={`flex overflow-hidden rounded-xl border border-slate-700 ${
+                status === 'completed'
+                  ? 'bg-state-done/10'
+                  : status === 'in-progress'
+                    ? 'bg-state-progress/10'
+                    : 'bg-slate-800'
+              }`}
+            >
+                <div className={`w-2 shrink-0 ${style.dot}`} />
+                <div className="flex flex-1 items-center gap-3 p-4">
+                  <span className="flex-1 text-lg font-semibold text-white">{label}</span>
+                  {status === 'completed' ? (
+                    <button
+                      type="button"
+                      onClick={() => setRestartSlot(slot.id)}
+                      className="flex min-h-touch items-center gap-2 rounded-lg bg-slate-700 px-4 font-bold text-white"
+                    >
+                      <RotateCcw size={18} />
+                      {t('home.restartSession')}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onStartSession(slot.id)}
+                      className={`min-h-touch rounded-lg px-5 font-bold text-white ${
+                        status === 'in-progress' ? 'bg-state-progress' : 'bg-brand-600'
+                      }`}
+                    >
+                      {status === 'in-progress' ? t('home.resume') : t('home.start')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      )}
 
       <Calendar />
 
@@ -114,6 +195,27 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
           <SettingsIcon size={20} /> {t('home.settings')}
         </button>
       </div>
+
+      <ConfirmDialog
+        open={restartSlot !== null}
+        title={t('home.restartSession')}
+        body={t('home.confirmRestartSession')}
+        confirmLabel={t('home.restartSession')}
+        cancelLabel={t('common.cancel')}
+        danger
+        onConfirm={confirmRestart}
+        onCancel={() => setRestartSlot(null)}
+      />
+      <ConfirmDialog
+        open={finishOpen}
+        title={t('home.confirmFinishTitle')}
+        body={t('home.confirmFinishBody')}
+        confirmLabel={t('home.finish')}
+        cancelLabel={t('common.cancel')}
+        danger
+        onConfirm={handleFinish}
+        onCancel={() => setFinishOpen(false)}
+      />
     </div>
   );
 });

@@ -1,9 +1,10 @@
 import { memo, useState } from 'react';
-import { ArrowLeft, Check, Info, Minus, Plus, ShieldAlert, Sliders } from 'lucide-react';
+import { Check, Info, Minus, Plus, ShieldAlert, Sliders } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TreatmentConfig } from '@/types';
 import { DEFAULT_CONFIG } from '@/store/useTreatmentStore';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
+import { BackButton } from '@/components/BackButton';
 
 interface Field {
   key: keyof TreatmentConfig;
@@ -15,11 +16,12 @@ interface Field {
 }
 
 const FIELDS: readonly Field[] = [
+  { key: 'cyclesPerSession', labelKey: 'wizard.cyclesPerSession', unitKey: 'wizard.cycles', step: 1, min: 1, max: 10 },
+  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', step: 1, min: 1, max: 6 },
+  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', step: 1, min: 1, max: 60 },
   { key: 'positionDuration', labelKey: 'wizard.positionDuration', unitKey: 'wizard.seconds', step: 5, min: 5, max: 120 },
   { key: 'restBetweenPositions', labelKey: 'wizard.restBetweenPositions', unitKey: 'wizard.seconds', step: 5, min: 0, max: 120 },
   { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', step: 15, min: 30, max: 600 },
-  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', step: 1, min: 1, max: 6 },
-  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', step: 1, min: 1, max: 60 },
 ] as const;
 
 interface WizardProps {
@@ -100,14 +102,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
     return (
       <div className="flex min-h-dvh flex-col justify-center p-6">
         {isReconfigure && onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label={t('common.back')}
-            className="mb-4 grid min-h-touch min-w-touch place-items-center self-start rounded-lg border border-slate-700 text-white"
-          >
-            <ArrowLeft size={22} />
-          </button>
+          <BackButton onBack={onBack} className="mb-4 self-start" />
         )}
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white">
@@ -168,14 +163,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
   return (
     <div className="flex min-h-dvh flex-col p-6">
       <header className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => setStep('choice')}
-          aria-label={t('common.back')}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg border border-slate-700 text-white"
-        >
-          <ArrowLeft size={22} />
-        </button>
+        <BackButton onBack={() => setStep('choice')} />
         <h1 className="text-xl font-bold text-white">{t('wizard.manualTitle')}</h1>
       </header>
       <div className="mt-5 flex flex-1 flex-col gap-3 overflow-y-auto">

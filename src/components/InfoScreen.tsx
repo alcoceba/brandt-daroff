@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { ArrowLeft, Activity, Clock, Lightbulb, TrendingUp } from 'lucide-react';
+import { CalendarDays, Clock, Ear, Lightbulb, Move, ShieldAlert, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { BackButton } from '@/components/BackButton';
 
 interface InfoScreenProps {
   onBack: () => void;
@@ -32,23 +33,24 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
   return (
     <div className="flex min-h-dvh flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label={t('common.back')}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg border border-slate-700 text-white"
-        >
-          <ArrowLeft size={22} />
-        </button>
+        <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('info.title')}</h1>
       </header>
 
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-4">
-        <Section icon={<Activity size={18} className="text-brand-500" />} title={t('info.whatIsVPPBTitle')}>
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+          <div className="flex items-center gap-2">
+            <ShieldAlert size={18} className="shrink-0 text-amber-400" />
+            <h2 className="text-sm font-bold text-amber-300">{t('wizard.disclaimerTitle')}</h2>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-amber-200/90">{t('wizard.disclaimerBody')}</p>
+        </div>
+
+        <Section icon={<Ear size={18} className="text-blue-400" />} title={t('info.whatIsVPPBTitle')}>
           <p>{t('info.whatIsVPPBBody')}</p>
         </Section>
 
-        <Section icon={<Activity size={18} className="text-brand-500" />} title={t('info.whatIsMethodTitle')}>
+        <Section icon={<Move size={18} className="text-brand-500" />} title={t('info.whatIsMethodTitle')}>
           <p>{t('info.whatIsMethodBody')}</p>
         </Section>
 
@@ -63,7 +65,7 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
           </ol>
         </Section>
 
-        <Section icon={<Clock size={18} className="text-amber-400" />} title={t('info.frequencyTitle')}>
+        <Section icon={<CalendarDays size={18} className="text-purple-400" />} title={t('info.frequencyTitle')}>
           <p>{t('info.frequencyBody')}</p>
         </Section>
 

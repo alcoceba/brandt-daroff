@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Armchair, Bed, Coffee, Hourglass, type LucideIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Circle, Coffee, Hourglass, type LucideIcon } from 'lucide-react';
 import type { PositionKind } from '@/types';
 
 interface PositionIconProps {
@@ -8,9 +8,9 @@ interface PositionIconProps {
 }
 
 const ICONS: Record<PositionKind, LucideIcon> = {
-  sitting: Armchair,
-  'lying-right': Bed,
-  'lying-left': Bed,
+  sitting: Circle,
+  'lying-right': ArrowRight,
+  'lying-left': ArrowLeft,
   rest: Coffee,
   'long-rest': Hourglass,
 };
@@ -19,8 +19,8 @@ const COLORS: Record<PositionKind, string> = {
   sitting: 'text-amber-400',
   'lying-right': 'text-brand-500',
   'lying-left': 'text-brand-500',
-  rest: 'text-slate-300',
-  'long-rest': 'text-slate-400',
+  rest: 'text-yellow-400',
+  'long-rest': 'text-red-600',
 };
 
 export const PositionIcon = memo(function PositionIcon({ kind, className }: PositionIconProps) {

@@ -1,6 +1,5 @@
 import { memo, useState } from 'react';
 import {
-  ArrowLeft,
   ChevronRight,
   Globe,
   RotateCcw,
@@ -14,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import type { Language } from '@/types';
 import { LANGUAGES } from '@/i18n/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
+import { BackButton } from '@/components/BackButton';
 import { ConfirmDialog } from '@/components/Modal';
 
 const Flags: Record<Language, React.FC<{ className?: string }>> = {
@@ -60,14 +60,7 @@ function LanguageScreen({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex min-h-dvh flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label={t('common.back')}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg border border-slate-700 text-white"
-        >
-          <ArrowLeft size={22} />
-        </button>
+        <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('settings.language')}</h1>
       </header>
       <section className="flex flex-col gap-2">
@@ -115,14 +108,7 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
   return (
     <div className="flex min-h-dvh flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label={t('common.back')}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg border border-slate-700 text-white"
-        >
-          <ArrowLeft size={22} />
-        </button>
+        <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('settings.title')}</h1>
       </header>
 

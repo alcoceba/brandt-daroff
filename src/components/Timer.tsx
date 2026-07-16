@@ -1,15 +1,25 @@
 import { memo, useMemo } from 'react';
+import type { PositionKind } from '@/types';
 
 interface TimerProps {
   secondsRemaining: number;
   totalDuration: number;
   isRunning: boolean;
+  kind?: PositionKind;
 }
 
 const SIZE = 300;
 const STROKE = 20;
 const RADIUS = (SIZE - STROKE) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+const RING_COLOR: Record<PositionKind, { running: string; paused: string }> = {
+  sitting: { running: '#22c55e', paused: '#f59e0b' },
+  'lying-right': { running: '#22c55e', paused: '#f59e0b' },
+  'lying-left': { running: '#22c55e', paused: '#f59e0b' },
+  rest: { running: '#facc15', paused: '#ca8a04' },
+  'long-rest': { running: '#dc2626', paused: '#b91c1c' },
+};
 
 function formatTime(seconds: number): string {
   const total = Math.max(Math.ceil(seconds), 0);
@@ -18,10 +28,16 @@ function formatTime(seconds: number): string {
   return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : String(s);
 }
 
-export const Timer = memo(function Timer({ secondsRemaining, totalDuration, isRunning }: TimerProps) {
+export const Timer = memo(function Timer({
+  secondsRemaining,
+  totalDuration,
+  isRunning,
+  kind = 'sitting',
+}: TimerProps) {
   const progress = totalDuration > 0 ? Math.min(secondsRemaining / totalDuration, 1) : 0;
   const offset = useMemo(() => CIRCUMFERENCE * (1 - progress), [progress]);
   const display = totalDuration > 0 ? formatTime(secondsRemaining) : '–';
+  const strokeColor = isRunning ? RING_COLOR[kind].running : RING_COLOR[kind].paused;
 
   return (
     <div className="relative grid place-items-center" style={{ width: SIZE, height: SIZE }}>
@@ -39,7 +55,7 @@ export const Timer = memo(function Timer({ secondsRemaining, totalDuration, isRu
           cy={SIZE / 2}
           r={RADIUS}
           fill="none"
-          stroke={isRunning ? '#22c55e' : '#f59e0b'}
+          stroke={strokeColor}
           strokeWidth={STROKE}
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}

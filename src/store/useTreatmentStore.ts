@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG: TreatmentConfig = {
   restBetweenCycles: 120,
   sessionsPerDay: 3,
   totalDays: 14,
+  cyclesPerSession: 5,
 };
 
 const DEFAULT_SETTINGS: Settings = {
