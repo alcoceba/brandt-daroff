@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
 import {
+  Calendar,
   ChevronRight,
   Globe,
   RotateCcw,
@@ -8,6 +9,7 @@ import {
   VibrateOff,
   Volume2,
   VolumeX,
+  Zap,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Language } from '@/types';
@@ -93,10 +95,13 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
   const { t } = useTranslation();
   const language = useTreatmentStore((s) => s.language);
   const settings = useTreatmentStore((s) => s.settings);
+  const appMode = useTreatmentStore((s) => s.mode);
+  const setMode = useTreatmentStore((s) => s.setMode);
   const toggleSound = useTreatmentStore((s) => s.toggleSound);
   const toggleVibration = useTreatmentStore((s) => s.toggleVibration);
   const fullReset = useTreatmentStore((s) => s.fullReset);
   const [resetOpen, setResetOpen] = useState(false);
+  const [modeOpen, setModeOpen] = useState(false);
   const [showLanguage, setShowLanguage] = useState(false);
 
   if (showLanguage) {
@@ -161,6 +166,18 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
         </button>
         <button
           type="button"
+          onClick={() => setModeOpen(true)}
+          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+        >
+          {appMode === 'progress' ? <Calendar size={24} /> : <Zap size={24} />}
+          <span className="flex-1 text-left">{t('settings.mode')}</span>
+          <span className="text-sm text-slate-400">
+            {appMode === 'progress' ? t('wizard.modeProgressTitle') : t('wizard.modeQuickTitle')}
+          </span>
+          <ChevronRight size={20} className="text-slate-500" />
+        </button>
+        <button
+          type="button"
           onClick={() => setResetOpen(true)}
           className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-state-danger/50 bg-slate-800 px-4 text-lg font-semibold text-state-danger active:scale-[.99]"
         >
@@ -169,6 +186,23 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
         </button>
       </section>
 
+      <ConfirmDialog
+        open={modeOpen}
+        title={t('settings.mode')}
+        body={
+          <p className="text-sm text-slate-300">
+            {appMode === 'progress' ? t('wizard.modeQuickDesc') : t('wizard.modeProgressDesc')}
+          </p>
+        }
+        confirmLabel={t('common.confirm')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={() => {
+          setMode(appMode === 'progress' ? 'quick' : 'progress');
+          setModeOpen(false);
+          onBack();
+        }}
+        onCancel={() => setModeOpen(false)}
+      />
       <ConfirmDialog
         open={resetOpen}
         title={t('home.resetTitle')}

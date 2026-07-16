@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { Github, Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
+import { Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSessionSlots } from '@/data/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -26,6 +26,8 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
     config,
     sessions,
     startDate,
+    mode,
+    setMode,
     setSessionStatus,
     clearSessionProgress,
     setConfig,
@@ -34,6 +36,8 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
     config: s.config,
     sessions: s.sessions,
     startDate: s.startDate,
+    mode: s.mode,
+    setMode: s.setMode,
     setSessionStatus: s.setSessionStatus,
     clearSessionProgress: s.clearSessionProgress,
     setConfig: s.setConfig,
@@ -91,18 +95,43 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
             <h1 className="whitespace-nowrap text-xl font-bold text-white">{t('home.title')}</h1>
-            {finished ? (
-              <span className="text-lg font-bold text-state-done">{t('home.complete')}</span>
-            ) : (
-              <span className="whitespace-nowrap text-lg font-semibold text-brand-500">
-                {t('home.day', { x: dayNumber, total: config.totalDays })}
-              </span>
+            {mode === 'progress' && (
+              <>
+                {finished ? (
+                  <span className="text-lg font-bold text-state-done">{t('home.complete')}</span>
+                ) : (
+                  <span className="whitespace-nowrap text-lg font-semibold text-brand-500">
+                    {t('home.day', { x: dayNumber, total: config.totalDays })}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
       </header>
 
-      {finished ? (
+      {mode === 'quick' ? (
+        <section className="flex flex-col items-center gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center">
+          <h2 className="text-xl font-bold text-white">{t('wizard.modeQuickTitle')}</h2>
+          <p className="text-sm text-slate-300">
+            {t('home.quickDesc', { cycles: config.cyclesPerSession, duration: config.positionDuration })}
+          </p>
+          <button
+            type="button"
+            onClick={() => onStartSession('quick')}
+            className="min-h-touch w-full rounded-xl bg-brand-600 text-lg font-bold text-white"
+          >
+            {t('home.quickStart')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('progress')}
+            className="text-sm font-semibold text-brand-500 transition-colors hover:text-brand-400"
+          >
+            {t('wizard.modeProgressTitle')} →
+          </button>
+        </section>
+      ) : finished ? (
         <section className="flex flex-col items-center gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center">
           <Trophy className="h-16 w-16 text-state-done" strokeWidth={1.5} />
           <div>
@@ -177,40 +206,25 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
         </section>
       )}
 
-      <Calendar />
+      {mode === 'progress' && <Calendar />}
 
-      <div className="mt-auto flex flex-col gap-3">
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onOpenInfo}
-            className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
-          >
-            <Info size={20} />
-            <span className="hidden sm:inline">{t('info.title')}</span>
-          </button>
-          <button
-            type="button"
-            onClick={onOpenSettings}
-            className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
-          >
-            <SettingsIcon size={20} />
-            <span className="hidden sm:inline">{t('home.settings')}</span>
-          </button>
-        </div>
-        <footer className="flex flex-wrap items-center gap-x-2 sm:gap-x-0 sm:justify-between gap-y-1 border-t border-slate-800 pt-3 text-xs text-slate-500">
-          <span>{t('footer.privacyNote')}</span>
-          <a
-            href="https://github.com/alcoceba/brandt-daroff"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-slate-400 transition-colors hover:text-white"
-            title={t('footer.github')}
-          >
-            <Github size={14} />
-            {t('footer.github')}
-          </a>
-        </footer>
+      <div className="mt-auto flex gap-3">
+        <button
+          type="button"
+          onClick={onOpenInfo}
+          className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
+        >
+          <Info size={20} />
+          <span className="hidden sm:inline">{t('info.title')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onOpenSettings}
+          className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
+        >
+          <SettingsIcon size={20} />
+          <span className="hidden sm:inline">{t('home.settings')}</span>
+        </button>
       </div>
 
       <ConfirmDialog

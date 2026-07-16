@@ -1,0 +1,27 @@
+# Brandt-Daroff — VPPB Home Treatment App
+
+A frontend-only Progressive Web App (PWA) that guides patients through Brandt-Daroff exercises for BPPV (benign paroxysmal positional vertigo) at home.
+
+## What it does
+- Step-by-step timer for each exercise position (sitting, lying right, rest, lying left, long rest)
+- Visual circular progress ring and countdown per position
+- Full treatment tracking with a daily calendar grid and completion status
+- Configurable durations, cycles per session, sessions per day, and total treatment days
+- Two operation modes: full treatment progress tracking and a quick timer mode without tracking
+- Clinical safety warnings and an emergency stop during exercise cycles
+- Sound and vibration cues for position changes
+
+## Architecture
+- React 18 + Vite + TypeScript
+- Tailwind CSS for styling
+- Zustand + localStorage for state and offline persistence
+- react-i18next for multi-language support (English, Catalan, Spanish)
+- PWA via vite-plugin-pwa with offline service worker
+- No backend; all data stays on the device
+
+## Project conventions
+- Mobile-first, high contrast, large tap targets
+- No personal/medical data leaves the device
+- Medical protocol defaults are respected; user can override durations
+- Code, comments, and UI strings are in English / Catalan / Spanish via i18n
+- Build commands: npm run dev | build | preview | lint | typecheck

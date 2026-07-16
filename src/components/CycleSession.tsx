@@ -39,10 +39,12 @@ function formatMinutesSeconds(totalSeconds: number): string {
 export const CycleSession = memo(function CycleSession({ sessionId, onExit }: CycleSessionProps) {
   const { t } = useTranslation();
   const config = useTreatmentStore((s) => s.config);
+  const mode = useTreatmentStore((s) => s.mode);
   const startDate = useTreatmentStore((s) => s.startDate);
   const setSessionStatus = useTreatmentStore((s) => s.setSessionStatus);
   const saveSessionProgress = useTreatmentStore((s) => s.saveSessionProgress);
   const clearSessionProgress = useTreatmentStore((s) => s.clearSessionProgress);
+  const isQuick = mode === 'quick';
 
   const restored = useState<SessionProgress | null>(
     () => useTreatmentStore.getState().progress[todayISO()]?.[sessionId] ?? null,
@@ -70,10 +72,12 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
   const goHome = useCallback(
     (status: 'pending' | 'completed') => {
       stop();
-      setSessionStatus(todayISO(), sessionId, status);
+      if (!isQuick) {
+        setSessionStatus(todayISO(), sessionId, status);
+      }
       onExit();
     },
-    [stop, setSessionStatus, sessionId, onExit],
+    [stop, isQuick, setSessionStatus, sessionId, onExit],
   );
 
   const handleBack = useCallback(() => {
@@ -86,8 +90,10 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
     if (positionIndex < POSITIONS.length - 1) {
       const nextPos = positionIndex + 1;
       setPositionIndex(nextPos);
-      setSessionStatus(todayISO(), sessionId, 'in-progress');
-      saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: nextPos });
+      if (!isQuick) {
+        setSessionStatus(todayISO(), sessionId, 'in-progress');
+        saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: nextPos });
+      }
       return;
     }
     if (cycleIndex < config.cyclesPerSession - 1) {
@@ -95,13 +101,17 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
       const nextPos = skipTransition ? 1 : 0;
       setCycleIndex(nextCycle);
       setPositionIndex(nextPos);
-      setSessionStatus(todayISO(), sessionId, 'in-progress');
-      saveSessionProgress(todayISO(), sessionId, { cycleIndex: nextCycle, positionIndex: nextPos });
+      if (!isQuick) {
+        setSessionStatus(todayISO(), sessionId, 'in-progress');
+        saveSessionProgress(todayISO(), sessionId, { cycleIndex: nextCycle, positionIndex: nextPos });
+      }
       return;
     }
-    clearSessionProgress(todayISO(), sessionId);
+    if (!isQuick) {
+      clearSessionProgress(todayISO(), sessionId);
+    }
     goHome('completed');
-  }, [stop, positionIndex, cycleIndex, config.cyclesPerSession, setSessionStatus, saveSessionProgress, clearSessionProgress, sessionId, goHome]);
+  }, [stop, positionIndex, cycleIndex, config.cyclesPerSession, isQuick, setSessionStatus, saveSessionProgress, clearSessionProgress, sessionId, goHome]);
 
   const advanceRef = useRef(advance);
   advanceRef.current = advance;
@@ -111,10 +121,10 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
   }, [setOnComplete]);
 
   useEffect(() => {
-    if (restored !== null) {
+    if (restored !== null && !isQuick) {
       setSessionStatus(todayISO(), sessionId, 'in-progress');
     }
-  }, [restored, setSessionStatus, sessionId]);
+  }, [restored, isQuick, setSessionStatus, sessionId]);
 
   useEffect(() => {
     if (isTransition) return;
@@ -159,7 +169,9 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
   const confirmReset = () => {
     stop();
     setPositionIndex(0);
-    saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: 0 });
+    if (!isQuick) {
+      saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: 0 });
+    }
   };
 
   const cycleNumber = cycleIndex + 1;
@@ -173,7 +185,9 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
       />
       <header className="relative flex items-center gap-3">
         <BackButton onBack={handleBack} />
-        <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
+        <h1 className="text-xl font-bold text-white">
+          {isQuick ? t('wizard.modeQuickTitle') : t('cycle.title', { x: dayNumber })}
+        </h1>
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
@@ -187,14 +201,16 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
           isRunning={isRunning}
           kind={position.kind}
         />
-        <div className="text-center">
-          <p className="text-lg font-bold text-white">
-            {t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
-          </p>
-          <p className="text-sm font-semibold text-slate-300">
-            {t('cycle.timeRemaining', { time: formatMinutesSeconds(remainingTotal) })}
-          </p>
-        </div>
+        {!isQuick && (
+          <div className="text-center">
+            <p className="text-lg font-bold text-white">
+              {t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
+            </p>
+            <p className="text-sm font-semibold text-slate-300">
+              {t('cycle.timeRemaining', { time: formatMinutesSeconds(remainingTotal) })}
+            </p>
+          </div>
+        )}
       </div>
 
       {isTransition ? (

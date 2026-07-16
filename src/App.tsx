@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Github } from 'lucide-react';
 import i18n from '@/i18n';
 import type { Language } from '@/types';
+import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { Wizard } from '@/components/Wizard';
@@ -88,6 +90,26 @@ export default function App() {
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[700px] border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
       {screen}
+      <GlobalFooter />
     </div>
+  );
+}
+
+function GlobalFooter() {
+  const { t } = useTranslation();
+  return (
+    <footer className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-5 py-3 text-center text-xs text-slate-500 sm:justify-between">
+      <span>{t('footer.privacyNote')}</span>
+      <a
+        href="https://github.com/alcoceba/brandt-daroff"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-1 text-slate-400 transition-colors hover:text-white"
+        title={t('footer.github')}
+      >
+        <Github size={14} />
+        {t('footer.github')}
+      </a>
+    </footer>
   );
 }

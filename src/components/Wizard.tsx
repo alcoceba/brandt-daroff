@@ -83,6 +83,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
   const setConfig = useTreatmentStore((s) => s.setConfig);
   const completeOnboarding = useTreatmentStore((s) => s.completeOnboarding);
   const storedConfig = useTreatmentStore((s) => s.config);
+  const currentMode = useTreatmentStore((s) => s.mode);
   const [step, setStep] = useState<Step>('choice');
   const [values, setValues] = useState<TreatmentConfig>(() => ({ ...DEFAULT_CONFIG, ...storedConfig }));
 
@@ -196,6 +197,10 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
     );
   }
 
+  const visibleFields = currentMode === 'quick'
+    ? FIELDS.filter((f) => f.key !== 'sessionsPerDay' && f.key !== 'totalDays')
+    : FIELDS;
+
   return (
     <div className="flex min-h-dvh flex-col p-6">
       <header className="flex items-center gap-3">
@@ -203,7 +208,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
         <h1 className="text-xl font-bold text-white">{t('wizard.manualTitle')}</h1>
       </header>
       <div className="mt-5 flex flex-1 flex-col gap-3 overflow-y-auto">
-        {FIELDS.map((field) => (
+        {visibleFields.map((field) => (
           <Stepper
             key={field.key}
             label={t(field.labelKey)}

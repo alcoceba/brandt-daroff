@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Language, SessionMap, SessionStatus, Settings, TreatmentConfig } from '@/types';
+import type { AppMode, Language, SessionMap, SessionStatus, Settings, TreatmentConfig } from '@/types';
 import { todayISO } from '@/utils/date';
 
 export const DEFAULT_CONFIG: TreatmentConfig = {
@@ -32,6 +32,7 @@ interface TreatmentState {
   progress: ProgressMap;
   settings: Settings;
   onboardingComplete: boolean;
+  mode: AppMode;
   setLanguage: (language: Language) => void;
   setConfig: (patch: Partial<TreatmentConfig>) => void;
   completeOnboarding: () => void;
@@ -42,6 +43,7 @@ interface TreatmentState {
   fullReset: () => void;
   toggleSound: () => void;
   toggleVibration: () => void;
+  setMode: (mode: AppMode) => void;
 }
 
 export const useTreatmentStore = create<TreatmentState>()(
@@ -54,6 +56,7 @@ export const useTreatmentStore = create<TreatmentState>()(
       progress: {},
       settings: DEFAULT_SETTINGS,
       onboardingComplete: false,
+      mode: 'progress',
       setLanguage: (language) => set({ language }),
       setConfig: (patch) => set((state) => ({ config: { ...state.config, ...patch } })),
       completeOnboarding: () =>
@@ -101,15 +104,17 @@ export const useTreatmentStore = create<TreatmentState>()(
           progress: {},
           settings: DEFAULT_SETTINGS,
           onboardingComplete: false,
+          mode: 'progress',
         }),
       toggleSound: () =>
         set((state) => ({ settings: { ...state.settings, sound: !state.settings.sound } })),
       toggleVibration: () =>
         set((state) => ({ settings: { ...state.settings, vibration: !state.settings.vibration } })),
+      setMode: (mode) => set({ mode }),
     }),
     {
       name: 'brandt-daroff-store',
-      version: 2,
+      version: 3,
     },
   ),
 );
