@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  base: '/brandt-daroff/',
   plugins: [
     react(),
     VitePWA({
@@ -17,7 +18,7 @@ export default defineConfig({
         background_color: '#0f172a',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: './',
         icons: [
           {
             src: 'icon.svg',
