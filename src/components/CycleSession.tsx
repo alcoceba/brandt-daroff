@@ -167,7 +167,7 @@ export const CycleSession = memo(function CycleSession({ sessionId, onExit }: Cy
   const glowClass = !isRunning && !isTransition ? 'bg-yellow-500/30' : GLOW[position.kind];
 
   return (
-    <div className="relative flex min-h-dvh flex-col gap-4 overflow-hidden bg-slate-900 p-5">
+    <div className="relative flex min-h-dvh flex-col gap-4 overflow-hidden bg-gradient-to-b from-slate-900 to-slate-800 p-5">
       <div
         className={`pointer-events-none absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[140px] transition-all duration-700 ${glowClass}`}
       />

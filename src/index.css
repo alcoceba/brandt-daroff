@@ -9,7 +9,7 @@
     @apply min-h-dvh;
   }
   body {
-    @apply bg-slate-900 text-slate-100 antialiased;
+    @apply bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100 antialiased;
     -webkit-tap-highlight-color: transparent;
   }
   button {

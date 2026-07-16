@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
+import { Github, Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSessionSlots } from '@/data/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -179,21 +179,38 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
 
       <Calendar />
 
-      <div className="mt-auto flex gap-3">
-        <button
-          type="button"
-          onClick={onOpenInfo}
-          className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
-        >
-          <Info size={20} /> {t('info.title')}
-        </button>
-        <button
-          type="button"
-          onClick={onOpenSettings}
-          className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
-        >
-          <SettingsIcon size={20} /> {t('home.settings')}
-        </button>
+      <div className="mt-auto flex flex-col gap-3">
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={onOpenInfo}
+            className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
+          >
+            <Info size={20} />
+            <span className="hidden sm:inline">{t('info.title')}</span>
+          </button>
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className="flex min-h-touch flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 font-semibold text-slate-200"
+          >
+            <SettingsIcon size={20} />
+            <span className="hidden sm:inline">{t('home.settings')}</span>
+          </button>
+        </div>
+        <footer className="flex flex-wrap items-center gap-x-2 sm:gap-x-0 sm:justify-between gap-y-1 border-t border-slate-800 pt-3 text-xs text-slate-500">
+          <span>{t('footer.privacyNote')}</span>
+          <a
+            href="https://github.com/alcoceba/brandt-daroff"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-slate-400 transition-colors hover:text-white"
+            title={t('footer.github')}
+          >
+            <Github size={14} />
+            {t('footer.github')}
+          </a>
+        </footer>
       </div>
 
       <ConfirmDialog

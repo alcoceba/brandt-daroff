@@ -86,7 +86,7 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[700px] border-x border-slate-800 bg-slate-900 shadow-xl">
+    <div className="mx-auto min-h-dvh w-full max-w-[700px] border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
       {screen}
     </div>
   );

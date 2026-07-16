@@ -10,18 +10,19 @@ interface Field {
   key: keyof TreatmentConfig;
   labelKey: string;
   unitKey: string;
+  descKey: string;
   step: number;
   min: number;
   max: number;
 }
 
 const FIELDS: readonly Field[] = [
-  { key: 'cyclesPerSession', labelKey: 'wizard.cyclesPerSession', unitKey: 'wizard.cycles', step: 1, min: 1, max: 10 },
-  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', step: 1, min: 1, max: 6 },
-  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', step: 1, min: 1, max: 60 },
-  { key: 'positionDuration', labelKey: 'wizard.positionDuration', unitKey: 'wizard.seconds', step: 5, min: 5, max: 120 },
-  { key: 'restBetweenPositions', labelKey: 'wizard.restBetweenPositions', unitKey: 'wizard.seconds', step: 5, min: 0, max: 120 },
-  { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', step: 15, min: 30, max: 600 },
+  { key: 'cyclesPerSession', labelKey: 'wizard.cyclesPerSession', unitKey: 'wizard.cycles', descKey: 'wizard.cyclesPerSessionDesc', step: 1, min: 1, max: 10 },
+  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', descKey: 'wizard.sessionsPerDayDesc', step: 1, min: 1, max: 6 },
+  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', descKey: 'wizard.totalDaysDesc', step: 1, min: 1, max: 60 },
+  { key: 'positionDuration', labelKey: 'wizard.positionDuration', unitKey: 'wizard.seconds', descKey: 'wizard.positionDurationDesc', step: 5, min: 5, max: 120 },
+  { key: 'restBetweenPositions', labelKey: 'wizard.restBetweenPositions', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenPositionsDesc', step: 5, min: 0, max: 120 },
+  { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenCyclesDesc', step: 15, min: 30, max: 600 },
 ] as const;
 
 interface WizardProps {
@@ -33,6 +34,7 @@ interface WizardProps {
 interface StepperProps {
   label: string;
   unit: string;
+  description?: string;
   value: number;
   step: number;
   min: number;
@@ -40,11 +42,14 @@ interface StepperProps {
   onChange: (v: number) => void;
 }
 
-const Stepper = memo(function Stepper({ label, unit, value, step, min, max, onChange }: StepperProps) {
+const Stepper = memo(function Stepper({ label, unit, description, value, step, min, max, onChange }: StepperProps) {
   const clamp = (v: number) => Math.min(Math.max(v, min), max);
   return (
     <div className="rounded-xl border border-slate-700 bg-slate-800 p-4">
-      <p className="text-base font-semibold text-white">{label}</p>
+      <div className="flex flex-col gap-0.5">
+        <p className="text-base font-semibold text-white">{label}</p>
+        {description && <p className="text-xs leading-relaxed text-slate-400">{description}</p>}
+      </div>
       <div className="mt-3 flex items-center justify-between gap-3">
         <button
           type="button"
@@ -99,6 +104,9 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
 
   if (step === 'choice') {
     const isReconfigure = mode === 'reconfigure';
+    const isUsingDefaults = (Object.keys(DEFAULT_CONFIG) as (keyof TreatmentConfig)[]).every(
+      (key) => storedConfig[key] === DEFAULT_CONFIG[key],
+    );
     return (
       <div className="flex min-h-dvh flex-col justify-center p-6">
         {isReconfigure && onBack && (
@@ -117,24 +125,52 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
           <button
             type="button"
             onClick={chooseDefaults}
-            className="flex min-h-touch flex-col items-start gap-1 rounded-xl border border-brand-500 bg-brand-600/10 p-5 text-left active:scale-[.99]"
+            className="flex min-h-touch w-full flex-col items-start gap-1 rounded-xl border border-brand-500 bg-brand-600/10 p-5 text-left active:scale-[.99]"
           >
-            <span className="flex items-center gap-2 text-lg font-bold text-white">
-              <Check size={22} className="text-brand-500" />
-              {t('wizard.defaults')}
+            <span className="flex w-full items-center justify-between gap-2 text-lg font-bold text-white">
+              <span className="flex items-center gap-2">
+                <Check size={22} className="text-brand-500" />
+                {t('wizard.defaults')}
+              </span>
+              {isUsingDefaults && isReconfigure && (
+                <span className="hidden sm:flex items-center gap-1 text-xs font-medium text-brand-500">
+                  <Check size={14} />
+                  {t('wizard.usingNow')}
+                </span>
+              )}
             </span>
             <span className="text-sm text-slate-300">{t('wizard.defaultsDesc')}</span>
+            {isUsingDefaults && isReconfigure && (
+              <span className="flex sm:hidden items-center gap-1 text-xs font-medium text-brand-500">
+                <Check size={14} />
+                {t('wizard.usingNow')}
+              </span>
+            )}
           </button>
           <button
             type="button"
             onClick={() => setStep('manual')}
-            className="flex min-h-touch flex-col items-start gap-1 rounded-xl border border-slate-700 bg-slate-800 p-5 text-left active:scale-[.99]"
+            className="flex min-h-touch w-full flex-col items-start gap-1 rounded-xl border border-slate-700 bg-slate-800 p-5 text-left active:scale-[.99]"
           >
-            <span className="flex items-center gap-2 text-lg font-bold text-white">
-              <Sliders size={22} className="text-slate-300" />
-              {t('wizard.manual')}
+            <span className="flex w-full items-center justify-between gap-2 text-lg font-bold text-white">
+              <span className="flex items-center gap-2">
+                <Sliders size={22} className="text-slate-300" />
+                {t('wizard.manual')}
+              </span>
+              {!isUsingDefaults && isReconfigure && (
+                <span className="hidden sm:flex items-center gap-1 text-xs font-medium text-brand-500">
+                  <Check size={14} />
+                  {t('wizard.usingNow')}
+                </span>
+              )}
             </span>
             <span className="text-sm text-slate-300">{t('wizard.manualDesc')}</span>
+            {!isUsingDefaults && isReconfigure && (
+              <span className="flex sm:hidden items-center gap-1 text-xs font-medium text-brand-500">
+                <Check size={14} />
+                {t('wizard.usingNow')}
+              </span>
+            )}
           </button>
         </div>
 
@@ -172,6 +208,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
             key={field.key}
             label={t(field.labelKey)}
             unit={t(field.unitKey)}
+            description={t(field.descKey)}
             value={values[field.key]}
             step={field.step}
             min={field.min}
@@ -186,7 +223,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
           onClick={save}
           className="min-h-touch w-full rounded-xl bg-brand-600 text-lg font-bold text-white"
         >
-          {t('wizard.save')}
+          {mode === 'reconfigure' ? t('wizard.saveOnly') : t('wizard.save')}
         </button>
       </div>
     </div>
