@@ -28,7 +28,7 @@ Built mobile-first with large tap targets (≥ 56 px), high contrast, and large 
   - Rest between cycles: 2 min
   - Sessions per day: 3 (Morning / Midday / Evening; or "Cycle 1, Cycle 2…" if changed)
   - Total treatment days: 14
-  - 5 cycles per session is **fixed** (medical protocol)
+  - Cycles per session: 5 (Brandt-Daroff protocol default, configurable)
 - **Visual timer** — SVG circular progress ring + big countdown number
 - **Position cards** — large illustration + short text + duration for each of the 5 positions
 - **Cycle counter** — "Cycle 2/5", "3 cycles remaining"
@@ -39,6 +39,7 @@ Built mobile-first with large tap targets (≥ 56 px), high contrast, and large 
 - **Clinical safety** — persistent warning for red-flag symptoms + an always-reachable emergency stop
 - **Installable** — add to your home screen; works fully offline once loaded
 - **Multilingual** — English / Català / Castellano, changeable at any time from Home
+- **Quick timer mode** — timer-only mode without tracking, switchable from Settings or Home
 
 ## Prerequisites
 
@@ -62,6 +63,7 @@ Open the printed local URL (usually `http://localhost:5173`). For the best exper
 | `npm run preview` | Preview the production build |
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Run `tsc --noEmit` |
+| `npm run deploy` | Build and deploy to GitHub Pages (`gh-pages` branch) |
 
 ## Tech stack
 
@@ -96,9 +98,9 @@ src/
     Timer.tsx
     PositionIcon.tsx
     Calendar.tsx
-    SafetyNotice.tsx
     Settings.tsx
     InfoScreen.tsx
+    BackButton.tsx
     Modal.tsx
     Logo.tsx
   data/
@@ -110,6 +112,10 @@ src/
     date.ts
 public/
   icon.svg
+  icon-192.png
+  icon-512.png
+  robots.txt
+  llms.txt
 ```
 
 ## Install as a PWA
@@ -133,7 +139,10 @@ All state is stored in the browser's `localStorage` on the device:
 
 ## Deployment
 
-The app is a static build, so any static host works. Recommended: **GitHub Pages** (this repo is already on GitHub) via a `gh-pages` branch or a GitHub Actions workflow that builds and publishes `dist/`.
+The app is a static build, so any static host works. Recommended: **GitHub Pages** (this repo is already on GitHub) via the `gh-pages` branch.
+
+1. Go to **Settings → Pages** and select source **Deploy from a branch** → `gh-pages` / `(root)`.
+2. Run `npm run deploy` locally to build and push `dist/` to the `gh-pages` branch.
 
 Alternatives (all free tier): Netlify, Vercel, Cloudflare Pages.
 

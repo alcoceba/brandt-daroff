@@ -16,19 +16,20 @@ This is a **medical guidance app** used by patients at home, typically next to t
 
 ### Onboarding (first run)
 1. **Language selection** screen: English / Català / Castellano, shown as **flag (SVG) + text**. Language is changeable later from Home.
-2. **Configuration wizard** with 5 fields, all pre-filled with protocol defaults. Skippable (saving defaults):
+2. **Configuration wizard** with 6 fields, all pre-filled with protocol defaults. Skippable (saving defaults):
    - Position duration: **30s**
    - Rest between positions: **30s**
    - Rest between cycles: **2 min**
    - Sessions per day (daily slots): **3** → labels "Morning / Midday / Evening"; if a different number → "Cycle 1, Cycle 2…"
    - Total treatment days: **14**
-   - **5 cycles per session is fixed** (medical protocol), not configurable.
+   - Cycles per session: **5** (Brandt-Daroff protocol default, configurable).
 
 ### Home screen
 - Shows **Day X / totalDays** computed from the treatment start date.
 - Lists today's sessions with state: pending / in-progress / completed.
 - Start a session → goes to Cycle screen.
 - Access to: reconfigure (wizard), change language, **reset whole treatment** (with confirmation).
+- Two operation modes: **Treatment progress** (full tracking) and **Quick timer** (no tracking, timer only). Mode switchable from Settings or Home.
 
 ### Cycle screen (during exercise)
 One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position:
@@ -52,6 +53,7 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
   - **Reset whole process** (confirmation)
   - **Stop and abandon** (returns to Home; session stays pending and can be restarted)
 - On completing all 5 cycles → mark session completed → return to Home.
+- Background glow changes color based on position kind (green for positions, yellow for short rest, red for long rest).
 
 ### Tracking
 - Calendar/grid showing per-session, per-day state.
@@ -104,27 +106,42 @@ src/
     Timer.tsx
     PositionIcon.tsx
     Calendar.tsx
-    SafetyNotice.tsx
+    Settings.tsx
+    InfoScreen.tsx
+    BackButton.tsx
+    Modal.tsx
+    Logo.tsx
   data/
     positions.ts
   utils/
     timer.ts
     sound.ts
     vibration.ts
+    date.ts
 public/
   manifest.webmanifest
-  icons/
+  icon.svg
+  icon-192.png
+  icon-512.png
+  robots.txt
+  llms.txt
 ```
 
 ### State model (persisted to localStorage)
 - `language: 'en' | 'ca' | 'es'`
-- `config: { positionDuration, restBetweenPositions, restBetweenCycles, sessionsPerDay, totalDays }` (seconds / count / days)
+- `config: { positionDuration, restBetweenPositions, restBetweenCycles, sessionsPerDay, totalDays, cyclesPerSession }` (seconds / count / days)
 - `startDate: ISOString | null`
 - `sessions: { [isoDate]: { [sessionId]: 'pending' | 'in-progress' | 'completed' } }`
 - `settings: { sound: boolean, vibration: boolean }`
+- `mode: 'progress' | 'quick'`
+- `onboardingComplete: boolean`
 
 ### Hosting (free)
-Recommended: **GitHub Pages** (the repo is already on GitHub) via `gh-pages` branch or a GitHub Actions workflow that builds and publishes `dist/`. Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
+Recommended: **GitHub Pages** (the repo is already on GitHub). The project is configured for manual deploy via `gh-pages`:
+1. Go to **Settings → Pages** and select source **Deploy from a branch** → `gh-pages` / `(root)`.
+2. Run `npm run deploy` locally to build and push `dist/` to the `gh-pages` branch.
+
+Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 
 ### Commands
 - `npm run dev` — local dev server
@@ -132,6 +149,7 @@ Recommended: **GitHub Pages** (the repo is already on GitHub) via `gh-pages` bra
 - `npm run preview` — preview the build
 - `npm run lint` — ESLint
 - `npm run typecheck` — `tsc --noEmit`
+- `npm run deploy` — build and deploy to GitHub Pages (`gh-pages` branch)
 
 ## Conventions
 
