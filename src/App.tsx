@@ -88,8 +88,10 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[700px] border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
-      {screen}
+    <div className="mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
+      <main className="flex flex-1 flex-col">
+        <div className="flex min-h-full flex-col">{screen}</div>
+      </main>
       <GlobalFooter />
     </div>
   );
@@ -98,8 +100,8 @@ export default function App() {
 function GlobalFooter() {
   const { t } = useTranslation();
   return (
-    <footer className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-5 py-3 text-center text-xs text-slate-500 sm:justify-between">
-      <span>{t('footer.privacyNote')}</span>
+    <footer className="shrink-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-5 py-3 text-center text-xs text-slate-500 sm:justify-between">
+      <span>{t('footer.copyright', { year: new Date().getFullYear() })} — {t('footer.privacyNote')}</span>
       <a
         href="https://github.com/alcoceba/brandt-daroff"
         target="_blank"

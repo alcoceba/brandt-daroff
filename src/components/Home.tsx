@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { Info, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
+import { Info, Play, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSessionSlots } from '@/data/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -90,7 +90,7 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
   };
 
   return (
-    <div className="flex min-h-dvh flex-col gap-4 p-5">
+    <div className="flex flex-1 flex-col gap-4 p-5">
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
@@ -192,10 +192,11 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
                     <button
                       type="button"
                       onClick={() => onStartSession(slot.id)}
-                      className={`min-h-touch rounded-lg px-5 font-bold text-white ${
+                      className={`flex min-h-touch items-center gap-2 rounded-lg px-4 font-bold text-white ${
                         status === 'in-progress' ? 'bg-state-progress' : 'bg-brand-600'
                       }`}
                     >
+                      <Play size={18} fill="currentColor" />
                       {status === 'in-progress' ? t('home.resume') : t('home.start')}
                     </button>
                   )}

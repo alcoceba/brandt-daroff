@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   open: boolean;
-  title: string;
+  title: React.ReactNode;
   body: React.ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;

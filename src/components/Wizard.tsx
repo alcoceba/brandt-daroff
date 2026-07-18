@@ -1,5 +1,17 @@
 import { memo, useState } from 'react';
-import { Check, Info, Minus, Plus, ShieldAlert, Sliders } from 'lucide-react';
+import {
+  Calendar,
+  CalendarDays,
+  Check,
+  Coffee,
+  Info,
+  Minus,
+  Plus,
+  Repeat,
+  ShieldAlert,
+  Sliders,
+  Timer,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TreatmentConfig } from '@/types';
 import { DEFAULT_CONFIG } from '@/store/useTreatmentStore';
@@ -11,18 +23,19 @@ interface Field {
   labelKey: string;
   unitKey: string;
   descKey: string;
+  icon: React.ReactNode;
   step: number;
   min: number;
   max: number;
 }
 
 const FIELDS: readonly Field[] = [
-  { key: 'cyclesPerSession', labelKey: 'wizard.cyclesPerSession', unitKey: 'wizard.cycles', descKey: 'wizard.cyclesPerSessionDesc', step: 1, min: 1, max: 10 },
-  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', descKey: 'wizard.sessionsPerDayDesc', step: 1, min: 1, max: 6 },
-  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', descKey: 'wizard.totalDaysDesc', step: 1, min: 1, max: 60 },
-  { key: 'positionDuration', labelKey: 'wizard.positionDuration', unitKey: 'wizard.seconds', descKey: 'wizard.positionDurationDesc', step: 5, min: 5, max: 120 },
-  { key: 'restBetweenPositions', labelKey: 'wizard.restBetweenPositions', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenPositionsDesc', step: 5, min: 0, max: 120 },
-  { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenCyclesDesc', step: 15, min: 30, max: 600 },
+  { key: 'cyclesPerSession', labelKey: 'wizard.cyclesPerSession', unitKey: 'wizard.cycles', descKey: 'wizard.cyclesPerSessionDesc', icon: <Repeat size={20} className="text-brand-500" />, step: 1, min: 1, max: 10 },
+  { key: 'sessionsPerDay', labelKey: 'wizard.sessionsPerDay', unitKey: 'wizard.sessions', descKey: 'wizard.sessionsPerDayDesc', icon: <CalendarDays size={20} className="text-brand-500" />, step: 1, min: 1, max: 6 },
+  { key: 'totalDays', labelKey: 'wizard.totalDays', unitKey: 'wizard.days', descKey: 'wizard.totalDaysDesc', icon: <Calendar size={20} className="text-brand-500" />, step: 1, min: 1, max: 60 },
+  { key: 'positionDuration', labelKey: 'wizard.positionDuration', unitKey: 'wizard.seconds', descKey: 'wizard.positionDurationDesc', icon: <Timer size={20} className="text-brand-500" />, step: 5, min: 5, max: 120 },
+  { key: 'restBetweenPositions', labelKey: 'wizard.restBetweenPositions', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenPositionsDesc', icon: <Coffee size={20} className="text-brand-500" />, step: 5, min: 0, max: 120 },
+  { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenCyclesDesc', icon: <Coffee size={20} className="text-brand-500" />, step: 15, min: 0, max: 600 },
 ] as const;
 
 interface WizardProps {
@@ -35,6 +48,7 @@ interface StepperProps {
   label: string;
   unit: string;
   description?: string;
+  icon: React.ReactNode;
   value: number;
   step: number;
   min: number;
@@ -42,13 +56,16 @@ interface StepperProps {
   onChange: (v: number) => void;
 }
 
-const Stepper = memo(function Stepper({ label, unit, description, value, step, min, max, onChange }: StepperProps) {
+const Stepper = memo(function Stepper({ label, unit, description, icon, value, step, min, max, onChange }: StepperProps) {
   const clamp = (v: number) => Math.min(Math.max(v, min), max);
   return (
     <div className="rounded-xl border border-slate-700 bg-slate-800 p-4">
-      <div className="flex flex-col gap-0.5">
-        <p className="text-base font-semibold text-white">{label}</p>
-        {description && <p className="text-xs leading-relaxed text-slate-400">{description}</p>}
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 shrink-0">{icon}</span>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-base font-semibold text-white">{label}</p>
+          {description && <p className="text-xs leading-relaxed text-slate-400">{description}</p>}
+        </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
         <button
@@ -109,7 +126,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
       (key) => storedConfig[key] === DEFAULT_CONFIG[key],
     );
     return (
-      <div className="flex min-h-dvh flex-col justify-center p-6">
+      <div className="flex flex-1 flex-col justify-center p-6">
         {isReconfigure && onBack && (
           <BackButton onBack={onBack} className="mb-4 self-start" />
         )}
@@ -202,7 +219,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
     : FIELDS;
 
   return (
-    <div className="flex min-h-dvh flex-col p-6">
+    <div className="flex flex-1 flex-col p-6">
       <header className="flex items-center gap-3">
         <BackButton onBack={() => setStep('choice')} />
         <h1 className="text-xl font-bold text-white">{t('wizard.manualTitle')}</h1>
@@ -214,6 +231,7 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
             label={t(field.labelKey)}
             unit={t(field.unitKey)}
             description={t(field.descKey)}
+            icon={field.icon}
             value={values[field.key]}
             step={field.step}
             min={field.min}
@@ -222,13 +240,20 @@ export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding'
           />
         ))}
       </div>
-      <div className="mt-5">
+      <div className="mt-5 flex flex-col gap-2">
         <button
           type="button"
           onClick={save}
           className="min-h-touch w-full rounded-xl bg-brand-600 text-lg font-bold text-white"
         >
           {mode === 'reconfigure' ? t('wizard.saveOnly') : t('wizard.save')}
+        </button>
+        <button
+          type="button"
+          onClick={() => setValues({ ...DEFAULT_CONFIG })}
+          className="min-h-touch w-full rounded-xl border border-slate-600 text-base font-semibold text-slate-300"
+        >
+          {t('wizard.resetDefault')}
         </button>
       </div>
     </div>

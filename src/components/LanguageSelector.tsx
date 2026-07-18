@@ -35,7 +35,7 @@ interface LanguageSelectorProps {
 
 export const LanguageSelector = memo(function LanguageSelector({ onSelect }: LanguageSelectorProps) {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-8 p-6">
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 p-6">
       <Logo />
       <ul className="flex w-full max-w-sm flex-col gap-3">
         {LANGUAGES.map(({ code, label }) => {

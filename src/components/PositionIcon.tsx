@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { ArrowLeft, ArrowRight, Circle, Coffee, Hourglass, type LucideIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Coffee, Flag, type LucideIcon } from 'lucide-react';
 import type { PositionKind } from '@/types';
 
 interface PositionIconProps {
@@ -8,11 +8,11 @@ interface PositionIconProps {
 }
 
 const ICONS: Record<PositionKind, LucideIcon> = {
-  sitting: Circle,
+  sitting: Flag,
   'lying-right': ArrowRight,
   'lying-left': ArrowLeft,
   rest: Coffee,
-  'long-rest': Hourglass,
+  'long-rest': Coffee,
 };
 
 const COLORS: Record<PositionKind, string> = {
@@ -23,8 +23,17 @@ const COLORS: Record<PositionKind, string> = {
   'long-rest': 'text-red-600',
 };
 
+const ANIMATIONS: Record<PositionKind, string> = {
+  sitting: '',
+  'lying-right': 'animate-arrow-sway',
+  'lying-left': 'animate-arrow-sway',
+  rest: 'animate-coffee-bob',
+  'long-rest': 'animate-coffee-bob',
+};
+
 export const PositionIcon = memo(function PositionIcon({ kind, className }: PositionIconProps) {
   const Icon = ICONS[kind];
   const color = COLORS[kind];
-  return <Icon className={`${className} ${color}`} strokeWidth={1.5} />;
+  const animation = ANIMATIONS[kind];
+  return <Icon className={`${className} ${color} ${animation}`} strokeWidth={1.5} />;
 });

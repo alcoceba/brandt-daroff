@@ -1,4 +1,5 @@
 import { memo, useMemo } from 'react';
+import { Pause } from 'lucide-react';
 import type { PositionKind } from '@/types';
 
 interface TimerProps {
@@ -37,19 +38,17 @@ export const Timer = memo(function Timer({
   const progress = totalDuration > 0 ? Math.min(secondsRemaining / totalDuration, 1) : 0;
   const offset = useMemo(() => {
     const raw = CIRCUMFERENCE * (1 - progress);
-    // Safari/WebKit bug: stroke-dashoffset=0 with round cap renders as empty.
-    // Use a tiny positive value so the full ring is always visible.
     return raw < 0.001 ? 0.001 : raw;
   }, [progress]);
-  const display = totalDuration > 0 ? formatTime(secondsRemaining) : '–';
+  const display = formatTime(secondsRemaining);
   const strokeColor = isRunning ? RING_COLOR[kind].running : RING_COLOR[kind].paused;
 
   const dashArray = CIRCUMFERENCE.toFixed(3);
   const dashOffset = offset.toFixed(3);
 
   return (
-    <div className="relative grid place-items-center" style={{ width: SIZE, height: SIZE }}>
-      <svg width={SIZE} height={SIZE} className="-rotate-90">
+    <div className="relative grid h-auto w-full max-w-[260px] place-items-center sm:max-w-[300px]">
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-auto w-full -rotate-90">
         <circle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -65,14 +64,15 @@ export const Timer = memo(function Timer({
           fill="none"
           stroke={strokeColor}
           strokeWidth={STROKE}
-          strokeLinecap="round"
           strokeDasharray={dashArray}
           strokeDashoffset={dashOffset}
         />
       </svg>
-      <span className="absolute text-7xl font-bold tabular-nums text-white">
-        {display}
-      </span>
+      {totalDuration > 0 && (
+        <span className="absolute text-5xl font-bold tabular-nums text-white sm:text-7xl">
+          {!isRunning ? <Pause size={48} className="sm:h-16 sm:w-16" /> : display}
+        </span>
+      )}
     </div>
   );
 });

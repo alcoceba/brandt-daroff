@@ -33,6 +33,7 @@ interface TreatmentState {
   settings: Settings;
   onboardingComplete: boolean;
   mode: AppMode;
+  skipSafetyWarning: boolean;
   setLanguage: (language: Language) => void;
   setConfig: (patch: Partial<TreatmentConfig>) => void;
   completeOnboarding: () => void;
@@ -41,9 +42,10 @@ interface TreatmentState {
   clearSessionProgress: (isoDate: string, sessionId: string) => void;
   resetTreatment: () => void;
   fullReset: () => void;
-  toggleSound: () => void;
+      toggleSound: () => void;
   toggleVibration: () => void;
   setMode: (mode: AppMode) => void;
+  toggleSkipSafetyWarning: () => void;
 }
 
 export const useTreatmentStore = create<TreatmentState>()(
@@ -57,6 +59,7 @@ export const useTreatmentStore = create<TreatmentState>()(
       settings: DEFAULT_SETTINGS,
       onboardingComplete: false,
       mode: 'progress',
+      skipSafetyWarning: false,
       setLanguage: (language) => set({ language }),
       setConfig: (patch) => set((state) => ({ config: { ...state.config, ...patch } })),
       completeOnboarding: () =>
@@ -111,6 +114,8 @@ export const useTreatmentStore = create<TreatmentState>()(
       toggleVibration: () =>
         set((state) => ({ settings: { ...state.settings, vibration: !state.settings.vibration } })),
       setMode: (mode) => set({ mode }),
+      toggleSkipSafetyWarning: () =>
+        set((state) => ({ skipSafetyWarning: !state.skipSafetyWarning })),
     }),
     {
       name: 'brandt-daroff-store',

@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    background-color: #0f172a;
+  }
   html,
   body,
   #root {
@@ -10,9 +13,28 @@
   }
   body {
     @apply bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100 antialiased;
+    background-color: #0f172a;
     -webkit-tap-highlight-color: transparent;
   }
   button {
     touch-action: manipulation;
   }
+}
+
+@keyframes arrow-sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes coffee-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-arrow-sway {
+  animation: arrow-sway 1.8s ease-in-out infinite;
+}
+
+.animate-coffee-bob {
+  animation: coffee-bob 2.2s ease-in-out infinite;
 }

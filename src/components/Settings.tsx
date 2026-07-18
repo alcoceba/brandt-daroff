@@ -1,9 +1,9 @@
 import { memo, useState } from 'react';
 import {
+  AlertTriangle,
   Calendar,
   ChevronRight,
   Globe,
-  RotateCcw,
   SlidersHorizontal,
   Vibrate,
   VibrateOff,
@@ -60,7 +60,7 @@ function LanguageScreen({ onBack }: { onBack: () => void }) {
   const setLanguage = useTreatmentStore((s) => s.setLanguage);
 
   return (
-    <div className="flex min-h-dvh flex-col gap-4 p-5">
+    <div className="flex flex-1 flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
         <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('settings.language')}</h1>
@@ -111,7 +111,7 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
   const activeLang = LANGUAGES.find((l) => l.code === language);
 
   return (
-    <div className="flex min-h-dvh flex-col gap-4 p-5">
+    <div className="flex flex-1 flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
         <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('settings.title')}</h1>
@@ -130,17 +130,19 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
             {settings.sound ? t('common.yes') : t('common.no')}
           </span>
         </button>
-        <button
-          type="button"
-          onClick={toggleVibration}
-          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
-        >
-          {settings.vibration ? <Vibrate size={24} /> : <VibrateOff size={24} />}
-          <span className="flex-1 text-left">{t('settings.vibration')}</span>
-          <span className={`text-sm font-bold ${settings.vibration ? 'text-brand-500' : 'text-slate-400'}`}>
-            {settings.vibration ? t('common.yes') : t('common.no')}
-          </span>
-        </button>
+        {typeof navigator !== 'undefined' && !!navigator.vibrate && (
+          <button
+            type="button"
+            onClick={toggleVibration}
+            className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+          >
+            {settings.vibration ? <Vibrate size={24} /> : <VibrateOff size={24} />}
+            <span className="flex-1 text-left">{t('settings.vibration')}</span>
+            <span className={`text-sm font-bold ${settings.vibration ? 'text-brand-500' : 'text-slate-400'}`}>
+              {settings.vibration ? t('common.yes') : t('common.no')}
+            </span>
+          </button>
+        )}
       </section>
 
       <section className="flex flex-col gap-2">
@@ -176,12 +178,16 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
           </span>
           <ChevronRight size={20} className="text-slate-500" />
         </button>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SectionTitle>{t('settings.dangerZone')}</SectionTitle>
         <button
           type="button"
           onClick={() => setResetOpen(true)}
           className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-state-danger/50 bg-slate-800 px-4 text-lg font-semibold text-state-danger active:scale-[.99]"
         >
-          <RotateCcw size={24} />
+          <AlertTriangle size={24} />
           <span className="flex-1 text-left">{t('home.reset')}</span>
         </button>
       </section>

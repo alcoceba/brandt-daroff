@@ -31,7 +31,7 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
   const { t } = useTranslation();
 
   return (
-    <div className="flex min-h-dvh flex-col gap-4 p-5">
+    <div className="flex flex-1 flex-col gap-4 p-5">
       <header className="flex items-center gap-3">
         <BackButton onBack={onBack} />
         <h1 className="text-xl font-bold text-white">{t('info.title')}</h1>
