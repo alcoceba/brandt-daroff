@@ -35,9 +35,17 @@ export const Timer = memo(function Timer({
   kind = 'sitting',
 }: TimerProps) {
   const progress = totalDuration > 0 ? Math.min(secondsRemaining / totalDuration, 1) : 0;
-  const offset = useMemo(() => CIRCUMFERENCE * (1 - progress), [progress]);
+  const offset = useMemo(() => {
+    const raw = CIRCUMFERENCE * (1 - progress);
+    // Safari/WebKit bug: stroke-dashoffset=0 with round cap renders as empty.
+    // Use a tiny positive value so the full ring is always visible.
+    return raw < 0.001 ? 0.001 : raw;
+  }, [progress]);
   const display = totalDuration > 0 ? formatTime(secondsRemaining) : '–';
   const strokeColor = isRunning ? RING_COLOR[kind].running : RING_COLOR[kind].paused;
+
+  const dashArray = CIRCUMFERENCE.toFixed(3);
+  const dashOffset = offset.toFixed(3);
 
   return (
     <div className="relative grid place-items-center" style={{ width: SIZE, height: SIZE }}>
@@ -58,9 +66,8 @@ export const Timer = memo(function Timer({
           stroke={strokeColor}
           strokeWidth={STROKE}
           strokeLinecap="round"
-          strokeDasharray={CIRCUMFERENCE}
-          strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-100 ease-linear"
+          strokeDasharray={dashArray}
+          strokeDashoffset={dashOffset}
         />
       </svg>
       <span className="absolute text-7xl font-bold tabular-nums text-white">
