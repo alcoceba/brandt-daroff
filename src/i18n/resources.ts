@@ -104,7 +104,7 @@ const en = {
     confirmReset: 'Restart the current cycle from the beginning?',
   },
   position: {
-    sitting: 'Sit on the bed.\nPress "Start" when ready',
+    sitting: 'Sit on the bed. Press "Start" when ready',
     lyingRight: 'Lying on right side\nHead tilted 45°',
     lyingLeft: 'Lying on left side\nHead tilted 45°',
     rest: 'Rest, sit on the bed',
@@ -272,7 +272,7 @@ const ca: Dict = {
     confirmReset: 'Reiniciar el cicle actual des de l’inici?',
   },
   position: {
-    sitting: 'Seu al llit.\nPrem "Comença" quan estiguis a punt',
+    sitting: 'Seu al llit. Prem "Comença" quan estiguis a punt',
     lyingRight: 'Estirat sobre el costat dret\nCap inclinat 45°',
     lyingLeft: 'Estirat sobre el costat esquerre\nCap inclinat 45°',
     rest: 'Descans, seu al llit',
@@ -438,7 +438,7 @@ const es: Dict = {
     confirmReset: '¿Reiniciar el ciclo actual desde el principio?',
   },
   position: {
-    sitting: 'Siéntate en la cama.\nPulsa "Empezar" cuando estés listo',
+    sitting: 'Siéntate en la cama. Pulsa "Empezar" cuando estés listo',
     lyingRight: 'Tumbado sobre el lado derecho\nCabeza inclinada 45°',
     lyingLeft: 'Tumbado sobre el lado izquierdo\nCabeza inclinada 45°',
     rest: 'Descanso, siéntate en la cama',

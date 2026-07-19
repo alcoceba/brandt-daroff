@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { Info, Play, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
+import { ChevronRight, Info, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getSessionSlots } from '@/constants/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -156,49 +156,45 @@ export const HomeScreen = memo(function HomeScreen({ onStartSession, onOpenSetti
       ) : (
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-semibold text-slate-300">{t('home.todaysSessions')}</h2>
-          {slots.map((slot) => {
-            const status: SessionStatus = todaySessions[slot.id] ?? 'pending';
-            const style = STATUS_STYLE[status];
-            const label = t(slot.labelKey, slot.id.includes('-') ? { n: Number(slot.id.split('-')[1]) } : undefined);
-            return (
-              <div
-                key={slot.id}
-                className={`flex overflow-hidden rounded-xl border border-slate-700 ${
-                  status === 'completed'
-                    ? 'bg-state-done/10'
-                    : status === 'in-progress'
-                      ? 'bg-state-progress/10'
-                      : 'bg-slate-800'
-                }`}
-              >
-                <div className={`w-2 shrink-0 ${style.dot}`} />
-                <div className="flex flex-1 items-center gap-3 p-4">
-                  <span className="flex-1 text-lg font-semibold text-white">{label}</span>
-                  {status === 'completed' ? (
-                    <button
-                      type="button"
-                      onClick={() => setRestartSlot(slot.id)}
-                      className="flex min-h-touch items-center gap-2 rounded-lg bg-slate-700 px-4 font-bold text-white"
-                    >
-                      <RotateCcw size={18} />
-                      {t('home.restartSession')}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => onStartSession(slot.id)}
-                      className={`flex min-h-touch items-center gap-2 rounded-lg px-4 font-bold text-white ${
-                        status === 'in-progress' ? 'bg-state-progress' : 'bg-brand-600'
+          <div className="flex flex-col gap-2.5">
+            {slots.map((slot) => {
+              const status: SessionStatus = todaySessions[slot.id] ?? 'pending';
+              const label = t(slot.labelKey, slot.id.includes('-') ? { n: Number(slot.id.split('-')[1]) } : undefined);
+              const isCompleted = status === 'completed';
+              const isInProgress = status === 'in-progress';
+              return (
+                <button
+                  key={slot.id}
+                  type="button"
+                  onClick={() => isCompleted ? setRestartSlot(slot.id) : onStartSession(slot.id)}
+                  className={`group w-full overflow-hidden rounded-2xl border text-left transition-all duration-200 hover:scale-[1.01] hover:brightness-110 active:scale-[0.99] ${
+                    isCompleted
+                      ? 'border-state-done/30 bg-gradient-to-r from-state-done/10 to-state-done/5'
+                      : isInProgress
+                        ? 'border-state-progress/40 bg-gradient-to-r from-state-progress/10 to-state-progress/5'
+                        : 'border-slate-700/60 bg-slate-800/70 hover:border-brand-500/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="text-base font-semibold text-white">{label}</span>
+                      <span className={`text-xs font-medium ${
+                        isCompleted ? 'text-state-done' : isInProgress ? 'text-state-progress' : 'text-slate-500'
+                      }`}>
+                        {t(STATUS_STYLE[status].label)}
+                      </span>
+                    </div>
+                    <ChevronRight
+                      size={18}
+                      className={`shrink-0 transition-all duration-200 group-hover:translate-x-0.5 ${
+                        isCompleted ? 'text-state-done/60' : isInProgress ? 'text-state-progress/70' : 'text-slate-600 group-hover:text-brand-500'
                       }`}
-                    >
-                      <Play size={18} fill="currentColor" />
-                      {status === 'in-progress' ? t('home.resume') : t('home.start')}
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </section>
       )}
 

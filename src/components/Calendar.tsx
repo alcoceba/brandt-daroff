@@ -8,8 +8,14 @@ import type { SessionStatus } from '@/types';
 
 const STATUS_FILL: Record<SessionStatus, string> = {
   pending: 'bg-slate-700',
-  'in-progress': 'bg-state-progress',
-  completed: 'bg-state-done',
+  'in-progress': 'bg-gradient-to-br from-state-progress to-amber-600',
+  completed: 'bg-gradient-to-br from-state-done to-emerald-400',
+};
+
+const STATUS_SWATCH: Record<SessionStatus, string> = {
+  pending: 'bg-slate-700',
+  'in-progress': 'bg-gradient-to-br from-state-progress to-amber-600',
+  completed: 'bg-gradient-to-br from-state-done to-emerald-400',
 };
 
 const STATUS_LABEL_KEY: Record<SessionStatus, string> = {
@@ -78,11 +84,12 @@ export const Calendar = memo(function Calendar() {
           </div>
         </div>
 
+        <div className="flex justify-center">
         <div
           className="grid gap-1"
           style={{
             gridTemplateColumns: `repeat(${displayDays}, minmax(0, 1fr))`,
-            maxWidth: `${displayDays * 2.5 + (displayDays - 1) * 0.25}rem`,
+            width: `${displayDays * 2.5 + (displayDays - 1) * 0.25}rem`,
           }}
         >
           {dayInfos.map(({ dayIdx, isToday }) => (
@@ -114,11 +121,12 @@ export const Calendar = memo(function Calendar() {
             }),
           )}
         </div>
+        </div>
 
         <ul className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-400">
           {legend.map((status) => (
             <li key={status} className="flex items-center gap-1.5">
-              <span className={`h-2.5 w-2.5 rounded-[3px] ${STATUS_FILL[status]}`} />
+              <span className={`h-2.5 w-2.5 rounded-[3px] ${STATUS_SWATCH[status]}`} />
               {t(STATUS_LABEL_KEY[status])}
             </li>
           ))}

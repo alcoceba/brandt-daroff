@@ -57,7 +57,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   const isPaused = !isRunning && !isTransition;
   const glowClass = isPaused ? 'bg-yellow-500/30' : GLOW[position.kind];
   const bgGradientClass = positionIndex === 0
-    ? 'bg-gradient-to-t from-yellow-600/20 via-slate-900 to-slate-950'
+    ? 'bg-gradient-to-t from-yellow-500/15 to-slate-900'
     : 'bg-gradient-to-b from-slate-900 to-slate-800';
 
   if (showCompletion) {
@@ -74,11 +74,16 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   }
 
   return (
-    <div className={`relative flex flex-1 flex-col gap-3 ${bgGradientClass} p-4 sm:gap-4 sm:p-5 min-h-dvh`}>
+    <div className={`relative flex flex-1 flex-col gap-3 ${bgGradientClass} p-4 sm:gap-4 sm:p-5 min-h-dvh sm:min-h-0`}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          className={`absolute left-1/2 top-1/2 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px] transition-all duration-700 ${glowClass}`}
+          className={`absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[130px] transition-all duration-700 animate-glow-drift ${glowClass}`}
         />
+        {!isPaused && position.kind !== 'sitting' && (
+          <div
+            className={`absolute left-1/3 top-2/3 h-[20rem] w-[20rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px] opacity-50 transition-all duration-700 animate-glow-drift-reverse ${glowClass}`}
+          />
+        )}
       </div>
       <header className="relative flex items-center gap-3">
         <BackButton onBack={handleBack} />

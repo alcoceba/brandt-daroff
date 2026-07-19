@@ -39,6 +39,26 @@
   animation: coffee-bob 2.2s ease-in-out infinite;
 }
 
+@keyframes glow-drift {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-46%, -53%) scale(1.07); }
+  66% { transform: translate(-54%, -47%) scale(0.95); }
+}
+
+@keyframes glow-drift-reverse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-55%, -46%) scale(0.93); }
+  66% { transform: translate(-44%, -54%) scale(1.08); }
+}
+
+.animate-glow-drift {
+  animation: glow-drift 8s ease-in-out infinite;
+}
+
+.animate-glow-drift-reverse {
+  animation: glow-drift-reverse 11s ease-in-out infinite;
+}
+
 @media (max-height: 700px) {
   .timer-container {
     max-width: 180px !important;
