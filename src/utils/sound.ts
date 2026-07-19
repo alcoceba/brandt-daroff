@@ -1,5 +1,3 @@
-import { useTreatmentStore } from '@/store/useTreatmentStore';
-
 let ctx: AudioContext | null = null;
 
 async function getCtx(): Promise<AudioContext | null> {
@@ -36,9 +34,8 @@ function makeOscillator(
   return osc;
 }
 
-export async function playBeep(): Promise<void> {
-  const soundOn = useTreatmentStore.getState().settings.sound;
-  if (!soundOn) return;
+export async function playBeep(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
   const audio = await getCtx();
   if (!audio) return;
   const now = audio.currentTime;
@@ -48,9 +45,8 @@ export async function playBeep(): Promise<void> {
   makeOscillator(audio, 880, now, 0.42, master);
 }
 
-export async function playBeepHigh(): Promise<void> {
-  const soundOn = useTreatmentStore.getState().settings.sound;
-  if (!soundOn) return;
+export async function playBeepHigh(soundEnabled: boolean): Promise<void> {
+  if (!soundEnabled) return;
   const audio = await getCtx();
   if (!audio) return;
   const now = audio.currentTime;
@@ -60,9 +56,8 @@ export async function playBeepHigh(): Promise<void> {
   makeOscillator(audio, 1320, now, 0.42, master);
 }
 
-async function playCue(frequencies: number[]): Promise<void> {
-  const soundOn = useTreatmentStore.getState().settings.sound;
-  if (!soundOn) return;
+async function playCue(soundEnabled: boolean, frequencies: number[]): Promise<void> {
+  if (!soundEnabled) return;
   const audio = await getCtx();
   if (!audio) return;
 
@@ -79,10 +74,10 @@ async function playCue(frequencies: number[]): Promise<void> {
   });
 }
 
-export async function playPositionCue(): Promise<void> {
-  await playCue([880, 1320]);
+export async function playPositionCue(soundEnabled: boolean): Promise<void> {
+  await playCue(soundEnabled, [880, 1320]);
 }
 
-export async function playRestCue(): Promise<void> {
-  await playCue([1320, 880]);
+export async function playRestCue(soundEnabled: boolean): Promise<void> {
+  await playCue(soundEnabled, [1320, 880]);
 }

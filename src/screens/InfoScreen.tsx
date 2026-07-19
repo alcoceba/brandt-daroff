@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { CalendarDays, Clock, Ear, Lightbulb, Move, ShieldAlert, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { BackButton } from '@/components/BackButton';
+import { BackButton } from '@/components/core/BackButton';
 
 interface InfoScreenProps {
   onBack: () => void;

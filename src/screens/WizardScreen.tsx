@@ -5,8 +5,6 @@ import {
   Check,
   Coffee,
   Info,
-  Minus,
-  Plus,
   Repeat,
   ShieldAlert,
   Sliders,
@@ -14,9 +12,10 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TreatmentConfig } from '@/types';
-import { DEFAULT_CONFIG } from '@/store/useTreatmentStore';
+import { DEFAULT_CONFIG } from '@/constants/treatment';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { BackButton } from '@/components/BackButton';
+import { BackButton } from '@/components/core/BackButton';
+import { Stepper } from '@/components/core/Stepper';
 
 interface Field {
   key: keyof TreatmentConfig;
@@ -38,64 +37,15 @@ const FIELDS: readonly Field[] = [
   { key: 'restBetweenCycles', labelKey: 'wizard.restBetweenCycles', unitKey: 'wizard.seconds', descKey: 'wizard.restBetweenCyclesDesc', icon: <Coffee size={20} className="text-brand-500" />, step: 15, min: 0, max: 600 },
 ] as const;
 
-interface WizardProps {
+interface WizardScreenProps {
   onDone: () => void;
   onBack?: () => void;
   mode?: 'onboarding' | 'reconfigure';
 }
 
-interface StepperProps {
-  label: string;
-  unit: string;
-  description?: string;
-  icon: React.ReactNode;
-  value: number;
-  step: number;
-  min: number;
-  max: number;
-  onChange: (v: number) => void;
-}
-
-const Stepper = memo(function Stepper({ label, unit, description, icon, value, step, min, max, onChange }: StepperProps) {
-  const clamp = (v: number) => Math.min(Math.max(v, min), max);
-  return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800 p-4">
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 shrink-0">{icon}</span>
-        <div className="flex flex-col gap-0.5">
-          <p className="text-base font-semibold text-white">{label}</p>
-          {description && <p className="text-xs leading-relaxed text-slate-400">{description}</p>}
-        </div>
-      </div>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <button
-          type="button"
-          aria-label="decrease"
-          onClick={() => onChange(clamp(value - step))}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg bg-slate-700 text-white"
-        >
-          <Minus size={24} />
-        </button>
-        <span className="text-3xl font-bold tabular-nums text-white">
-          {value}
-          <span className="ml-1 text-base font-normal text-slate-400">{unit}</span>
-        </span>
-        <button
-          type="button"
-          aria-label="increase"
-          onClick={() => onChange(clamp(value + step))}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg bg-slate-700 text-white"
-        >
-          <Plus size={24} />
-        </button>
-      </div>
-    </div>
-  );
-});
-
 type Step = 'choice' | 'manual';
 
-export const Wizard = memo(function Wizard({ onDone, onBack, mode = 'onboarding' }: WizardProps) {
+export const WizardScreen = memo(function WizardScreen({ onDone, onBack, mode = 'onboarding' }: WizardScreenProps) {
   const { t } = useTranslation();
   const setConfig = useTreatmentStore((s) => s.setConfig);
   const completeOnboarding = useTreatmentStore((s) => s.completeOnboarding);

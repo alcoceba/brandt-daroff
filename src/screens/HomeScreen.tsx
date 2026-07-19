@@ -1,14 +1,15 @@
 import { memo, useState } from 'react';
 import { Info, Play, RotateCcw, Settings as SettingsIcon, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getSessionSlots } from '@/data/positions';
+import { getSessionSlots } from '@/constants/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { addDays, getDayNumber, todayISO } from '@/utils/date';
+import { getDayNumber, todayISO } from '@/utils/date';
 import { Calendar } from '@/components/Calendar';
-import { ConfirmDialog } from '@/components/Modal';
+import { ConfirmDialog } from '@/components/core/ConfirmDialog';
+import { countCompletedSessions, isTreatmentComplete } from '@/utils/sessions';
 import type { SessionStatus } from '@/types';
 
-interface HomeProps {
+interface HomeScreenProps {
   onStartSession: (sessionId: string) => void;
   onOpenSettings: () => void;
   onOpenInfo: () => void;
@@ -20,7 +21,7 @@ const STATUS_STYLE: Record<SessionStatus, { dot: string; label: string }> = {
   completed: { dot: 'bg-state-done', label: 'home.completed' },
 };
 
-export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenInfo }: HomeProps) {
+export const HomeScreen = memo(function HomeScreen({ onStartSession, onOpenSettings, onOpenInfo }: HomeScreenProps) {
   const { t } = useTranslation();
   const {
     config,
@@ -56,21 +57,15 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
           86_400_000,
       ) + 1
     : 1;
-  const isTreatmentComplete = startDate
-    ? slots.every((slot) =>
-        Array.from({ length: config.totalDays }, (_, dayIdx) => {
-          const iso = addDays(startDate, dayIdx);
-          return (sessions[iso] ?? {})[slot.id] === 'completed';
-        }).every(Boolean),
-      )
+
+  const treatmentFinished = startDate
+    ? isTreatmentComplete(startDate, sessions, config, slots)
     : false;
+
   const todaySessions = sessions[today] ?? {};
   const totalSessions = config.sessionsPerDay * config.totalDays;
-  const completedCount = Object.values(sessions).reduce(
-    (acc, day) => acc + Object.values(day).filter((s) => s === 'completed').length,
-    0,
-  );
-  const finished = rawDayNumber > config.totalDays || isTreatmentComplete;
+  const completedCount = countCompletedSessions(sessions);
+  const finished = rawDayNumber > config.totalDays || treatmentFinished;
 
   const confirmRestart = () => {
     if (!restartSlot) return;
@@ -167,15 +162,15 @@ export const Home = memo(function Home({ onStartSession, onOpenSettings, onOpenI
             const label = t(slot.labelKey, slot.id.includes('-') ? { n: Number(slot.id.split('-')[1]) } : undefined);
             return (
               <div
-              key={slot.id}
-              className={`flex overflow-hidden rounded-xl border border-slate-700 ${
-                status === 'completed'
-                  ? 'bg-state-done/10'
-                  : status === 'in-progress'
-                    ? 'bg-state-progress/10'
-                    : 'bg-slate-800'
-              }`}
-            >
+                key={slot.id}
+                className={`flex overflow-hidden rounded-xl border border-slate-700 ${
+                  status === 'completed'
+                    ? 'bg-state-done/10'
+                    : status === 'in-progress'
+                      ? 'bg-state-progress/10'
+                      : 'bg-slate-800'
+                }`}
+              >
                 <div className={`w-2 shrink-0 ${style.dot}`} />
                 <div className="flex flex-1 items-center gap-3 p-4">
                   <span className="flex-1 text-lg font-semibold text-white">{label}</span>

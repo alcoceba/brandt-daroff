@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Pause } from 'lucide-react';
 import type { PositionKind } from '@/types';
+import { formatTime } from '@/utils/format';
 
 interface TimerProps {
   secondsRemaining: number;
@@ -22,13 +23,6 @@ const RING_COLOR: Record<PositionKind, { running: string; paused: string }> = {
   'long-rest': { running: '#dc2626', paused: '#b91c1c' },
 };
 
-function formatTime(seconds: number): string {
-  const total = Math.max(Math.ceil(seconds), 0);
-  const m = Math.floor(total / 60);
-  const s = total % 60;
-  return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : String(s);
-}
-
 export const Timer = memo(function Timer({
   secondsRemaining,
   totalDuration,
@@ -47,7 +41,7 @@ export const Timer = memo(function Timer({
   const dashOffset = offset.toFixed(3);
 
   return (
-    <div className="relative grid h-auto w-full max-w-[260px] place-items-center sm:max-w-[300px]">
+    <div className="relative grid h-auto w-full max-w-[260px] place-items-center sm:max-w-[300px] timer-container">
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-auto w-full -rotate-90">
         <circle
           cx={SIZE / 2}
@@ -69,8 +63,8 @@ export const Timer = memo(function Timer({
         />
       </svg>
       {totalDuration > 0 && (
-        <span className="absolute text-5xl font-bold tabular-nums text-white sm:text-7xl">
-          {!isRunning ? <Pause size={48} className="sm:h-16 sm:w-16" /> : display}
+        <span className="absolute text-5xl font-bold tabular-nums text-white sm:text-7xl timer-text">
+          {!isRunning ? <Pause size={48} className="sm:h-16 sm:w-16 timer-pause-icon" /> : display}
         </span>
       )}
     </div>

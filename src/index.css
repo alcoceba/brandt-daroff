@@ -38,3 +38,16 @@
 .animate-coffee-bob {
   animation: coffee-bob 2.2s ease-in-out infinite;
 }
+
+@media (max-height: 700px) {
+  .timer-container {
+    max-width: 180px !important;
+  }
+  .timer-text {
+    font-size: 2.5rem !important;
+  }
+  .timer-pause-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}

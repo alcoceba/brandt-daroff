@@ -12,39 +12,13 @@ import {
   Zap,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { Language } from '@/types';
-import { LANGUAGES } from '@/i18n/languages';
+import { LANGUAGES } from '@/constants/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { BackButton } from '@/components/BackButton';
-import { ConfirmDialog } from '@/components/Modal';
+import { BackButton } from '@/components/core/BackButton';
+import { ConfirmDialog } from '@/components/core/ConfirmDialog';
+import { LanguageSettingsScreen } from '@/screens/LanguageSettingsScreen';
 
-const Flags: Record<Language, React.FC<{ className?: string }>> = {
-  en: ({ className }) => (
-    <svg viewBox="0 0 60 40" className={className} aria-hidden preserveAspectRatio="none">
-      <rect width="60" height="40" fill="#012169" />
-      <path d="M0 0 L60 40 M60 0 L0 40" stroke="#fff" strokeWidth="8" />
-      <path d="M0 0 L60 40 M60 0 L0 40" stroke="#C8102E" strokeWidth="3" />
-      <path d="M30 0 V40 M0 20 H60" stroke="#fff" strokeWidth="10" />
-      <path d="M30 0 V40 M0 20 H60" stroke="#C8102E" strokeWidth="5" />
-    </svg>
-  ),
-  ca: ({ className }) => (
-    <svg viewBox="0 0 60 40" className={className} aria-hidden preserveAspectRatio="none">
-      <rect width="60" height="40" fill="#FCDD09" />
-      <rect y="8" width="60" height="5.3" fill="#DA121A" />
-      <rect y="18.7" width="60" height="5.3" fill="#DA121A" />
-      <rect y="29.3" width="60" height="5.3" fill="#DA121A" />
-    </svg>
-  ),
-  es: ({ className }) => (
-    <svg viewBox="0 0 60 40" className={className} aria-hidden preserveAspectRatio="none">
-      <rect width="60" height="40" fill="#AA151B" />
-      <rect y="10" width="60" height="20" fill="#F1BF00" />
-    </svg>
-  ),
-};
-
-interface SettingsProps {
+interface SettingsScreenProps {
   onBack: () => void;
   onReconfigure: () => void;
   onFullReset: () => void;
@@ -54,44 +28,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-sm font-semibold text-slate-300">{children}</h2>;
 }
 
-function LanguageScreen({ onBack }: { onBack: () => void }) {
-  const { t } = useTranslation();
-  const language = useTreatmentStore((s) => s.language);
-  const setLanguage = useTreatmentStore((s) => s.setLanguage);
-
-  return (
-    <div className="flex flex-1 flex-col gap-4 p-5">
-      <header className="flex items-center gap-3">
-        <BackButton onBack={onBack} />
-        <h1 className="text-xl font-bold text-white">{t('settings.language')}</h1>
-      </header>
-      <section className="flex flex-col gap-2">
-        {LANGUAGES.map(({ code, label }) => {
-          const Flag = Flags[code];
-          const active = code === language;
-          return (
-            <button
-              key={code}
-              type="button"
-              onClick={() => setLanguage(code)}
-              className={`flex w-full min-h-touch items-center gap-4 rounded-xl border px-4 text-lg font-semibold active:scale-[.99] ${
-                active
-                  ? 'border-brand-500 bg-brand-600 text-white'
-                  : 'border-slate-700 bg-slate-800 text-white'
-              }`}
-            >
-              <Flag className="h-7 w-10 shrink-0 overflow-hidden rounded shadow" />
-              <span className="flex-1 text-left">{label}</span>
-              {active && <span className="text-sm text-brand-50">●</span>}
-            </button>
-          );
-        })}
-      </section>
-    </div>
-  );
-}
-
-export const Settings = memo(function Settings({ onBack, onReconfigure, onFullReset }: SettingsProps) {
+export const SettingsScreen = memo(function SettingsScreen({ onBack, onReconfigure, onFullReset }: SettingsScreenProps) {
   const { t } = useTranslation();
   const language = useTreatmentStore((s) => s.language);
   const settings = useTreatmentStore((s) => s.settings);
@@ -105,7 +42,7 @@ export const Settings = memo(function Settings({ onBack, onReconfigure, onFullRe
   const [showLanguage, setShowLanguage] = useState(false);
 
   if (showLanguage) {
-    return <LanguageScreen onBack={() => setShowLanguage(false)} />;
+    return <LanguageSettingsScreen onBack={() => setShowLanguage(false)} />;
   }
 
   const activeLang = LANGUAGES.find((l) => l.code === language);

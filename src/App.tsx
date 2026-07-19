@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Github } from 'lucide-react';
 import i18n from '@/i18n';
-import type { Language } from '@/types';
-import { useTranslation } from 'react-i18next';
+import type { Language, Route } from '@/types';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { LanguageSelector } from '@/components/LanguageSelector';
-import { Wizard } from '@/components/Wizard';
-import { Home } from '@/components/Home';
-import { CycleSession } from '@/components/CycleSession';
-import { Settings } from '@/components/Settings';
-import { InfoScreen } from '@/components/InfoScreen';
-
-type Route = 'language' | 'wizard' | 'home' | 'cycle' | 'settings' | 'info';
+import { LanguageSelectorScreen } from '@/screens/LanguageSelectorScreen';
+import { WizardScreen } from '@/screens/WizardScreen';
+import { HomeScreen } from '@/screens/HomeScreen';
+import { CycleSessionScreen } from '@/screens/CycleSessionScreen';
+import { SettingsScreen } from '@/screens/SettingsScreen';
+import { InfoScreen } from '@/screens/InfoScreen';
+import { AppLayout } from '@/layouts/AppLayout';
 
 export default function App() {
   const language = useTreatmentStore((s) => s.language);
@@ -40,24 +37,24 @@ export default function App() {
   let screen: React.ReactNode;
   switch (route) {
     case 'language':
-      screen = <LanguageSelector onSelect={handleLanguageSelect} />;
+      screen = <LanguageSelectorScreen onSelect={handleLanguageSelect} />;
       break;
     case 'wizard':
       screen = onboardingComplete ? (
-        <Wizard
+        <WizardScreen
           mode="reconfigure"
           onDone={() => setRoute('home')}
           onBack={() => setRoute('settings')}
         />
       ) : (
-        <Wizard mode="onboarding" onDone={() => setRoute('home')} />
+        <WizardScreen mode="onboarding" onDone={() => setRoute('home')} />
       );
       break;
     case 'cycle':
       screen = sessionId ? (
-        <CycleSession sessionId={sessionId} onExit={() => setRoute('home')} />
+        <CycleSessionScreen sessionId={sessionId} onExit={() => setRoute('home')} />
       ) : (
-        <Home
+        <HomeScreen
           onStartSession={handleStartSession}
           onOpenSettings={() => setRoute('settings')}
           onOpenInfo={() => setRoute('info')}
@@ -66,7 +63,7 @@ export default function App() {
       break;
     case 'settings':
       screen = (
-        <Settings
+        <SettingsScreen
           onBack={() => setRoute('home')}
           onReconfigure={() => setRoute('wizard')}
           onFullReset={() => setRoute('language')}
@@ -79,7 +76,7 @@ export default function App() {
     case 'home':
     default:
       screen = (
-        <Home
+        <HomeScreen
           onStartSession={handleStartSession}
           onOpenSettings={() => setRoute('settings')}
           onOpenInfo={() => setRoute('info')}
@@ -87,31 +84,5 @@ export default function App() {
       );
   }
 
-  return (
-    <div className="mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
-      <main className="flex flex-1 flex-col">
-        <div className="flex min-h-full flex-col">{screen}</div>
-      </main>
-      <GlobalFooter />
-    </div>
-  );
-}
-
-function GlobalFooter() {
-  const { t } = useTranslation();
-  return (
-    <footer className="shrink-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-5 py-3 text-center text-xs text-slate-500 sm:justify-between">
-      <span>{t('footer.copyright', { year: new Date().getFullYear() })} — {t('footer.privacyNote')}</span>
-      <a
-        href="https://github.com/alcoceba/brandt-daroff"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-1 text-slate-400 transition-colors hover:text-white"
-        title={t('footer.github')}
-      >
-        <Github size={14} />
-        {t('footer.github')}
-      </a>
-    </footer>
-  );
+  return <AppLayout>{screen}</AppLayout>;
 }

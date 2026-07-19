@@ -34,3 +34,10 @@ export interface SessionSlot {
 }
 
 export type SessionMap = Record<string, Record<string, SessionStatus>>;
+
+export interface SessionProgress {
+  cycleIndex: number;
+  positionIndex: number;
+}
+
+export type Route = 'language' | 'wizard' | 'home' | 'cycle' | 'settings' | 'info';

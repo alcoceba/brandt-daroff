@@ -1,7 +1,5 @@
 import { memo } from 'react';
 import type { Language } from '@/types';
-import { LANGUAGES } from '@/i18n/languages';
-import { Logo } from '@/components/Logo';
 
 const Flags: Record<Language, React.FC<{ className?: string }>> = {
   en: ({ className }) => (
@@ -29,31 +27,12 @@ const Flags: Record<Language, React.FC<{ className?: string }>> = {
   ),
 };
 
-interface LanguageSelectorProps {
-  onSelect: (code: Language) => void;
+interface FlagIconProps {
+  code: Language;
+  className?: string;
 }
 
-export const LanguageSelector = memo(function LanguageSelector({ onSelect }: LanguageSelectorProps) {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 p-6">
-      <Logo />
-      <ul className="flex w-full max-w-sm flex-col gap-3">
-        {LANGUAGES.map(({ code, label }) => {
-          const Flag = Flags[code];
-          return (
-            <li key={code}>
-              <button
-                type="button"
-                onClick={() => onSelect(code)}
-                className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
-              >
-                <Flag className="h-7 w-10 shrink-0 overflow-hidden rounded shadow" />
-                <span>{label}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+export const FlagIcon = memo(function FlagIcon({ code, className }: FlagIconProps) {
+  const Flag = Flags[code];
+  return <Flag className={className} />;
 });

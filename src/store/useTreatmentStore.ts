@@ -1,26 +1,9 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { AppMode, Language, SessionMap, SessionStatus, Settings, TreatmentConfig } from '@/types';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import type { AppMode, Language, SessionMap, SessionStatus, Settings, TreatmentConfig, SessionProgress } from '@/types';
 import { todayISO } from '@/utils/date';
-
-export const DEFAULT_CONFIG: TreatmentConfig = {
-  positionDuration: 30,
-  restBetweenPositions: 30,
-  restBetweenCycles: 120,
-  sessionsPerDay: 3,
-  totalDays: 14,
-  cyclesPerSession: 5,
-};
-
-const DEFAULT_SETTINGS: Settings = {
-  sound: true,
-  vibration: true,
-};
-
-export interface SessionProgress {
-  cycleIndex: number;
-  positionIndex: number;
-}
+import { DEFAULT_CONFIG, DEFAULT_SETTINGS } from '@/constants/treatment';
+import { treatmentStorage } from '@/storage/treatmentStorage';
 
 type ProgressMap = Record<string, Record<string, SessionProgress>>;
 
@@ -42,7 +25,7 @@ interface TreatmentState {
   clearSessionProgress: (isoDate: string, sessionId: string) => void;
   resetTreatment: () => void;
   fullReset: () => void;
-      toggleSound: () => void;
+  toggleSound: () => void;
   toggleVibration: () => void;
   setMode: (mode: AppMode) => void;
   toggleSkipSafetyWarning: () => void;
@@ -120,6 +103,7 @@ export const useTreatmentStore = create<TreatmentState>()(
     {
       name: 'brandt-daroff-store',
       version: 3,
+      storage: createJSONStorage(() => treatmentStorage),
     },
   ),
 );
