@@ -10,7 +10,7 @@ describe('useTreatmentStore', () => {
 
   it('should initialize with correct default values', () => {
     const state = useTreatmentStore.getState();
-    
+
     expect(state.language).toBe('en');
     expect(state.config).toEqual(DEFAULT_CONFIG);
     expect(state.startDate).toBeNull();
@@ -18,7 +18,6 @@ describe('useTreatmentStore', () => {
     expect(state.progress).toEqual({});
     expect(state.settings).toEqual(DEFAULT_SETTINGS);
     expect(state.onboardingComplete).toBe(false);
-    expect(state.mode).toBe('progress');
   });
 
   it('should change language when setLanguage is called', () => {
@@ -40,26 +39,26 @@ describe('useTreatmentStore', () => {
   });
 
   it('should set session status correctly', () => {
-    useTreatmentStore.getState().setSessionStatus('2026-07-19', 'morning', 'completed');
-    expect(useTreatmentStore.getState().sessions['2026-07-19']?.morning).toBe('completed');
+    useTreatmentStore.getState().setSessionStatus('2026-07-19', 'session-1', 'completed');
+    expect(useTreatmentStore.getState().sessions['2026-07-19']?.['session-1']).toBe('completed');
   });
 
   it('should save, update, and clear session progress', () => {
     const progress = { cycleIndex: 2, positionIndex: 3 };
-    
-    useTreatmentStore.getState().saveSessionProgress('2026-07-19', 'morning', progress);
-    expect(useTreatmentStore.getState().progress['2026-07-19']?.morning).toEqual(progress);
 
-    useTreatmentStore.getState().clearSessionProgress('2026-07-19', 'morning');
-    expect(useTreatmentStore.getState().progress['2026-07-19']?.morning).toBeUndefined();
+    useTreatmentStore.getState().saveSessionProgress('2026-07-19', 'session-1', progress);
+    expect(useTreatmentStore.getState().progress['2026-07-19']?.['session-1']).toEqual(progress);
+
+    useTreatmentStore.getState().clearSessionProgress('2026-07-19', 'session-1');
+    expect(useTreatmentStore.getState().progress['2026-07-19']?.['session-1']).toBeUndefined();
   });
 
   it('should reset today\'s treatment progress when resetTreatment is called', () => {
-    useTreatmentStore.getState().setSessionStatus('2026-07-19', 'morning', 'completed');
-    useTreatmentStore.getState().saveSessionProgress('2026-07-19', 'morning', { cycleIndex: 1, positionIndex: 1 });
-    
+    useTreatmentStore.getState().setSessionStatus('2026-07-19', 'session-1', 'completed');
+    useTreatmentStore.getState().saveSessionProgress('2026-07-19', 'session-1', { cycleIndex: 1, positionIndex: 1 });
+
     useTreatmentStore.getState().resetTreatment();
-    
+
     expect(useTreatmentStore.getState().sessions).toEqual({});
     expect(useTreatmentStore.getState().progress).toEqual({});
     expect(useTreatmentStore.getState().startDate).not.toBeNull(); // starts again from today
@@ -73,11 +72,6 @@ describe('useTreatmentStore', () => {
     const initialVibration = useTreatmentStore.getState().settings.vibration;
     useTreatmentStore.getState().toggleVibration();
     expect(useTreatmentStore.getState().settings.vibration).toBe(!initialVibration);
-  });
-
-  it('should update app mode when setMode is called', () => {
-    useTreatmentStore.getState().setMode('quick');
-    expect(useTreatmentStore.getState().mode).toBe('quick');
   });
 
   it('should toggle skip safety warning state', () => {

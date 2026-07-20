@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { AppMode, Language, SessionMap, SessionStatus, Settings, TreatmentConfig, SessionProgress } from '@/types';
+import type { Language, SessionMap, SessionStatus, Settings, TreatmentConfig, SessionProgress } from '@/types';
 import { todayISO } from '@/utils/date';
 import { DEFAULT_CONFIG, DEFAULT_SETTINGS } from '@/constants/treatment';
 import { treatmentStorage } from '@/storage/treatmentStorage';
@@ -15,7 +15,6 @@ interface TreatmentState {
   progress: ProgressMap;
   settings: Settings;
   onboardingComplete: boolean;
-  mode: AppMode;
   skipSafetyWarning: boolean;
   setLanguage: (language: Language) => void;
   setConfig: (patch: Partial<TreatmentConfig>) => void;
@@ -27,7 +26,6 @@ interface TreatmentState {
   fullReset: () => void;
   toggleSound: () => void;
   toggleVibration: () => void;
-  setMode: (mode: AppMode) => void;
   toggleSkipSafetyWarning: () => void;
 }
 
@@ -41,7 +39,6 @@ export const useTreatmentStore = create<TreatmentState>()(
       progress: {},
       settings: DEFAULT_SETTINGS,
       onboardingComplete: false,
-      mode: 'progress',
       skipSafetyWarning: false,
       setLanguage: (language) => set({ language }),
       setConfig: (patch) => set((state) => ({ config: { ...state.config, ...patch } })),
@@ -90,19 +87,17 @@ export const useTreatmentStore = create<TreatmentState>()(
           progress: {},
           settings: DEFAULT_SETTINGS,
           onboardingComplete: false,
-          mode: 'progress',
         }),
       toggleSound: () =>
         set((state) => ({ settings: { ...state.settings, sound: !state.settings.sound } })),
       toggleVibration: () =>
         set((state) => ({ settings: { ...state.settings, vibration: !state.settings.vibration } })),
-      setMode: (mode) => set({ mode }),
       toggleSkipSafetyWarning: () =>
         set((state) => ({ skipSafetyWarning: !state.skipSafetyWarning })),
     }),
     {
       name: 'brandt-daroff-store',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => treatmentStorage),
     },
   ),

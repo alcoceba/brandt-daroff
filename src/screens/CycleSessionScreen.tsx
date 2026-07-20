@@ -30,20 +30,21 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     position,
     isTransition,
     duration,
-    isQuick,
     isRunning,
     secondsRemaining,
     cycleIndex,
     cycleNumber,
     dayNumber,
-    positionIndex,
+
     dialog,
     setDialog,
     skipChecked,
     setSkipChecked,
     showCompletion,
     completedCount,
+    extraCompletedCount,
     totalSessions,
+    isExtraSession,
 
     advance,
     goHome,
@@ -56,16 +57,15 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
 
   const isPaused = !isRunning && !isTransition;
   const glowClass = isPaused ? 'bg-yellow-500/30' : GLOW[position.kind];
-  const bgGradientClass = positionIndex === 0
-    ? 'bg-gradient-to-t from-yellow-500/15 to-slate-900'
-    : 'bg-gradient-to-b from-slate-900 to-slate-800';
+
 
   if (showCompletion) {
     return (
       <SessionCompletionCard
         dayNumber={dayNumber}
-        isQuick={isQuick}
+        isExtraSession={isExtraSession}
         completedCount={completedCount}
+        extraCompletedCount={extraCompletedCount}
         totalSessions={totalSessions}
         elapsedSeconds={sessionElapsedSeconds()}
         onDone={() => goHome('completed')}
@@ -74,25 +74,23 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   }
 
   return (
-    <div className={`relative flex flex-1 flex-col gap-3 ${bgGradientClass} p-4 sm:gap-4 sm:p-5 min-h-dvh sm:min-h-0`}>
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="relative flex flex-1 flex-col gap-3 p-4 sm:gap-4 sm:p-5 min-h-dvh sm:min-h-0">
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div
-          className={`absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[130px] transition-all duration-700 animate-glow-drift ${glowClass}`}
+          className={`absolute left-1/2 top-1/2 h-[50rem] w-[50rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px] transition-all duration-700 animate-glow-drift ${glowClass}`}
         />
         {!isPaused && position.kind !== 'sitting' && (
           <div
-            className={`absolute left-1/3 top-2/3 h-[20rem] w-[20rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px] opacity-50 transition-all duration-700 animate-glow-drift-reverse ${glowClass}`}
+            className={`absolute left-1/3 top-2/3 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px] opacity-60 transition-all duration-700 animate-glow-drift-reverse ${glowClass}`}
           />
         )}
       </div>
-      <header className="relative flex items-center gap-3">
+      <header className="relative z-10 flex items-center gap-3">
         <BackButton onBack={handleBack} />
-        <h1 className="text-xl font-bold text-white">
-          {isQuick ? t('wizard.modeQuickTitle') : t('cycle.title', { x: dayNumber })}
-        </h1>
+        <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
       </header>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-5">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-5">
         <PositionIcon kind={position.kind} isPaused={isPaused} className="h-20 w-20 sm:h-28 sm:w-28" />
         <p className="whitespace-pre-line text-center text-xl font-bold text-white leading-7 h-14 sm:text-2xl sm:leading-8 sm:h-16 flex items-center justify-center">
           {t(position.labelKey)}
@@ -106,14 +104,12 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
               kind={position.kind}
             />
 
-            {!isQuick && (
-              <div className="flex flex-col items-center gap-2 text-center">
-                <p className="text-lg font-bold text-white">
-                  {t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
-                </p>
-                <CycleProgressDots total={config.cyclesPerSession} currentIndex={cycleIndex} kind={position.kind} isPaused={isPaused} />
-              </div>
-            )}
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="text-lg font-bold text-white">
+                {t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
+              </p>
+              <CycleProgressDots total={config.cyclesPerSession} currentIndex={cycleIndex} kind={position.kind} isPaused={isPaused} />
+            </div>
           </>
         )}
       </div>
@@ -122,17 +118,17 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
         <button
           type="button"
           onClick={() => advance()}
-          className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-xl font-bold text-white"
+          className="relative z-10 flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-xl font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
         >
           <Play size={26} /> {t('cycle.start')}
         </button>
       ) : (
-        <div className="grid grid-cols-3 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
+        <div className="relative z-10 grid grid-cols-3 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
           <button
             type="button"
             onClick={() => setDialog('reset')}
             aria-label={t('cycle.resetProcess')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border border-state-danger/50 text-sm font-semibold text-state-danger"
+            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border border-state-danger/50 text-sm font-semibold text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger hover:scale-[1.01] active:scale-[0.98]"
           >
             <RotateCcw size={24} />
             <span className="hidden sm:inline">{t('cycle.resetProcess')}</span>
@@ -141,7 +137,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
             type="button"
             onClick={handlePauseResume}
             aria-label={isRunning ? t('cycle.pause') : t('cycle.resume')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-lg font-bold text-white"
+            className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-lg font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
           >
             {isRunning ? <Pause size={24} /> : <Play size={24} />}
             <span className="hidden sm:inline">
@@ -152,7 +148,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
             type="button"
             onClick={() => advance(true)}
             aria-label={t('cycle.next')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 border-brand-500 text-lg font-bold text-brand-500"
+            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 border-brand-500 text-lg font-bold text-brand-500 transition-all duration-200 hover:bg-brand-500/10 hover:scale-[1.01] active:scale-[0.98]"
           >
             <ArrowRight size={24} />
             <span className="hidden sm:inline">{t('cycle.next')}</span>

@@ -7,7 +7,7 @@ describe('useCountdown hook', () => {
     vi.useFakeTimers();
     // Map requestAnimationFrame to setTimeout for easy test timing control
     vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => setTimeout(cb, 16));
-    vi.stubGlobal('cancelAnimationFrame', (id: any) => clearTimeout(id));
+    vi.stubGlobal('cancelAnimationFrame', (id: ReturnType<typeof setTimeout>) => clearTimeout(id));
   });
 
   afterEach(() => {

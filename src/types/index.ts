@@ -1,5 +1,4 @@
 export type Language = 'en' | 'ca' | 'es';
-export type AppMode = 'progress' | 'quick';
 
 export type SessionStatus = 'pending' | 'in-progress' | 'completed';
 

@@ -18,7 +18,6 @@ interface UseCycleSessionParams {
 
 export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const config = useTreatmentStore((s) => s.config);
-  const mode = useTreatmentStore((s) => s.mode);
   const startDate = useTreatmentStore((s) => s.startDate);
   const settings = useTreatmentStore((s) => s.settings);
   const skipSafetyWarning = useTreatmentStore((s) => s.skipSafetyWarning);
@@ -26,9 +25,15 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const setSessionStatus = useTreatmentStore((s) => s.setSessionStatus);
   const saveSessionProgress = useTreatmentStore((s) => s.saveSessionProgress);
   const clearSessionProgress = useTreatmentStore((s) => s.clearSessionProgress);
-  const completedCount = useTreatmentStore((s) => countCompletedSessions(s.sessions));
+  const sessions = useTreatmentStore((s) => s.sessions);
+  const completedCount = countCompletedSessions(sessions, config.sessionsPerDay);
+  const totalCompleted = countCompletedSessions(sessions);
+  const extraCompletedCount = Math.max(0, totalCompleted - completedCount);
   const totalSessions = config.sessionsPerDay * config.totalDays;
-  const isQuick = mode === 'quick';
+  const todayCompletedCount = Object.values(sessions[todayISO()] ?? {}).filter(
+    (s) => s === 'completed',
+  ).length;
+  const isExtraSession = todayCompletedCount > config.sessionsPerDay;
 
   const restored = useState<SessionProgress | null>(
     () => useTreatmentStore.getState().progress[todayISO()]?.[sessionId] ?? null,
@@ -62,12 +67,10 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const goHome = useCallback(
     (status: 'pending' | 'completed') => {
       stop();
-      if (!isQuick) {
-        setSessionStatus(todayISO(), sessionId, status);
-      }
+      setSessionStatus(todayISO(), sessionId, status);
       onExit();
     },
-    [stop, isQuick, setSessionStatus, sessionId, onExit],
+    [stop, setSessionStatus, sessionId, onExit],
   );
 
   const handleBack = useCallback(() => {
@@ -81,19 +84,15 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
       const isLastCycle = cycleIndex === config.cyclesPerSession - 1;
       const isBeforeLongRest = positionIndex === POSITIONS.length - 2;
       if (isLastCycle && isBeforeLongRest) {
-        if (!isQuick) {
-          clearSessionProgress(todayISO(), sessionId);
-          setSessionStatus(todayISO(), sessionId, 'completed');
-        }
+        clearSessionProgress(todayISO(), sessionId);
+        setSessionStatus(todayISO(), sessionId, 'completed');
         setShowCompletion(true);
         return;
       }
       const nextPos = positionIndex + 1;
       setPositionIndex(nextPos);
-      if (!isQuick) {
-        setSessionStatus(todayISO(), sessionId, 'in-progress');
-        saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: nextPos });
-      }
+      setSessionStatus(todayISO(), sessionId, 'in-progress');
+      saveSessionProgress(todayISO(), sessionId, { cycleIndex, positionIndex: nextPos });
       return;
     }
     if (cycleIndex < config.cyclesPerSession - 1) {
@@ -103,18 +102,14 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
       const nextPos = skipTransition || (comingFromEnd && firstPosEmpty) ? 1 : 0;
       setCycleIndex(nextCycle);
       setPositionIndex(nextPos);
-      if (!isQuick) {
-        setSessionStatus(todayISO(), sessionId, 'in-progress');
-        saveSessionProgress(todayISO(), sessionId, { cycleIndex: nextCycle, positionIndex: nextPos });
-      }
+      setSessionStatus(todayISO(), sessionId, 'in-progress');
+      saveSessionProgress(todayISO(), sessionId, { cycleIndex: nextCycle, positionIndex: nextPos });
       return;
     }
-    if (!isQuick) {
-      clearSessionProgress(todayISO(), sessionId);
-      setSessionStatus(todayISO(), sessionId, 'completed');
-    }
+    clearSessionProgress(todayISO(), sessionId);
+    setSessionStatus(todayISO(), sessionId, 'completed');
     setShowCompletion(true);
-  }, [stop, positionIndex, cycleIndex, config, isQuick, setSessionStatus, saveSessionProgress, clearSessionProgress, sessionId]);
+  }, [stop, positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, sessionId]);
 
   const advanceRef = useRef(advance);
   advanceRef.current = advance;
@@ -124,10 +119,10 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   }, [setOnComplete]);
 
   useEffect(() => {
-    if (restored !== null && !isQuick) {
+    if (restored !== null) {
       setSessionStatus(todayISO(), sessionId, 'in-progress');
     }
-  }, [restored, isQuick, setSessionStatus, sessionId]);
+  }, [restored, setSessionStatus, sessionId]);
 
   const bypassRef = useRef(false);
 
@@ -164,9 +159,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     stop();
     setCycleIndex(0);
     setPositionIndex(0);
-    if (!isQuick) {
-      saveSessionProgress(todayISO(), sessionId, { cycleIndex: 0, positionIndex: 0 });
-    }
+    saveSessionProgress(todayISO(), sessionId, { cycleIndex: 0, positionIndex: 0 });
   };
 
   const handleSafetyConfirm = () => {
@@ -182,8 +175,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     position,
     isTransition,
     duration,
-    isRest,
-    isQuick,
     isRunning,
     secondsRemaining,
     cycleIndex,
@@ -196,7 +187,9 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     setSkipChecked,
     showCompletion,
     completedCount,
+    extraCompletedCount,
     totalSessions,
+    isExtraSession,
 
     advance,
     goHome,
@@ -205,6 +198,5 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     confirmReset,
     handleSafetyConfirm,
     sessionElapsedSeconds,
-    todayISO,
   };
 }

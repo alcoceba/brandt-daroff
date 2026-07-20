@@ -21,16 +21,13 @@ export function getDurationSeconds(pos: PositionDef, config: TreatmentConfig): n
   }
 }
 
+export function getSessionSlotId(index: number): string {
+  return `session-${index + 1}`;
+}
+
 export function getSessionSlots(sessionsPerDay: number): SessionSlot[] {
-  if (sessionsPerDay === 3) {
-    return [
-      { id: 'morning', labelKey: 'session.morning' },
-      { id: 'midday', labelKey: 'session.midday' },
-      { id: 'evening', labelKey: 'session.evening' },
-    ];
-  }
   return Array.from({ length: sessionsPerDay }, (_, i) => ({
-    id: `cycle-${i + 1}`,
-    labelKey: 'session.cycleN',
+    id: getSessionSlotId(i),
+    labelKey: 'session.sessionN',
   }));
 }
