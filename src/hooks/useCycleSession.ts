@@ -25,6 +25,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const setSessionStatus = useTreatmentStore((s) => s.setSessionStatus);
   const saveSessionProgress = useTreatmentStore((s) => s.saveSessionProgress);
   const clearSessionProgress = useTreatmentStore((s) => s.clearSessionProgress);
+  const setSessionDuration = useTreatmentStore((s) => s.setSessionDuration);
   const sessions = useTreatmentStore((s) => s.sessions);
   const completedCount = countCompletedSessions(sessions, config.sessionsPerDay);
   const totalCompleted = countCompletedSessions(sessions);
@@ -86,6 +87,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
       if (isLastCycle && isBeforeLongRest) {
         clearSessionProgress(todayISO(), sessionId);
         setSessionStatus(todayISO(), sessionId, 'completed');
+        setSessionDuration(todayISO(), sessionId, sessionElapsedSeconds());
         setShowCompletion(true);
         return;
       }
@@ -108,8 +110,9 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     }
     clearSessionProgress(todayISO(), sessionId);
     setSessionStatus(todayISO(), sessionId, 'completed');
+    setSessionDuration(todayISO(), sessionId, sessionElapsedSeconds());
     setShowCompletion(true);
-  }, [stop, positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, sessionId]);
+  }, [stop, positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, setSessionDuration, sessionId]);
 
   const advanceRef = useRef(advance);
   advanceRef.current = advance;

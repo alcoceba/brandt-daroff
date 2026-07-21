@@ -90,34 +90,54 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
 src/
   main.tsx
   App.tsx
-  types.ts
+  types/
+    index.ts
   i18n/
-    en.ts
-    ca.ts
-    es.ts
+    resources.ts
     index.ts
   store/
     useTreatmentStore.ts
   components/
-    LanguageSelector.tsx
-    Wizard.tsx
-    Home.tsx
-    CycleSession.tsx
-    Timer.tsx
-    PositionIcon.tsx
     Calendar.tsx
-    Settings.tsx
-    InfoScreen.tsx
-    BackButton.tsx
-    Modal.tsx
+    CycleProgressDots.tsx
+    FlagIcon.tsx
     Logo.tsx
-  data/
+    PositionIcon.tsx
+    ProgressSummary.tsx
+    CircularProgress.tsx
+    SessionCompletionCard.tsx
+    Timer.tsx
+    core/
+      BackButton.tsx
+      ConfirmDialog.tsx
+      Stepper.tsx
+  screens/
+    CycleSessionScreen.tsx
+    HomeScreen.tsx
+    InfoScreen.tsx
+    LanguageSelectorScreen.tsx
+    LanguageSettingsScreen.tsx
+    SettingsScreen.tsx
+    WizardScreen.tsx
+  layouts/
+    AppLayout.tsx
+  constants/
+    languages.ts
     positions.ts
+    treatment.ts
+  hooks/
+    useBeepCues.ts
+    useCountdown.ts
+    useCycleSession.ts
+  storage/
+    createStorage.ts
+    treatmentStorage.ts
   utils/
-    timer.ts
+    date.ts
+    format.ts
+    sessions.ts
     sound.ts
     vibration.ts
-    date.ts
 public/
   manifest.webmanifest
   icon.svg
@@ -132,7 +152,10 @@ public/
 - `config: { positionDuration, restBetweenPositions, restBetweenCycles, sessionsPerDay, totalDays, cyclesPerSession }` (seconds / count / days)
 - `startDate: ISOString | null`
 - `sessions: { [isoDate]: { [sessionId]: 'pending' | 'in-progress' | 'completed' } }`
+- `progress: { [isoDate]: { [sessionId]: { cycleIndex, positionIndex } } }` (in-progress session state, cleared on completion)
+- `sessionDurations: { [isoDate]: { [sessionId]: elapsedSeconds } }` (real time invested per completed session)
 - `settings: { sound: boolean, vibration: boolean }`
+- `skipSafetyWarning: boolean` (persistent opt-out of the cycle safety dialog)
 - `mode: 'progress' | 'quick'`
 - `onboardingComplete: boolean`
 

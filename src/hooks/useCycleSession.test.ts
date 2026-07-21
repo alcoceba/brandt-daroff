@@ -106,6 +106,7 @@ describe('useCycleSession hook', () => {
     // because rest between cycles (long-rest) is skipped on the final cycle
     expect(result.current.showCompletion).toBe(true);
     expect(useTreatmentStore.getState().sessions[todayISO()]?.['session-1']).toBe('completed');
+    expect(useTreatmentStore.getState().sessionDurations[todayISO()]?.['session-1']).toBeGreaterThan(0);
   });
 
   it('should toggle pause/resume states correctly', async () => {

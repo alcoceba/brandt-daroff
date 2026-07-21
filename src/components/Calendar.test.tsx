@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Calendar } from './Calendar';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 
@@ -95,5 +95,61 @@ describe('Calendar component', () => {
     const firstDaySquares = Array.from(grid.children[0].children).slice(1);
     const lastSquare = firstDaySquares[firstDaySquares.length - 1];
     expect(lastSquare).toHaveTextContent('+1');
+  });
+
+  it('renders milestone ticks on the progress bar', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 4, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+
+    const { container } = render(<Calendar />);
+
+    const barContainer = container.querySelector('.bg-slate-700');
+    const ticks = barContainer?.querySelectorAll('.absolute');
+    expect(ticks).toHaveLength(3);
+  });
+
+  it('renders day columns as accessible buttons', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 3, sessionsPerDay: 2 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    render(<Calendar />);
+
+    const dayButtons = screen.getAllByRole('button');
+    expect(dayButtons).toHaveLength(3);
+    expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('shows inline day detail when a day column is tapped', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 3, sessionsPerDay: 2 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    render(<Calendar />);
+
+    const dayButtons = screen.getAllByRole('button');
+    fireEvent.click(dayButtons[0]);
+
+    expect(screen.getByText('home.dayDetail:{"n":1,"completed":1,"total":2}')).toBeInTheDocument();
+    expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(dayButtons[0]);
+    expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('shows future day detail for upcoming days', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 3, sessionsPerDay: 2 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+
+    render(<Calendar />);
+
+    const dayButtons = screen.getAllByRole('button');
+    fireEvent.click(dayButtons[2]); // future day
+
+    expect(screen.getByText('home.dayDetailFuture:{"n":3}')).toBeInTheDocument();
   });
 });

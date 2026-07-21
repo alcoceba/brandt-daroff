@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatTime, formatDuration } from './format';
+import { formatTime, formatDuration, formatLongDuration } from './format';
 
 describe('format utilities', () => {
   describe('formatTime', () => {
@@ -28,6 +28,27 @@ describe('format utilities', () => {
       expect(formatDuration(60)).toBe('1:00');
       expect(formatDuration(75)).toBe('1:15');
       expect(formatDuration(1205)).toBe('20:05');
+    });
+  });
+
+  describe('formatLongDuration', () => {
+    it('formats hours and minutes when >= 1 hour', () => {
+      expect(formatLongDuration(8100)).toBe('2h 15m');
+      expect(formatLongDuration(3600)).toBe('1h 00m');
+    });
+
+    it('formats minutes when >= 1 minute but < 1 hour', () => {
+      expect(formatLongDuration(900)).toBe('15m');
+      expect(formatLongDuration(60)).toBe('1m');
+    });
+
+    it('formats seconds when < 1 minute', () => {
+      expect(formatLongDuration(45)).toBe('45s');
+      expect(formatLongDuration(0)).toBe('0s');
+    });
+
+    it('clamps negative values to 0', () => {
+      expect(formatLongDuration(-10)).toBe('0s');
     });
   });
 });

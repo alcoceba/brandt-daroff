@@ -16,6 +16,7 @@ describe('useTreatmentStore', () => {
     expect(state.startDate).toBeNull();
     expect(state.sessions).toEqual({});
     expect(state.progress).toEqual({});
+    expect(state.sessionDurations).toEqual({});
     expect(state.settings).toEqual(DEFAULT_SETTINGS);
     expect(state.onboardingComplete).toBe(false);
   });
@@ -53,14 +54,24 @@ describe('useTreatmentStore', () => {
     expect(useTreatmentStore.getState().progress['2026-07-19']?.['session-1']).toBeUndefined();
   });
 
+  it('should save session duration and overwrite on subsequent completion', () => {
+    useTreatmentStore.getState().setSessionDuration('2026-07-19', 'session-1', 120);
+    expect(useTreatmentStore.getState().sessionDurations['2026-07-19']?.['session-1']).toBe(120);
+
+    useTreatmentStore.getState().setSessionDuration('2026-07-19', 'session-1', 95);
+    expect(useTreatmentStore.getState().sessionDurations['2026-07-19']?.['session-1']).toBe(95);
+  });
+
   it('should reset today\'s treatment progress when resetTreatment is called', () => {
     useTreatmentStore.getState().setSessionStatus('2026-07-19', 'session-1', 'completed');
     useTreatmentStore.getState().saveSessionProgress('2026-07-19', 'session-1', { cycleIndex: 1, positionIndex: 1 });
+    useTreatmentStore.getState().setSessionDuration('2026-07-19', 'session-1', 120);
 
     useTreatmentStore.getState().resetTreatment();
 
     expect(useTreatmentStore.getState().sessions).toEqual({});
     expect(useTreatmentStore.getState().progress).toEqual({});
+    expect(useTreatmentStore.getState().sessionDurations).toEqual({});
     expect(useTreatmentStore.getState().startDate).not.toBeNull(); // starts again from today
   });
 
@@ -78,5 +89,11 @@ describe('useTreatmentStore', () => {
     const initialSkip = useTreatmentStore.getState().skipSafetyWarning;
     useTreatmentStore.getState().toggleSkipSafetyWarning();
     expect(useTreatmentStore.getState().skipSafetyWarning).toBe(!initialSkip);
+  });
+
+  it('should clear session durations on fullReset', () => {
+    useTreatmentStore.getState().setSessionDuration('2026-07-19', 'session-1', 120);
+    useTreatmentStore.getState().fullReset();
+    expect(useTreatmentStore.getState().sessionDurations).toEqual({});
   });
 });

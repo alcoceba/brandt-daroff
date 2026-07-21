@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Language, SessionMap, SessionStatus, Settings, TreatmentConfig, SessionProgress } from '@/types';
+import type { Language, SessionMap, SessionStatus, Settings, TreatmentConfig, SessionProgress, SessionDurations } from '@/types';
 import { todayISO } from '@/utils/date';
 import { DEFAULT_CONFIG, DEFAULT_SETTINGS } from '@/constants/treatment';
 import { treatmentStorage } from '@/storage/treatmentStorage';
@@ -13,6 +13,7 @@ interface TreatmentState {
   startDate: string | null;
   sessions: SessionMap;
   progress: ProgressMap;
+  sessionDurations: SessionDurations;
   settings: Settings;
   onboardingComplete: boolean;
   skipSafetyWarning: boolean;
@@ -22,6 +23,7 @@ interface TreatmentState {
   setSessionStatus: (isoDate: string, sessionId: string, status: SessionStatus) => void;
   saveSessionProgress: (isoDate: string, sessionId: string, progress: SessionProgress) => void;
   clearSessionProgress: (isoDate: string, sessionId: string) => void;
+  setSessionDuration: (isoDate: string, sessionId: string, seconds: number) => void;
   resetTreatment: () => void;
   fullReset: () => void;
   toggleSound: () => void;
@@ -37,6 +39,7 @@ export const useTreatmentStore = create<TreatmentState>()(
       startDate: null,
       sessions: {},
       progress: {},
+      sessionDurations: {},
       settings: DEFAULT_SETTINGS,
       onboardingComplete: false,
       skipSafetyWarning: false,
@@ -72,11 +75,19 @@ export const useTreatmentStore = create<TreatmentState>()(
             },
           };
         }),
+      setSessionDuration: (isoDate, sessionId, seconds) =>
+        set((state) => ({
+          sessionDurations: {
+            ...state.sessionDurations,
+            [isoDate]: { ...state.sessionDurations[isoDate], [sessionId]: seconds },
+          },
+        })),
       resetTreatment: () =>
         set({
           startDate: todayISO(),
           sessions: {},
           progress: {},
+          sessionDurations: {},
         }),
       fullReset: () =>
         set({
@@ -85,6 +96,7 @@ export const useTreatmentStore = create<TreatmentState>()(
           startDate: null,
           sessions: {},
           progress: {},
+          sessionDurations: {},
           settings: DEFAULT_SETTINGS,
           onboardingComplete: false,
         }),
@@ -97,8 +109,15 @@ export const useTreatmentStore = create<TreatmentState>()(
     }),
     {
       name: 'brandt-daroff-store',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => treatmentStorage),
+      migrate: (persistedState) => {
+        const state = persistedState as Record<string, unknown>;
+        if (!state.sessionDurations) {
+          state.sessionDurations = {};
+        }
+        return state as unknown as TreatmentState;
+      },
     },
   ),
 );

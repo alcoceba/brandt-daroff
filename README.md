@@ -4,6 +4,9 @@
 
 # Brandt-Daroff — VPPB Home Treatment
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/alcoceba/brandt-daroff/actions/workflows/ci.yml/badge.svg)](https://github.com/alcoceba/brandt-daroff/actions/workflows/ci.yml)
+
 A progressive web app that guides patients through the Brandt-Daroff exercises for BPPV (Benign Paroxysmal Positional Vertigo) at home.
 
 </div>
@@ -63,7 +66,23 @@ Open the printed local URL (usually `http://localhost:5173`). For the best exper
 | `npm run preview` | Preview the production build |
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Run `tsc --noEmit` |
+| `npm run test` | Run the Vitest suite once |
+| `npm run test:watch` | Run tests in watch mode |
 | `npm run deploy` | Build and deploy to GitHub Pages (`gh-pages` branch) |
+
+## Tests
+
+The test suite runs on every push and pull request via GitHub Actions. Locally, run it once with:
+
+```bash
+npm run test
+```
+
+For development, use watch mode:
+
+```bash
+npm run test:watch
+```
 
 ## Tech stack
 
@@ -78,45 +97,7 @@ Open the printed local URL (usually `http://localhost:5173`). For the best exper
 
 ## Project structure
 
-```
-src/
-  main.tsx
-  App.tsx
-  types.ts
-  index.css
-  i18n/
-    index.ts
-    languages.ts
-    resources.ts
-  store/
-    useTreatmentStore.ts
-  components/
-    LanguageSelector.tsx
-    Wizard.tsx
-    Home.tsx
-    CycleSession.tsx
-    Timer.tsx
-    PositionIcon.tsx
-    Calendar.tsx
-    Settings.tsx
-    InfoScreen.tsx
-    BackButton.tsx
-    Modal.tsx
-    Logo.tsx
-  data/
-    positions.ts
-  utils/
-    timer.ts
-    sound.ts
-    vibration.ts
-    date.ts
-public/
-  icon.svg
-  icon-192.png
-  icon-512.png
-  robots.txt
-  llms.txt
-```
+The codebase is organized around screens, reusable components, state, and utilities. Tests live alongside the files they cover.
 
 ## Install as a PWA
 

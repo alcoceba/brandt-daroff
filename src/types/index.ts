@@ -34,6 +34,8 @@ export interface SessionSlot {
 
 export type SessionMap = Record<string, Record<string, SessionStatus>>;
 
+export type SessionDurations = Record<string, Record<string, number>>;
+
 export interface SessionProgress {
   cycleIndex: number;
   positionIndex: number;
