@@ -23,7 +23,7 @@ export function useBeepCues({
   const lastBeepSecondRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isTransition || !isRunning || duration <= 0) {
+    if (!soundEnabled || isTransition || !isRunning || duration <= 0) {
       lastBeepSecondRef.current = null;
       return;
     }

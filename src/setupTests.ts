@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
+  initReactI18next: { type: '3rdParty' as const, init: vi.fn() },
   useTranslation: () => ({
     t: (key: string, options?: Record<string, unknown>) => {
       if (options) {

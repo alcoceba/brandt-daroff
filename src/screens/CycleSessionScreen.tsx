@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { AlertTriangle, ArrowRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Pause, Play, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PositionIcon } from '@/components/PositionIcon';
 import { Timer } from '@/components/Timer';
@@ -7,6 +7,7 @@ import { BackButton } from '@/components/core/BackButton';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { CycleProgressDots } from '@/components/CycleProgressDots';
 import { SessionCompletionCard } from '@/components/SessionCompletionCard';
+import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { useCycleSession } from '@/hooks/useCycleSession';
 import type { PositionKind } from '@/types';
 
@@ -25,6 +26,8 @@ interface CycleSessionScreenProps {
 
 export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, onExit }: CycleSessionScreenProps) {
   const { t } = useTranslation();
+  const soundEnabled = useTreatmentStore((s) => s.settings.sound);
+  const toggleSound = useTreatmentStore((s) => s.toggleSound);
   const {
     config,
     position,
@@ -88,6 +91,24 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
       <header className="relative z-10 flex items-center gap-3">
         <BackButton onBack={handleBack} />
         <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setDialog('reset')}
+            aria-label={t('cycle.resetProcess')}
+            className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger active:scale-[0.98]"
+          >
+            <RotateCcw size={22} />
+          </button>
+          <button
+            type="button"
+            onClick={toggleSound}
+            aria-label={soundEnabled ? t('cycle.mute') : t('cycle.unmute')}
+            className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
+          >
+            {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
+          </button>
+        </div>
       </header>
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-5">
@@ -123,21 +144,12 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
           <Play size={26} /> {t('cycle.start')}
         </button>
       ) : (
-        <div className="relative z-10 grid grid-cols-3 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
-          <button
-            type="button"
-            onClick={() => setDialog('reset')}
-            aria-label={t('cycle.resetProcess')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border border-state-danger/50 text-sm font-semibold text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger hover:scale-[1.01] active:scale-[0.98]"
-          >
-            <RotateCcw size={24} />
-            <span className="hidden sm:inline">{t('cycle.resetProcess')}</span>
-          </button>
+        <div className="relative z-10 grid grid-cols-2 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
           <button
             type="button"
             onClick={handlePauseResume}
             aria-label={isRunning ? t('cycle.pause') : t('cycle.resume')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-lg font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
+            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 border-brand-500 text-lg font-bold text-brand-500 transition-all duration-200 hover:bg-brand-500/10 hover:scale-[1.01] active:scale-[0.98]"
           >
             {isRunning ? <Pause size={24} /> : <Play size={24} />}
             <span className="hidden sm:inline">
@@ -148,7 +160,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
             type="button"
             onClick={() => advance(true)}
             aria-label={t('cycle.next')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 border-brand-500 text-lg font-bold text-brand-500 transition-all duration-200 hover:bg-brand-500/10 hover:scale-[1.01] active:scale-[0.98]"
+            className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-lg font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
           >
             <ArrowRight size={24} />
             <span className="hidden sm:inline">{t('cycle.next')}</span>

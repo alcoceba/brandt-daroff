@@ -5,14 +5,10 @@ import { useCountdown } from './useCountdown';
 describe('useCountdown hook', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    // Map requestAnimationFrame to setTimeout for easy test timing control
-    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => setTimeout(cb, 16));
-    vi.stubGlobal('cancelAnimationFrame', (id: ReturnType<typeof setTimeout>) => clearTimeout(id));
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.unstubAllGlobals();
   });
 
   it('should initialize in stopped state', () => {

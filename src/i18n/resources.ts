@@ -98,6 +98,8 @@ const en = {
     timeInvested: 'Time invested',
     done: 'Done!',
     confirmReset: 'Restart the current cycle from the beginning?',
+    mute: 'Mute sound',
+    unmute: 'Unmute sound',
   },
   position: {
     sitting: 'Sit on the bed. Press "Start" when ready',
@@ -262,6 +264,8 @@ const ca: Dict = {
     timeInvested: 'Temps invertit',
     done: 'Fet!',
     confirmReset: 'Reiniciar el cicle actual des de l’inici?',
+    mute: 'Silenciar so',
+    unmute: 'Activar so',
   },
   position: {
     sitting: 'Seu al llit. Prem "Comença" quan estiguis a punt',
@@ -424,6 +428,8 @@ const es: Dict = {
     timeInvested: 'Tiempo invertido',
     done: '¡Hecho!',
     confirmReset: '¿Reiniciar el ciclo actual desde el principio?',
+    mute: 'Silenciar sonido',
+    unmute: 'Activar sonido',
   },
   position: {
     sitting: 'Siéntate en la cama. Pulsa "Empezar" cuando estés listo',

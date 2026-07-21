@@ -22,16 +22,12 @@ describe('useCycleSession hook', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    // Map requestAnimationFrame to setTimeout for easy test timing control
-    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => setTimeout(cb, 16));
-    vi.stubGlobal('cancelAnimationFrame', (id: ReturnType<typeof setTimeout>) => clearTimeout(id));
     vi.clearAllMocks();
     useTreatmentStore.getState().fullReset();
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.unstubAllGlobals();
   });
 
   it('should initialize with correct session parameters', () => {
@@ -84,9 +80,11 @@ describe('useCycleSession hook', () => {
     expect(result.current.position.kind).toBe('long-rest');
     act(() => { vi.advanceTimersByTime(120100); });
 
-    // Should now be at Cycle 2, Position 0 (Sitting - transition)
+    // Should now be at Cycle 2. The 0s sitting transition is skipped,
+    // so the next active position is Lying right (position 1).
     expect(result.current.cycleNumber).toBe(2);
-    expect(result.current.positionIndex).toBe(0);
+    expect(result.current.positionIndex).toBe(1);
+    expect(result.current.position.kind).toBe('lying-right');
   });
 
   it('should show completion view when all cycles are finished', () => {
@@ -110,7 +108,7 @@ describe('useCycleSession hook', () => {
     expect(useTreatmentStore.getState().sessions[todayISO()]?.['session-1']).toBe('completed');
   });
 
-  it('should toggle pause/resume states correctly', () => {
+  it('should toggle pause/resume states correctly', async () => {
     const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
 
     // Advance to Lying right
@@ -118,14 +116,14 @@ describe('useCycleSession hook', () => {
     expect(result.current.isRunning).toBe(true);
 
     // Pause
-    act(() => {
-      result.current.handlePauseResume();
+    await act(async () => {
+      await result.current.handlePauseResume();
     });
     expect(result.current.isRunning).toBe(false);
 
     // Resume
-    act(() => {
-      result.current.handlePauseResume();
+    await act(async () => {
+      await result.current.handlePauseResume();
     });
     expect(result.current.isRunning).toBe(true);
   });
