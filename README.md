@@ -4,7 +4,7 @@
 
 # Brandt-Daroff — VPPB Home Treatment
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![CI](https://github.com/alcoceba/brandt-daroff/actions/workflows/ci.yml/badge.svg)](https://github.com/alcoceba/brandt-daroff/actions/workflows/ci.yml)
 
 A progressive web app that guides patients through the Brandt-Daroff exercises for BPPV (Benign Paroxysmal Positional Vertigo) at home.
@@ -135,4 +135,4 @@ Alternatives (all free tier): Netlify, Vercel, Cloudflare Pages.
 
 ## License
 
-[MIT](LICENSE) © Manel Alcoceba
+[CC BY-NC 4.0](LICENSE.md) © Manel Alcoceba
