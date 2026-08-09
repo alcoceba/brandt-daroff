@@ -5,11 +5,13 @@ A frontend-only Progressive Web App (PWA) that guides patients through Brandt-Da
 ## What it does
 - Step-by-step timer for each exercise position (sitting, lying right, rest, lying left, long rest)
 - Visual circular progress ring and countdown per position
-- Full treatment tracking with a daily calendar grid and completion status
+- Full treatment tracking with a 7-day-row progress grid and completion status
+- Extra sessions: available only after the daily scheduled goal is met; tracked separately from protocol progress
 - Configurable durations, cycles per session, sessions per day, and total treatment days
 - Two operation modes: full treatment progress tracking and a quick timer mode without tracking
 - Clinical safety warnings and an emergency stop during exercise cycles
 - Sound and vibration cues for position changes
+- Progress ring and progress bar animate from 0 on app start
 
 ## Architecture
 - React 18 + Vite + TypeScript
@@ -23,5 +25,6 @@ A frontend-only Progressive Web App (PWA) that guides patients through Brandt-Da
 - Mobile-first, high contrast, large tap targets
 - No personal/medical data leaves the device
 - Medical protocol defaults are respected; user can override durations
-- Code, comments, and UI strings are in English / Catalan / Spanish via i18n
-- Build commands: npm run dev | build | preview | lint | typecheck
+- Code and comments in English; UI strings in English / Catalan / Spanish via i18n
+- i18n plurals use explicit camelCase singular/plural keys (no `_one`/`_other` suffixes or nested objects)
+- Build commands: npm run dev | build | preview | lint | typecheck | test | deploy
