@@ -57,11 +57,25 @@ describe('CycleSessionScreen', () => {
     };
   }
 
-  it('renders the header, day number, and mute/reset buttons', () => {
+  function openTopMenu() {
+    fireEvent.click(screen.getByRole('button', { name: 'cycle.moreActions' }));
+  }
+
+  it('renders the header, day number, and top menu button', () => {
     mockedUseCycleSession.mockReturnValue(baseMock());
     render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
 
     expect(screen.getByText('cycle.title:{"x":2}')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'cycle.moreActions' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'cycle.resetProcess' })).not.toBeInTheDocument();
+  });
+
+  it('reveals reset and sound buttons after opening the top menu', () => {
+    mockedUseCycleSession.mockReturnValue(baseMock());
+    render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
+
+    openTopMenu();
+
     expect(screen.getByRole('button', { name: 'cycle.resetProcess' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'cycle.mute' })).toBeInTheDocument();
   });
@@ -123,6 +137,8 @@ describe('CycleSessionScreen', () => {
     mockedUseCycleSession.mockReturnValue(baseMock());
     render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
 
+    openTopMenu();
+
     expect(useTreatmentStore.getState().settings.sound).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'cycle.mute' }));
     expect(useTreatmentStore.getState().settings.sound).toBe(false);
@@ -135,8 +151,9 @@ describe('CycleSessionScreen', () => {
     mockedUseCycleSession.mockReturnValue(baseMock({ setDialog, confirmReset }));
     render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
 
-    const resetButtons = screen.getAllByRole('button', { name: 'cycle.resetProcess' });
-    fireEvent.click(resetButtons[0]);
+    openTopMenu();
+
+    fireEvent.click(screen.getByRole('button', { name: 'cycle.resetProcess' }));
     expect(setDialog).toHaveBeenCalledTimes(1);
     expect(setDialog).toHaveBeenCalledWith('reset');
   });

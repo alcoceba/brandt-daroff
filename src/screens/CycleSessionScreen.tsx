@@ -1,5 +1,15 @@
-import { memo } from 'react';
-import { AlertTriangle, ArrowRight, Pause, Play, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import { memo, useState } from 'react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  MoreHorizontal,
+  Pause,
+  Play,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  X,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PositionIcon } from '@/components/PositionIcon';
 import { Timer } from '@/components/Timer';
@@ -28,12 +38,14 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   const { t } = useTranslation();
   const soundEnabled = useTreatmentStore((s) => s.settings.sound);
   const toggleSound = useTreatmentStore((s) => s.toggleSound);
+  const [topMenuOpen, setTopMenuOpen] = useState(false);
   const {
     config,
     position,
     isTransition,
     duration,
     isRunning,
+    isPaused,
     secondsRemaining,
     cycleIndex,
     cycleNumber,
@@ -58,7 +70,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     sessionElapsedSeconds,
   } = useCycleSession({ sessionId, onExit });
 
-  const isPaused = !isRunning && !isTransition;
   const glowClass = isPaused ? 'bg-yellow-500/30' : GLOW[position.kind];
 
 
@@ -91,23 +102,42 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
       <header className="relative z-10 flex items-center gap-3">
         <BackButton onBack={handleBack} />
         <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="relative ml-auto flex items-center">
           <button
             type="button"
-            onClick={() => setDialog('reset')}
-            aria-label={t('cycle.resetProcess')}
-            className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger active:scale-[0.98]"
+            onClick={() => setTopMenuOpen((open) => !open)}
+            aria-label={t('cycle.moreActions')}
+            aria-expanded={topMenuOpen}
+            className="relative z-30 flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
           >
-            <RotateCcw size={22} />
+            {topMenuOpen ? <X size={22} /> : <MoreHorizontal size={22} />}
           </button>
-          <button
-            type="button"
-            onClick={toggleSound}
-            aria-label={soundEnabled ? t('cycle.mute') : t('cycle.unmute')}
-            className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
+
+          <div
+            aria-hidden={!topMenuOpen}
+            className={`absolute right-0 top-full z-20 mt-2 flex flex-col gap-2 transition-all duration-200 ${
+              topMenuOpen
+                ? 'translate-y-0 opacity-100'
+                : 'pointer-events-none -translate-y-2 opacity-0'
+            }`}
           >
-            {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
-          </button>
+            <button
+              type="button"
+              onClick={() => setDialog('reset')}
+              aria-label={t('cycle.resetProcess')}
+              className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger active:scale-[0.98]"
+            >
+              <RotateCcw size={22} />
+            </button>
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-label={soundEnabled ? t('cycle.mute') : t('cycle.unmute')}
+              className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
+            >
+              {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
+            </button>
+          </div>
         </div>
       </header>
 

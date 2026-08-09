@@ -41,6 +41,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const [dialog, setDialog] = useState<Dialog>(restored || skipSafetyWarning ? 'none' : 'safety');
   const [skipChecked, setSkipChecked] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [intentionallyPaused, setIntentionallyPaused] = useState(false);
   const sessionStartRef = useRef(performance.now());
   const { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete } = useCountdown();
 
@@ -78,6 +79,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
 
   const advance = useCallback((skipTransition = false) => {
     stop();
+    setIntentionallyPaused(false);
     if (positionIndex < POSITIONS.length - 1) {
       const isLastCycle = cycleIndex === config.cyclesPerSession - 1;
       const isBeforeLongRest = positionIndex === POSITIONS.length - 2;
@@ -149,9 +151,11 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     if (isRunning) {
       await playBeepHigh(settings.sound);
       pause();
+      setIntentionallyPaused(true);
     } else {
       await playBeep(settings.sound);
       resume();
+      setIntentionallyPaused(false);
     }
   };
 
@@ -170,12 +174,15 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const sessionElapsedSeconds = () =>
     Math.round((performance.now() - sessionStartRef.current) / 1000);
 
+  const isPaused = intentionallyPaused && !isRunning && !isTransition;
+
   return {
     config,
     position,
     isTransition,
     duration,
     isRunning,
+    isPaused,
     secondsRemaining,
     cycleIndex,
     cycleNumber,

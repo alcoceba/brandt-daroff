@@ -121,6 +121,7 @@ const en = {
     confirmReset: 'Restart the current cycle from the beginning?',
     mute: 'Mute sound',
     unmute: 'Unmute sound',
+    moreActions: 'More actions',
   },
   position: {
     sitting: 'Sit on the bed. Press "Start" when ready',
@@ -308,6 +309,7 @@ const ca: Dict = {
     confirmReset: 'Reiniciar el cicle actual des de l’inici?',
     mute: 'Silenciar so',
     unmute: 'Activar so',
+    moreActions: 'Més accions',
   },
   position: {
     sitting: 'Seu al llit. Prem "Comença" quan estiguis a punt',
@@ -493,6 +495,7 @@ const es: Dict = {
     confirmReset: '¿Reiniciar el ciclo actual desde el principio?',
     mute: 'Silenciar sonido',
     unmute: 'Activar sonido',
+    moreActions: 'Más acciones',
   },
   position: {
     sitting: 'Siéntate en la cama. Pulsa "Empezar" cuando estés listo',

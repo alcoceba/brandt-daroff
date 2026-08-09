@@ -9,6 +9,7 @@ import { CycleSessionScreen } from '@/screens/CycleSessionScreen';
 import { SettingsScreen } from '@/screens/SettingsScreen';
 import { InfoScreen } from '@/screens/InfoScreen';
 import { AppLayout } from '@/layouts/AppLayout';
+import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
 
 export default function App() {
   const language = useTreatmentStore((s) => s.language);
@@ -33,6 +34,17 @@ export default function App() {
     setSessionId(id);
     setRoute('cycle');
   };
+
+  const showDevScenarios =
+    import.meta.env.DEV && new URLSearchParams(window.location.search).get('dev') === 'scenarios';
+
+  if (showDevScenarios) {
+    return (
+      <AppLayout>
+        <DevScenariosScreen />
+      </AppLayout>
+    );
+  }
 
   let screen: React.ReactNode;
   switch (route) {
