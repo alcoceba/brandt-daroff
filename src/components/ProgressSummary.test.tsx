@@ -46,6 +46,16 @@ describe('ProgressSummary component', () => {
     expect(screen.queryByText(/home.estimatedLeft/)).toBeNull();
   });
 
+  it('shows days left based on current day, not completed days', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 14, sessionsPerDay: 3 });
+    useTreatmentStore.setState({ startDate: '2026-01-06' });
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.daysLeft:{"count":5}')).toBeInTheDocument();
+  });
+
   it('hides days left and estimated time when treatment is finished', () => {
     const store = useTreatmentStore.getState();
     store.setConfig({ totalDays: 1, sessionsPerDay: 1 });
@@ -66,5 +76,31 @@ describe('ProgressSummary component', () => {
     render(<ProgressSummary />);
 
     expect(screen.queryByText(/home.streak/)).toBeNull();
+  });
+
+  it('shows extras separately from scheduled progress', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 4, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+    store.setSessionStatus('2026-01-14', 'session-2', 'completed');
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.sessionsSummary:{"done":1,"total":4}')).toBeInTheDocument();
+    expect(screen.getByText('home.extraDone:{"count":1}')).toBeInTheDocument();
+  });
+
+  it('shows the plural extras pill', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 4, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+    store.setSessionStatus('2026-01-14', 'session-2', 'completed');
+    store.setSessionStatus('2026-01-14', 'session-3', 'completed');
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.extrasDone:{"count":2}')).toBeInTheDocument();
   });
 });

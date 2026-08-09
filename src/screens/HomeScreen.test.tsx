@@ -82,6 +82,44 @@ describe('HomeScreen', () => {
     expect(onStartSession).toHaveBeenCalledWith('session-4');
   });
 
+  it('does not offer extra sessions before scheduled sessions are complete', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-1', 'completed');
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-2', 'completed');
+    renderScreen();
+
+    expect(screen.queryByText('home.goalReached')).not.toBeInTheDocument();
+    expect(screen.queryByText('home.addExtraSession')).not.toBeInTheDocument();
+    expect(screen.getByText('session.sessionN:{"n":3}')).toBeInTheDocument();
+  });
+
+  it('resumes an in-progress extra session and shows the extra badge', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-1', 'completed');
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-2', 'completed');
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-3', 'completed');
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-4', 'in-progress');
+    renderScreen();
+
+    expect(screen.getByRole('button', { name: /home.resume/i })).toBeInTheDocument();
+    expect(screen.getByText('session.sessionN:{"n":4}')).toBeInTheDocument();
+    expect(screen.getByText('home.extraBadge')).toBeInTheDocument();
+    expect(screen.queryByText('home.goalReached')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /home.resume/i }));
+    expect(onStartSession).toHaveBeenCalledWith('session-4');
+  });
+
+  it('starts the next extra session from the treatment complete card', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    useTreatmentStore.setState({ startDate: addDays(todayISO(), -15) });
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-4', 'in-progress');
+    renderScreen();
+
+    fireEvent.click(screen.getByRole('button', { name: /home.addExtraSession/i }));
+    expect(onStartSession).toHaveBeenCalledWith('session-5');
+  });
+
   it('shows treatment complete state when treatment days have passed', () => {
     useTreatmentStore.getState().completeOnboarding();
     useTreatmentStore.setState({ startDate: addDays(todayISO(), -15) });
@@ -89,18 +127,22 @@ describe('HomeScreen', () => {
 
     expect(screen.getByText('home.complete')).toBeInTheDocument();
     expect(screen.getByText('home.treatmentComplete')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'common.close' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'home.startNewTreatment' })).toBeInTheDocument();
   });
 
-  it('dismisses the treatment complete notice', () => {
+  it('starts a new treatment from the complete card after confirmation', () => {
     useTreatmentStore.getState().completeOnboarding();
     useTreatmentStore.setState({ startDate: addDays(todayISO(), -15) });
     renderScreen();
 
-    fireEvent.click(screen.getByRole('button', { name: 'common.close' }));
+    fireEvent.click(screen.getByRole('button', { name: 'home.startNewTreatment' }));
+
+    expect(screen.getByText('home.confirmStartNewTreatment')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
 
     expect(screen.queryByText('home.treatmentComplete')).not.toBeInTheDocument();
-    expect(screen.getByText('home.todaysSessions')).toBeInTheDocument();
+    expect(screen.getByText('home.day:{"x":1,"total":14}')).toBeInTheDocument();
   });
 
   it('opens settings and info screens', () => {

@@ -26,7 +26,8 @@ This is a **medical guidance app** used by patients at home, typically next to t
 
 ### Home screen
 - Shows **Day X / totalDays** computed from the treatment start date.
-- Lists today's sessions with state: pending / in-progress / completed.
+- One unified **Today card**: a single CTA always targets the next logical session (first non-completed scheduled session, or any in-progress session). The goal-reached state is an inline banner, not a layout swap.
+- **Extra sessions**: unlocked only after all scheduled daily sessions are completed. Stored as `session-N` ids with `N > sessionsPerDay`. They are resumable, shown with an `Extra` badge, and **never count toward scheduled progress** (shown separately as `+n extra`).
 - Start a session → goes to Cycle screen.
 - Access to: reconfigure (wizard), change language, **reset whole treatment** (with confirmation).
 - Two operation modes: **Treatment progress** (full tracking) and **Quick timer** (no tracking, timer only). Mode switchable from Settings or Home.
@@ -56,8 +57,8 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
 - Background glow changes color based on position kind (green for positions, yellow for short rest, red for long rest).
 
 ### Tracking
-- Calendar/grid showing per-session, per-day state.
-- Global progress: completed sessions / total (sessionsPerDay × totalDays).
+- Progress grid: **7-column treatment-week rows** (Day 1 first cell). Each day cell shows the day number, a mini progress bar for scheduled completion, and color-coded state (done / in-progress / partial / pending / future; today ring-highlighted). Tapping a cell swaps a persistent detail line below the grid (a hint is shown when nothing is selected — no layout jump).
+- Global progress: completed scheduled sessions / total (sessionsPerDay × totalDays). Extras are excluded from this ratio and shown separately.
 
 ### Persistence (local only)
 - Stored: language, config, start date, completed sessions, history, sound/vibration settings.
@@ -185,6 +186,8 @@ Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 - **Follow the medical protocol defaults**; user config is allowed but defaults must match the Brandt-Daroff protocol.
 - **Mobile-first, high contrast, ≥56px tap targets.**
 - **i18n every user-facing string** via react-i18next; never hardcode display text.
+- **i18n plurals**: use explicit camelCase singular/plural keys (e.g. `dayLeft` / `daysLeft`, `streak` / `streaks`) and pick in code by `count`. Never use `_one`/`_other` suffix keys (snake_case) or nested plural objects (`key: { one, other }` — i18next returns the object and warns).
+- Session/day view-model logic lives in `src/utils/sessions.ts` (`getDaySessionsView`, `getDayProgress`, `getNextSessionId`, `getSessionNumber`); components must not re-derive what counts as an extra session.
 - **Flags as inline SVG**, not emoji (Catalan flag has no emoji).
 - **Prefer editing existing files**; never create documentation files unless asked.
 - **Never commit changes unless explicitly asked.**

@@ -41,6 +41,81 @@ export function countDayCompletedRaw(daySessions: Record<string, SessionStatus> 
   return Object.values(daySessions).filter((s) => s === 'completed').length;
 }
 
+export function getSessionNumber(id: string): number | null {
+  const match = id.match(/^session-(\d+)$/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+export interface DaySessionView {
+  id: string;
+  n: number;
+  status: SessionStatus;
+  isExtra: boolean;
+}
+
+export function getDaySessionsView(
+  daySessions: Record<string, SessionStatus> | undefined,
+  sessionsPerDay: number,
+): DaySessionView[] {
+  const view = new Map<number, DaySessionView>();
+  for (let i = 1; i <= sessionsPerDay; i++) {
+    const id = `session-${i}`;
+    view.set(i, { id, n: i, status: daySessions?.[id] ?? 'pending', isExtra: false });
+  }
+  for (const [id, status] of Object.entries(daySessions ?? {})) {
+    const n = getSessionNumber(id);
+    if (n === null) continue;
+    const existing = view.get(n);
+    if (existing) {
+      existing.status = status;
+    } else {
+      view.set(n, { id, n, status, isExtra: n > sessionsPerDay });
+    }
+  }
+  return [...view.values()].sort((a, b) => a.n - b.n);
+}
+
+export function getNextSessionId(
+  daySessions: Record<string, SessionStatus> | undefined,
+  sessionsPerDay: number,
+): string {
+  const existingNumbers = Object.keys(daySessions ?? {})
+    .map(getSessionNumber)
+    .filter((n): n is number => n !== null);
+  const maxExisting = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+  return `session-${Math.max(maxExisting, sessionsPerDay) + 1}`;
+}
+
+export type DayProgressState = 'done' | 'in-progress' | 'partial' | 'pending';
+
+export interface DayProgress {
+  completedScheduled: number;
+  extrasCompleted: number;
+  hasInProgress: boolean;
+  ratio: number;
+  state: DayProgressState;
+}
+
+export function getDayProgress(
+  daySessions: Record<string, SessionStatus> | undefined,
+  sessionsPerDay: number,
+): DayProgress {
+  const view = getDaySessionsView(daySessions, sessionsPerDay);
+  const completedScheduled = view.filter((s) => !s.isExtra && s.status === 'completed').length;
+  const extrasCompleted = view.filter((s) => s.isExtra && s.status === 'completed').length;
+  const hasInProgress = view.some((s) => s.status === 'in-progress');
+  const ratio = sessionsPerDay > 0 ? completedScheduled / sessionsPerDay : 0;
+  const state: DayProgressState =
+    sessionsPerDay > 0 && completedScheduled >= sessionsPerDay
+      ? 'done'
+      : hasInProgress
+        ? 'in-progress'
+        : completedScheduled > 0
+          ? 'partial'
+          : 'pending';
+  return { completedScheduled, extrasCompleted, hasInProgress, ratio, state };
+}
+
 export function countCompletedDays(
   sessions: SessionMap,
   config: TreatmentConfig,

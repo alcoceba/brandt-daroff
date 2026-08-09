@@ -6,7 +6,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { useBeepCues } from '@/hooks/useBeepCues';
 import { playBeep, playBeepHigh, playPositionCue, playRestCue } from '@/utils/sound';
 import { cueChange } from '@/utils/vibration';
-import { countCompletedSessions } from '@/utils/sessions';
+import { countCompletedSessions, getSessionNumber } from '@/utils/sessions';
 import type { PositionDef, SessionProgress } from '@/types';
 
 type Dialog = 'none' | 'reset' | 'safety';
@@ -31,10 +31,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const totalCompleted = countCompletedSessions(sessions);
   const extraCompletedCount = Math.max(0, totalCompleted - completedCount);
   const totalSessions = config.sessionsPerDay * config.totalDays;
-  const todayCompletedCount = Object.values(sessions[todayISO()] ?? {}).filter(
-    (s) => s === 'completed',
-  ).length;
-  const isExtraSession = todayCompletedCount > config.sessionsPerDay;
+  const isExtraSession = (getSessionNumber(sessionId) ?? 0) > config.sessionsPerDay;
 
   const restored = useState<SessionProgress | null>(
     () => useTreatmentStore.getState().progress[todayISO()]?.[sessionId] ?? null,

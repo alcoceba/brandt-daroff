@@ -1,9 +1,9 @@
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flame, Clock, CalendarDays } from 'lucide-react';
+import { Flame, Clock, CalendarDays, Target } from 'lucide-react';
 import { CircularProgress } from '@/components/CircularProgress';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { todayISO } from '@/utils/date';
+import { getDayNumber, todayISO } from '@/utils/date';
 import { formatLongDuration } from '@/utils/format';
 import {
   countCompletedDays,
@@ -36,18 +36,23 @@ export const ProgressSummary = memo(function ProgressSummary() {
   );
   const investedSeconds = useMemo(() => sumInvestedSeconds(sessionDurations), [sessionDurations]);
   const investedLabel = formatLongDuration(investedSeconds);
+  const extrasCompleted = Math.max(0, countCompletedSessions(sessions) - completedSessions);
 
-  const daysLeft = Math.max(0, config.totalDays - completedDays);
+  const rawDayNumber = useMemo(() => {
+    if (!startDate) return 1;
+    const todayTime = new Date(`${today}T00:00:00`).getTime();
+    const startTime = new Date(`${startDate}T00:00:00`).getTime();
+    return Math.floor((todayTime - startTime) / 86_400_000) + 1;
+  }, [startDate, today]);
+
+  const currentDayNumber = startDate ? getDayNumber(startDate, config.totalDays) : 1;
+  const daysLeft = Math.max(0, config.totalDays - currentDayNumber + 1);
+  const sessionsToGo = Math.max(0, totalSessions - completedSessions);
 
   const finished = useMemo(() => {
     if (!startDate) return false;
-    const todayDayNumber =
-      Math.floor(
-        (new Date(`${today}T00:00:00`).getTime() - new Date(`${startDate}T00:00:00`).getTime()) /
-          86_400_000,
-      ) + 1;
-    return todayDayNumber > config.totalDays || completedDays >= config.totalDays;
-  }, [startDate, today, completedDays, config.totalDays]);
+    return rawDayNumber > config.totalDays || completedDays >= config.totalDays;
+  }, [startDate, rawDayNumber, completedDays, config.totalDays]);
 
   if (!startDate) return null;
 
@@ -64,23 +69,35 @@ export const ProgressSummary = memo(function ProgressSummary() {
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
           {streak > 0 && (
-            <span className="inline-flex items-center gap-1" aria-label={t('home.streak', { count: streak })}>
+            <span className="inline-flex items-center gap-1" aria-label={streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}>
               <Flame size={12} className="text-amber-400" />
-              {t('home.streak', { count: streak })}
+              {streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
             </span>
           )}
           <span className="inline-flex items-center gap-1" aria-label={t('home.timeInvested')}>
             <Clock size={12} className="text-brand-400" />
             {investedLabel}
           </span>
+          {extrasCompleted > 0 && (
+            <span className="inline-flex items-center gap-1 font-medium text-brand-400" aria-label={extrasCompleted === 1 ? t('home.extraDone', { count: extrasCompleted }) : t('home.extrasDone', { count: extrasCompleted })}>
+              <Target size={12} className="text-brand-400" />
+              {extrasCompleted === 1 ? t('home.extraDone', { count: extrasCompleted }) : t('home.extrasDone', { count: extrasCompleted })}
+            </span>
+          )}
         </div>
 
         {!finished && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
-            <span className="inline-flex items-center gap-1" aria-label={t('home.daysLeft', { count: daysLeft })}>
+            <span className="inline-flex items-center gap-1" aria-label={daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })}>
               <CalendarDays size={12} className="text-slate-400" />
-              {t('home.daysLeft', { count: daysLeft })}
+              {daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })}
             </span>
+            {sessionsToGo > 0 && (
+              <span className="inline-flex items-center gap-1 font-medium text-brand-400" aria-label={sessionsToGo === 1 ? t('home.sessionToGo', { count: sessionsToGo }) : t('home.sessionsToGo', { count: sessionsToGo })}>
+                <Target size={12} className="text-brand-400" />
+                {sessionsToGo === 1 ? t('home.sessionToGo', { count: sessionsToGo }) : t('home.sessionsToGo', { count: sessionsToGo })}
+              </span>
+            )}
           </div>
         )}
       </div>

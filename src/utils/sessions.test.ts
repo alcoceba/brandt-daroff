@@ -6,8 +6,12 @@ import {
   computeStreak,
   estimatedSessionSeconds,
   sumInvestedSeconds,
+  getSessionNumber,
+  getDaySessionsView,
+  getNextSessionId,
+  getDayProgress,
 } from './sessions';
-import type { SessionMap, SessionDurations, TreatmentConfig } from '@/types';
+import type { SessionMap, SessionDurations, SessionStatus, TreatmentConfig } from '@/types';
 
 describe('sessions utilities', () => {
   describe('countCompletedSessions', () => {
@@ -143,6 +147,111 @@ describe('sessions utilities', () => {
       };
       // 5 cycles * (2*30 + 30) + 4 * 120 = 5 * 90 + 480 = 930
       expect(estimatedSessionSeconds(config)).toBe(930);
+    });
+  });
+
+  describe('getSessionNumber', () => {
+    it('parses session ids', () => {
+      expect(getSessionNumber('session-1')).toBe(1);
+      expect(getSessionNumber('session-12')).toBe(12);
+      expect(getSessionNumber('foo')).toBeNull();
+    });
+  });
+
+  describe('getDaySessionsView', () => {
+    it('returns scheduled slots as pending when empty', () => {
+      const view = getDaySessionsView(undefined, 3);
+      expect(view.map((s) => s.id)).toEqual(['session-1', 'session-2', 'session-3']);
+      expect(view.every((s) => s.status === 'pending' && !s.isExtra)).toBe(true);
+    });
+
+    it('marks sessions beyond sessionsPerDay as extra and sorts by number', () => {
+      const daySessions: Record<string, SessionStatus> = {
+        'session-1': 'completed',
+        'session-4': 'in-progress',
+      };
+      const view = getDaySessionsView(daySessions, 3);
+      expect(view.map((s) => [s.n, s.status, s.isExtra])).toEqual([
+        [1, 'completed', false],
+        [2, 'pending', false],
+        [3, 'pending', false],
+        [4, 'in-progress', true],
+      ]);
+    });
+
+    it('ignores ids that are not session ids', () => {
+      const view = getDaySessionsView({ other: 'completed' }, 1);
+      expect(view).toHaveLength(1);
+      expect(view[0].id).toBe('session-1');
+    });
+  });
+
+  describe('getNextSessionId', () => {
+    it('returns the first extra id when empty', () => {
+      expect(getNextSessionId(undefined, 3)).toBe('session-4');
+    });
+
+    it('skips existing sessions including in-progress extras', () => {
+      const daySessions: Record<string, SessionStatus> = {
+        'session-1': 'completed',
+        'session-2': 'completed',
+        'session-3': 'completed',
+        'session-4': 'in-progress',
+      };
+      expect(getNextSessionId(daySessions, 3)).toBe('session-5');
+    });
+
+    it('never returns a scheduled id', () => {
+      expect(getNextSessionId({ 'session-1': 'completed' }, 3)).toBe('session-4');
+    });
+  });
+
+  describe('getDayProgress', () => {
+    it('is pending when nothing is done', () => {
+      const progress = getDayProgress(undefined, 3);
+      expect(progress).toEqual({
+        completedScheduled: 0,
+        extrasCompleted: 0,
+        hasInProgress: false,
+        ratio: 0,
+        state: 'pending',
+      });
+    });
+
+    it('is partial when some scheduled sessions are completed', () => {
+      const progress = getDayProgress({ 'session-1': 'completed' }, 3);
+      expect(progress.state).toBe('partial');
+      expect(progress.ratio).toBeCloseTo(1 / 3);
+    });
+
+    it('is in-progress when any session is in progress', () => {
+      const progress = getDayProgress({ 'session-2': 'in-progress' }, 3);
+      expect(progress.state).toBe('in-progress');
+      expect(progress.hasInProgress).toBe(true);
+    });
+
+    it('is done when all scheduled sessions are completed and counts extras separately', () => {
+      const progress = getDayProgress(
+        {
+          'session-1': 'completed',
+          'session-2': 'completed',
+          'session-3': 'completed',
+          'session-4': 'completed',
+        },
+        3,
+      );
+      expect(progress.state).toBe('done');
+      expect(progress.completedScheduled).toBe(3);
+      expect(progress.extrasCompleted).toBe(1);
+      expect(progress.ratio).toBe(1);
+    });
+
+    it('extras do not count toward the scheduled ratio', () => {
+      const progress = getDayProgress({ 'session-4': 'completed' }, 3);
+      expect(progress.completedScheduled).toBe(0);
+      expect(progress.extrasCompleted).toBe(1);
+      expect(progress.ratio).toBe(0);
+      expect(progress.state).toBe('pending');
     });
   });
 
