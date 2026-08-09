@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 interface CircularProgressProps {
   value: number;
@@ -20,7 +20,13 @@ export const CircularProgress = memo(function CircularProgress({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.min(Math.max(value, 0), 1);
-  const offset = circumference * (1 - clamped);
+  const [animatedValue, setAnimatedValue] = useState(0);
+
+  useEffect(() => {
+    setAnimatedValue(clamped);
+  }, [clamped]);
+
+  const offset = circumference * (1 - animatedValue);
 
   return (
     <div

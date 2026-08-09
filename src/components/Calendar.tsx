@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -69,6 +69,11 @@ export const Calendar = memo(function Calendar() {
   const totalSessions = config.sessionsPerDay * config.totalDays;
   const completedCount = countCompletedSessions(sessions, config.sessionsPerDay);
   const pctDone = totalSessions ? Math.round((completedCount / totalSessions) * 100) : 0;
+  const [animatedPct, setAnimatedPct] = useState(0);
+
+  useEffect(() => {
+    setAnimatedPct(pctDone);
+  }, [pctDone]);
 
   const weeks = useMemo(() => {
     const chunks: typeof dayInfos[] = [];
@@ -117,7 +122,7 @@ export const Calendar = memo(function Calendar() {
         <div className="relative mb-4 h-2.5 overflow-hidden rounded-full bg-slate-700">
           <div
             className="h-full rounded-full bg-state-done transition-all duration-700"
-            style={{ width: `${pctDone}%` }}
+            style={{ width: `${animatedPct}%` }}
           />
           {MILESTONES.map((pct) => (
             <div

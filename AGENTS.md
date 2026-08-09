@@ -198,3 +198,4 @@ Before finishing any task:
 - Run `npm run lint` and `npm run typecheck`; fix any errors.
 - Run `npm run build` to confirm the build passes.
 - Manually exercise the affected flow (onboarding → wizard → Home → a full cycle → tracking) at a narrow mobile viewport.
+- Use the dev scenario seeder for fast state regression: `npm run dev`, then open `http://localhost:5173/brandt-daroff/?dev=scenarios` and validate the affected scenario(s).
