@@ -78,7 +78,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   }, [stop, onExit]);
 
   const advance = useCallback((skipTransition = false) => {
-    stop();
     setIntentionallyPaused(false);
     if (positionIndex < POSITIONS.length - 1) {
       const isLastCycle = cycleIndex === config.cyclesPerSession - 1;
@@ -111,7 +110,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     setSessionStatus(todayISO(), sessionId, 'completed');
     setSessionDuration(todayISO(), sessionId, sessionElapsedSeconds());
     setShowCompletion(true);
-  }, [stop, positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, setSessionDuration, sessionId]);
+  }, [positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, setSessionDuration, sessionId]);
 
   const advanceRef = useRef(advance);
   advanceRef.current = advance;

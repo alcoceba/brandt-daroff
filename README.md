@@ -84,6 +84,24 @@ For development, use watch mode:
 npm run test:watch
 ```
 
+## Development
+
+### Manual regression scenarios
+
+To quickly test UI states that would otherwise require days of sessions, use the dev scenario seeder. Start the dev server:
+
+```bash
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:5173/brandt-daroff/?dev=scenarios
+```
+
+Click any scenario to overwrite `localStorage` and reload the app in that state (e.g. *Treatment complete*, *Day 5 / 14 — on track*, *In-progress session*). This screen is only available in development mode.
+
 ## Tech stack
 
 - **React 18 + Vite 5 + TypeScript**
