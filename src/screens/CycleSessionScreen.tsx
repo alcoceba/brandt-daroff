@@ -99,7 +99,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
           />
         )}
       </div>
-      <header className="relative z-10 flex items-center gap-3">
+      <header className="relative z-30 flex items-center gap-3">
         <BackButton onBack={handleBack} />
         <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
         <div className="relative ml-auto flex items-center">
