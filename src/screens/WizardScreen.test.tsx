@@ -55,7 +55,7 @@ describe('WizardScreen', () => {
       goToDisclaimer();
       fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
       expect(screen.getByText('info.title')).toBeInTheDocument();
-      expect(screen.getByText('wizard.aboutStep1')).toBeInTheDocument();
+      expect(screen.getAllByText('wizard.aboutStep1').length).toBeGreaterThanOrEqual(1);
     });
   });
 

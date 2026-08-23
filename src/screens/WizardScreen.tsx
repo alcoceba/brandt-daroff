@@ -5,6 +5,7 @@ import {
   Calendar,
   CalendarDays,
   Check,
+  ChevronLeft,
   Clock,
   Coffee,
   Ear,
@@ -26,6 +27,7 @@ import { LANGUAGES } from '@/constants/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { Stepper } from '@/components/core/Stepper';
 import { StepDots } from '@/components/core/StepDots';
+import { AboutStepCards } from '@/components/AboutStepCards';
 import { FlagIcon } from '@/components/FlagIcon';
 
 interface Field {
@@ -112,7 +114,8 @@ export const WizardScreen = memo(function WizardScreen({
     (key) => storedConfig[key] === DEFAULT_CONFIG[key],
   );
 
-  const [step, setStep] = useState<Step>(mode === 'onboarding' ? 'language' : 'choice');
+  const isReconfigure = mode === 'reconfigure';
+  const [step, setStep] = useState<Step>(isReconfigure ? 'choice' : 'language');
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(detectedLanguage ?? storedLanguage);
   const [selectedChoice, setSelectedChoice] = useState<'defaults' | 'manual'>(() => 'defaults');
   const [values, setValues] = useState<TreatmentConfig>(() => ({ ...DEFAULT_CONFIG, ...storedConfig }));
@@ -164,13 +167,59 @@ export const WizardScreen = memo(function WizardScreen({
       : dotsCurrent === 'about'
         ? 'bg-amber-400/60'
         : 'bg-brand-500/60';
-  const dots = (
-    <StepDots
-      steps={ONBOARDING_STEPS}
-      current={dotsCurrent}
-      activeClassName={dotsActiveClass}
-      completedClassName={dotsCompletedClassName}
-    />
+
+  const handleBack = () => {
+    if (isReconfigure) {
+      if (step === 'choice') {
+        _onBack?.();
+      } else if (step === 'manual') {
+        setStep('choice');
+      }
+      return;
+    }
+
+    switch (step) {
+      case 'disclaimer':
+        setStep('language');
+        break;
+      case 'about':
+      case 'choice':
+        setStep('disclaimer');
+        break;
+      case 'about-detail':
+        setStep('about');
+        break;
+      case 'manual':
+        setStep('choice');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const wizardFooter = (
+    <div className="flex items-center gap-3">
+      {step !== 'language' && (
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+          aria-label={t('common.back')}
+        >
+          <ChevronLeft size={24} />
+        </button>
+      )}
+      {!isReconfigure && (
+        <div className="flex-1">
+          <StepDots
+            steps={ONBOARDING_STEPS}
+            current={dotsCurrent}
+            activeClassName={dotsActiveClass}
+            completedClassName={dotsCompletedClassName}
+          />
+        </div>
+      )}
+    </div>
   );
 
   const preferredLanguage = detectedLanguage ?? storedLanguage;
@@ -219,7 +268,7 @@ export const WizardScreen = memo(function WizardScreen({
             </span>
           </button>
         </div>
-        {dots}
+        {wizardFooter}
       </div>
     );
   }
@@ -248,14 +297,14 @@ export const WizardScreen = memo(function WizardScreen({
             {t('wizard.disclaimerContinue')}
           </button>
         </div>
-        {dots}
+        {wizardFooter}
       </div>
     );
   }
 
   if (step === 'about') {
     return (
-      <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-6 px-3 py-6 sm:px-6">
+      <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-6 px-3 py-6 sm:px-6">
         <div className="flex flex-1 flex-col justify-center gap-6">
           <OnboardingHeader
             icon={<BookOpen size={28} className="text-amber-400" />}
@@ -263,27 +312,8 @@ export const WizardScreen = memo(function WizardScreen({
             subtitle={t('wizard.aboutSubtitle')}
             iconClassName="border-amber-500/40 bg-amber-500/15 shadow-amber-500/10"
           />
-          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory sm:grid sm:grid-cols-3">
-            {[1, 2, 3, 4, 5].map((stepNumber) => (
-              <div
-                key={stepNumber}
-                className="snap-start flex min-w-[130px] flex-1 flex-col gap-2 rounded-xl border border-slate-700 bg-slate-800 p-3"
-              >
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-slate-900">
-                  {stepNumber}
-                </span>
-                <img
-                  src={`${import.meta.env.BASE_URL}steps/step-${stepNumber}.png`}
-                  alt=""
-                  className="h-28 w-full object-contain"
-                />
-                <p className="text-xs font-medium leading-snug text-slate-300">
-                  {t(`wizard.aboutStep${stepNumber}`)}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-col gap-3">
+          <AboutStepCards />
+          <div className="mx-auto flex w-full max-w-[480px] flex-col gap-3">
             <button
               type="button"
               onClick={() => setStep('about-detail')}
@@ -304,7 +334,7 @@ export const WizardScreen = memo(function WizardScreen({
             </button>
           </div>
         </div>
-        {dots}
+        {wizardFooter}
       </div>
     );
   }
@@ -314,6 +344,7 @@ export const WizardScreen = memo(function WizardScreen({
       <div className="mx-auto flex w-full max-w-none flex-1 flex-col gap-4 px-3 py-6 sm:px-6">
         <h1 className="text-xl font-bold text-white">{t('info.title')}</h1>
         <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-2">
+          <AboutStepCards />
           <InfoSection icon={<Ear size={18} className="text-blue-400" />} title={t('info.whatIsVPPBTitle')}>
             <p>{t('info.whatIsVPPBBody')}</p>
           </InfoSection>
@@ -350,13 +381,12 @@ export const WizardScreen = memo(function WizardScreen({
             <ArrowRight size={18} />
           </span>
         </button>
-        {dots}
+        {wizardFooter}
       </div>
     );
   }
 
   if (step === 'choice') {
-    const isReconfigure = mode === 'reconfigure';
     const confirmLabel = isReconfigure ? t('common.confirm') : t('wizard.choiceConfirm');
     return (
       <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col justify-center gap-6 px-3 py-6 sm:px-6">
@@ -428,7 +458,7 @@ export const WizardScreen = memo(function WizardScreen({
             </span>
           </button>
         </div>
-        {!isReconfigure && dots}
+        {wizardFooter}
       </div>
     );
   }
