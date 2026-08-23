@@ -4,15 +4,16 @@ import { Github } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  hideFooter?: boolean;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children, hideFooter = false }: AppLayoutProps) {
   return (
     <div className="mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
       <main className="flex flex-1 flex-col">
         <div className="flex min-h-full flex-col">{children}</div>
       </main>
-      <GlobalFooter />
+      {!hideFooter && <GlobalFooter />}
     </div>
   );
 }
@@ -20,7 +21,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 function GlobalFooter() {
   const { t } = useTranslation();
   return (
-    <footer className="shrink-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-5 py-3 text-center text-xs text-slate-500 sm:justify-between">
+    <footer className="shrink-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-800 px-3 py-3 text-center text-xs text-slate-500 sm:justify-between sm:px-5">
       <span>
         {t('footer.copyright', { year: new Date().getFullYear() })} — {t('footer.privacyNote')}
       </span>

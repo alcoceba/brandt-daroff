@@ -104,7 +104,7 @@ export const Calendar = memo(function Calendar() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold text-slate-300">
           <TrendingUp size={16} className="text-brand-400" strokeWidth={2} />

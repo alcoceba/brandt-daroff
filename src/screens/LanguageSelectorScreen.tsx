@@ -10,7 +10,7 @@ interface LanguageSelectorScreenProps {
 
 export const LanguageSelectorScreen = memo(function LanguageSelectorScreen({ onSelect }: LanguageSelectorScreenProps) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 p-6">
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 px-3 py-6 sm:px-6">
       <Logo />
       <ul className="flex w-full max-w-sm flex-col gap-3">
         {LANGUAGES.map(({ code, label }) => {

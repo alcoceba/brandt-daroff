@@ -37,8 +37,8 @@ interface ScenarioState {
   skipSafetyWarning: boolean;
 }
 
-const STORAGE_KEY = 'brandt-daroff-store';
-const STORAGE_VERSION = 5;
+export const STORAGE_KEY = 'brandt-daroff-store';
+export const STORAGE_VERSION = 5;
 
 function emptyState(): ScenarioState {
   return {

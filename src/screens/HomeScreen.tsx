@@ -144,7 +144,7 @@ export const HomeScreen = memo(function HomeScreen({
   }, [completedToday, config.sessionsPerDay, t]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-5">
+    <div className="flex flex-1 flex-col gap-4 px-3 py-5 sm:px-5">
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">

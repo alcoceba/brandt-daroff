@@ -26,6 +26,20 @@ export default {
       minHeight: {
         touch: '56px',
       },
+      keyframes: {
+        'arrow-bounce': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(4px)' },
+        },
+        'pulse-soft': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.06)', opacity: '0.92' },
+        },
+      },
+      animation: {
+        'arrow-bounce': 'arrow-bounce 1.5s ease-in-out infinite',
+        'pulse-soft': 'pulse-soft 2.6s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

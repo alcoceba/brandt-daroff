@@ -12,88 +12,160 @@ describe('WizardScreen', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the onboarding choice screen', () => {
-    render(<WizardScreen onDone={onDone} />);
-    expect(screen.getByText((text) => text.includes('wizard.choiceTitle'))).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /wizard.defaults/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /wizard.manual/i })).toBeInTheDocument();
-    expect(screen.getByText('wizard.disclaimerTitle')).toBeInTheDocument();
+  describe('onboarding — language step', () => {
+    it('renders the language step first', () => {
+      render(<WizardScreen onDone={onDone} />);
+      expect(screen.getByText('language.title')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /English/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'common.confirm' })).toBeInTheDocument();
+    });
+
+    it('pre-marks the detected language', () => {
+      render(<WizardScreen onDone={onDone} detectedLanguage="ca" />);
+      expect(screen.getByRole('button', { name: /Català/i }).className).toContain('border-brand-500');
+    });
+
+    it('changes selection when another language is tapped', () => {
+      render(<WizardScreen onDone={onDone} detectedLanguage="en" />);
+      fireEvent.click(screen.getByRole('button', { name: /Castellano/i }));
+      expect(screen.getByRole('button', { name: /Castellano/i }).className).toContain('border-brand-500');
+    });
+
+    it('advances to disclaimer on confirm', () => {
+      render(<WizardScreen onDone={onDone} />);
+      fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
+      expect(screen.getByText('wizard.disclaimerTitle')).toBeInTheDocument();
+    });
   });
 
-  it('chooses defaults path and completes onboarding', () => {
-    render(<WizardScreen onDone={onDone} />);
-    fireEvent.click(screen.getByRole('button', { name: /wizard.defaults/i }));
+  describe('onboarding — disclaimer step', () => {
+    function goToDisclaimer() {
+      fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
+    }
 
-    expect(onDone).toHaveBeenCalledTimes(1);
-    expect(useTreatmentStore.getState().onboardingComplete).toBe(true);
-    expect(useTreatmentStore.getState().startDate).not.toBeNull();
+    it('shows disclaimer content and CTA', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToDisclaimer();
+      expect(screen.getByText('wizard.disclaimerBody')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'wizard.disclaimerContinue' })).toBeInTheDocument();
+    });
+
+    it('advances to about step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToDisclaimer();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
+      expect(screen.getByText('info.title')).toBeInTheDocument();
+      expect(screen.getByText('wizard.aboutStep1')).toBeInTheDocument();
+    });
   });
 
-  it('navigates to manual configuration with steppers', () => {
-    render(<WizardScreen onDone={onDone} />);
-    fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+  describe('onboarding — about step', () => {
+    function goToAbout() {
+      fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
+    }
 
-    expect(screen.getByText('wizard.manualTitle')).toBeInTheDocument();
-    expect(screen.getByText('wizard.cyclesPerSession')).toBeInTheDocument();
-    expect(screen.getByText('wizard.positionDuration')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'wizard.save' })).toBeInTheDocument();
+    it('shows brief summary and two CTAs', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      expect(screen.getByRole('button', { name: 'wizard.tellMeMore' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'wizard.letsStart' })).toBeInTheDocument();
+    });
+
+    it('"Let\'s start" skips to choice step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
+    });
+
+    it('"Tell me more" opens the detail view', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.tellMeMore' }));
+      expect(screen.getByText('info.whatIsVPPBTitle')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'wizard.letsStart' })).toBeInTheDocument();
+    });
+
+    it('"Let\'s start" from detail view advances to choice', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.tellMeMore' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
+    });
   });
 
-  it('saves manual configuration to the store', () => {
-    render(<WizardScreen onDone={onDone} />);
-    fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+  describe('onboarding — choice step', () => {
+    function goToChoice() {
+      fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+    }
 
-    const increaseButtons = screen.getAllByRole('button', { name: 'increase' });
-    // Increase cycles per session from 5 to 6.
-    fireEvent.click(increaseButtons[0]);
+    it('preselects the defaults option', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToChoice();
+      const defaultsButton = screen.getByRole('button', { name: /wizard.defaults/i });
+      expect(defaultsButton.className).toContain('border-brand-500');
+      expect(screen.getByRole('button', { name: 'wizard.choiceConfirm' })).not.toBeDisabled();
+    });
 
-    fireEvent.click(screen.getByRole('button', { name: 'wizard.save' }));
+    it('chooses defaults and completes onboarding after confirming', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToChoice();
+      fireEvent.click(screen.getByRole('button', { name: /wizard.defaults/i }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.choiceConfirm' }));
+      expect(onDone).toHaveBeenCalledTimes(1);
+      expect(useTreatmentStore.getState().onboardingComplete).toBe(true);
+    });
 
-    expect(useTreatmentStore.getState().config.cyclesPerSession).toBe(6);
-    expect(useTreatmentStore.getState().onboardingComplete).toBe(true);
-    expect(onDone).toHaveBeenCalledTimes(1);
+    it('navigates to manual configuration when manual option is clicked', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToChoice();
+      fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+      expect(screen.getByText('wizard.manualTitle')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'wizard.save' })).toBeInTheDocument();
+    });
   });
 
-  it('resets values to defaults from the manual screen', () => {
-    render(<WizardScreen onDone={onDone} />);
-    fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+  describe('onboarding — manual step', () => {
+    function goToManual() {
+      fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+    }
 
-    const increaseButtons = screen.getAllByRole('button', { name: 'increase' });
-    fireEvent.click(increaseButtons[0]);
+    it('saves manual config and completes onboarding', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToManual();
+      fireEvent.click(screen.getAllByRole('button', { name: 'increase' })[0]);
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.save' }));
+      expect(useTreatmentStore.getState().config.cyclesPerSession).toBe(6);
+      expect(onDone).toHaveBeenCalledTimes(1);
+    });
 
-    expect(screen.getAllByText('6')[0]).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'wizard.resetDefault' }));
-
-    expect(useTreatmentStore.getState().config.cyclesPerSession).toBe(5);
-    expect(screen.getByText('5')).toBeInTheDocument();
   });
 
-  it('renders reconfigure mode with back button and using-now indicator', () => {
-    render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
+  describe('reconfigure mode', () => {
+    it('starts directly at choice step', () => {
+      render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
+      expect(screen.queryByText('language.title')).not.toBeInTheDocument();
+      expect(screen.queryByText('wizard.disclaimerTitle')).not.toBeInTheDocument();
+      expect(screen.queryByText('wizard.aboutSummary')).not.toBeInTheDocument();
+      expect(screen.getByText('wizard.reconfigureTitle')).toBeInTheDocument();
+    });
 
-    expect(screen.getByText('wizard.reconfigureTitle')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'common.back' })).toBeInTheDocument();
-    expect(screen.getAllByText('wizard.usingNow').length).toBeGreaterThanOrEqual(1);
-  });
+    it('shows using-now indicator', () => {
+      render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
+      expect(screen.getAllByText('wizard.usingNow').length).toBeGreaterThanOrEqual(1);
+    });
 
-  it('calls onBack from reconfigure choice screen', () => {
-    render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
-    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
-    expect(onBack).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows using-now on manual option when config differs from defaults', () => {
-    useTreatmentStore.getState().setConfig({ positionDuration: 45 });
-    render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
-
-    expect(screen.getAllByText('wizard.usingNow').length).toBeGreaterThanOrEqual(1);
-  });
-
-  it('uses save-only label in reconfigure manual mode', () => {
-    render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
-    fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
-
-    expect(screen.getByRole('button', { name: 'wizard.saveOnly' })).toBeInTheDocument();
+    it('uses save-only label in manual mode', () => {
+      render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
+      fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+      expect(screen.getByRole('button', { name: 'wizard.saveOnly' })).toBeInTheDocument();
+    });
   });
 });

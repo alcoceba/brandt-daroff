@@ -88,7 +88,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   }
 
   return (
-    <div className="relative flex flex-1 flex-col gap-3 p-4 sm:gap-4 sm:p-5 min-h-dvh sm:min-h-0">
+    <div className="relative flex flex-1 flex-col gap-3 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5 min-h-dvh sm:min-h-0">
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div
           className={`absolute left-1/2 top-1/2 h-[50rem] w-[50rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px] transition-all duration-700 animate-glow-drift ${glowClass}`}
