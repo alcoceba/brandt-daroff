@@ -20,7 +20,7 @@ export const StepDots = memo(function StepDots({
       {steps.map((s, i) => (
         <span
           key={s}
-          className={`h-2 rounded-full transition-all duration-300 ${
+          className={`h-2 rounded-full transition-all duration-300 ease-out ${
             i === idx
               ? `w-6 ${activeClassName}`
               : i < idx

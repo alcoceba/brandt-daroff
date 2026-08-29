@@ -55,7 +55,14 @@ describe('WizardScreen', () => {
       goToDisclaimer();
       fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
       expect(screen.getByText('info.title')).toBeInTheDocument();
-      expect(screen.getAllByText('wizard.aboutStep1').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('wizard.aboutSummary')).toBeInTheDocument();
+    });
+
+    it('back button returns to language step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToDisclaimer();
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByText('language.title')).toBeInTheDocument();
     });
   });
 
@@ -69,13 +76,13 @@ describe('WizardScreen', () => {
       render(<WizardScreen onDone={onDone} />);
       goToAbout();
       expect(screen.getByRole('button', { name: 'wizard.tellMeMore' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'wizard.letsStart' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'wizard.aboutContinue' })).toBeInTheDocument();
     });
 
     it('"Let\'s start" skips to choice step', () => {
       render(<WizardScreen onDone={onDone} />);
       goToAbout();
-      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.aboutContinue' }));
       expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
     });
 
@@ -94,13 +101,36 @@ describe('WizardScreen', () => {
       fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
       expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
     });
+
+    it('back button returns to disclaimer step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByText('wizard.disclaimerTitle')).toBeInTheDocument();
+    });
+
+    it('detail view shows step infographics', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.tellMeMore' }));
+      expect(screen.getByText('info.whatIsVPPBTitle')).toBeInTheDocument();
+      expect(screen.getAllByText('wizard.aboutStep1').length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('back button from detail view returns to about step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToAbout();
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.tellMeMore' }));
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByRole('button', { name: 'wizard.tellMeMore' })).toBeInTheDocument();
+    });
   });
 
   describe('onboarding — choice step', () => {
     function goToChoice() {
       fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
       fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
-      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.aboutContinue' }));
     }
 
     it('preselects the defaults option', () => {
@@ -127,13 +157,20 @@ describe('WizardScreen', () => {
       expect(screen.getByText('wizard.manualTitle')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'wizard.save' })).toBeInTheDocument();
     });
+
+    it('back button returns to about step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToChoice();
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByRole('button', { name: 'wizard.tellMeMore' })).toBeInTheDocument();
+    });
   });
 
   describe('onboarding — manual step', () => {
     function goToManual() {
       fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
       fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
-      fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.aboutContinue' }));
       fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
     }
 
@@ -146,6 +183,12 @@ describe('WizardScreen', () => {
       expect(onDone).toHaveBeenCalledTimes(1);
     });
 
+    it('back button returns to choice step', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToManual();
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
+    });
   });
 
   describe('reconfigure mode', () => {
@@ -153,7 +196,7 @@ describe('WizardScreen', () => {
       render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
       expect(screen.queryByText('language.title')).not.toBeInTheDocument();
       expect(screen.queryByText('wizard.disclaimerTitle')).not.toBeInTheDocument();
-      expect(screen.queryByText('wizard.aboutSummary')).not.toBeInTheDocument();
+      expect(screen.queryByText('wizard.aboutStep1')).not.toBeInTheDocument();
       expect(screen.getByText('wizard.reconfigureTitle')).toBeInTheDocument();
     });
 
@@ -166,6 +209,12 @@ describe('WizardScreen', () => {
       render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
       fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
       expect(screen.getByRole('button', { name: 'wizard.saveOnly' })).toBeInTheDocument();
+    });
+
+    it('back button from choice step calls onBack', () => {
+      render(<WizardScreen onDone={onDone} onBack={onBack} mode="reconfigure" />);
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(onBack).toHaveBeenCalledTimes(1);
     });
   });
 });

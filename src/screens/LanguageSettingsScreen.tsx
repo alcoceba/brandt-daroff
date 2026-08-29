@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '@/constants/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { BackButton } from '@/components/core/BackButton';
-import { FlagIcon } from '@/components/FlagIcon';
 
 interface LanguageSettingsScreenProps {
   onBack: () => void;
@@ -28,13 +27,12 @@ export const LanguageSettingsScreen = memo(function LanguageSettingsScreen({ onB
               key={code}
               type="button"
               onClick={() => setLanguage(code)}
-              className={`flex w-full min-h-touch items-center gap-4 rounded-xl border px-4 text-lg font-semibold active:scale-[.99] ${
+              className={`flex w-full min-h-touch items-center gap-3 rounded-xl border px-4 text-lg font-semibold active:scale-[.99] ${
                 active
                   ? 'border-brand-500 bg-brand-600 text-white'
                   : 'border-slate-700 bg-slate-800 text-white'
               }`}
             >
-              <FlagIcon code={code} className="h-7 w-10 shrink-0 overflow-hidden rounded shadow" />
               <span className="flex-1 text-left">{label}</span>
               {active && <span className="text-sm text-brand-50">●</span>}
             </button>

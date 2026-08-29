@@ -56,7 +56,7 @@ describe('App routing', () => {
     passSplash();
     fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
     fireEvent.click(screen.getByRole('button', { name: 'wizard.disclaimerContinue' }));
-    fireEvent.click(screen.getByRole('button', { name: 'wizard.letsStart' }));
+    fireEvent.click(screen.getByRole('button', { name: 'wizard.aboutContinue' }));
     fireEvent.click(screen.getByRole('button', { name: /wizard.defaults/i }));
     fireEvent.click(screen.getByRole('button', { name: 'wizard.choiceConfirm' }));
     expect(screen.getByText('home.title')).toBeInTheDocument();

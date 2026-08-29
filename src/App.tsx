@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ReconfigureScreen } from '@/screens/ReconfigureScreen';
 import i18n from '@/i18n';
 import type { Language, Route } from '@/types';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
@@ -63,13 +64,7 @@ export default function App() {
   let screen: React.ReactNode;
   switch (route) {
     case 'wizard':
-      screen = onboardingComplete ? (
-        <WizardScreen
-          mode="reconfigure"
-          onDone={() => setRoute('home')}
-          onBack={() => setRoute('settings')}
-        />
-      ) : (
+      screen = (
         <WizardScreen
           mode="onboarding"
           detectedLanguage={detectLanguage()}
@@ -92,10 +87,13 @@ export default function App() {
       screen = (
         <SettingsScreen
           onBack={() => setRoute('home')}
-          onReconfigure={() => setRoute('wizard')}
+          onReconfigure={() => setRoute('reconfigure')}
           onFullReset={() => setRoute('wizard')}
         />
       );
+      break;
+    case 'reconfigure':
+      screen = <ReconfigureScreen onBack={() => setRoute('settings')} />;
       break;
     case 'info':
       screen = <InfoScreen onBack={() => setRoute('home')} />;
