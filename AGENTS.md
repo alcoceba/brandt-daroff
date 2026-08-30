@@ -89,8 +89,8 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
 ### Project structure
 ```
 src/
-  main.tsx
   App.tsx
+  main.tsx
   types/
     index.ts
   i18n/
@@ -99,26 +99,54 @@ src/
   store/
     useTreatmentStore.ts
   components/
+    AboutStepCards.tsx
     Calendar.tsx
     CycleProgressDots.tsx
-    FlagIcon.tsx
-    Logo.tsx
     PositionIcon.tsx
     ProgressSummary.tsx
-    CircularProgress.tsx
     SessionCompletionCard.tsx
     Timer.tsx
     core/
       BackButton.tsx
+      CircularProgress.tsx
       ConfirmDialog.tsx
+      Logo.tsx
+      ProgressIndicator.tsx
+      StepDots.tsx
       Stepper.tsx
+    cycle/
+      CycleControls.tsx
+      CyclePositionView.tsx
+      CycleTopBar.tsx
+    home/
+      HomeActions.tsx
+      HomeHeader.tsx
+      HomeActions.tsx
+      MotivationCard.tsx
+      TodaySessionCard.tsx
+      TreatmentCompleteCard.tsx
+    wizard/
+      InfoContent.tsx
+      TreatmentSettingsForm.tsx
+      WizardAboutDetailStep.tsx
+      WizardAboutStep.tsx
+      WizardChoiceStep.tsx
+      WizardDisclaimerStep.tsx
+      WizardHeader.tsx
+      WizardLanguageStep.tsx
+      WizardManualStep.tsx
+      WizardShell.tsx
   screens/
     CycleSessionScreen.tsx
+    DevScenariosScreen.tsx
     HomeScreen.tsx
     InfoScreen.tsx
     LanguageSelectorScreen.tsx
     LanguageSettingsScreen.tsx
+    ReadyScreen.tsx
+    ReconfigureScreen.tsx
     SettingsScreen.tsx
+    SplashScreen.tsx
     WizardScreen.tsx
   layouts/
     AppLayout.tsx
@@ -187,8 +215,8 @@ Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 - **Mobile-first, high contrast, ≥56px tap targets.**
 - **i18n every user-facing string** via react-i18next; never hardcode display text.
 - **i18n plurals**: use explicit camelCase singular/plural keys (e.g. `dayLeft` / `daysLeft`, `streak` / `streaks`) and pick in code by `count`. Never use `_one`/`_other` suffix keys (snake_case) or nested plural objects (`key: { one, other }` — i18next returns the object and warns).
-- Session/day view-model logic lives in `src/utils/sessions.ts` (`getDaySessionsView`, `getDayProgress`, `getNextSessionId`, `getSessionNumber`); components must not re-derive what counts as an extra session.
-- **Flags as inline SVG**, not emoji (Catalan flag has no emoji).
+- Session/day view-model logic lives in `src/utils/sessions.ts` (`getDaySessionsView`, `getDayProgress`, `getNextSessionId`, `getSessionNumber`, `getTreatmentSummary`); components must not re-derive what counts as an extra session.
+- Route transitions use the native **View Transitions API** (`document.startViewTransition`) in `App.tsx`; unsupported browsers fall back to instant navigation.
 - **Prefer editing existing files**; never create documentation files unless asked.
 - **Never commit changes unless explicitly asked.**
 
