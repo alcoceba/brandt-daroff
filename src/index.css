@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    background-color: #0f172a;
+    background-color: #020617;
   }
   html,
   body,
@@ -12,8 +12,8 @@
     @apply min-h-dvh;
   }
   body {
-    @apply bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100 antialiased;
-    background-color: #0f172a;
+    @apply bg-gradient-to-b from-slate-950 to-indigo-900 text-slate-100 antialiased;
+    background-color: #020617;
     -webkit-tap-highlight-color: transparent;
   }
   button {

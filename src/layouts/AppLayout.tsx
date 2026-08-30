@@ -9,7 +9,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, hideFooter = false }: AppLayoutProps) {
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl">
+    <div className="mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 bg-gradient-to-b from-slate-950 to-indigo-900 shadow-xl">
       <main className="flex flex-1 flex-col">
         <div className="flex min-h-full flex-col">{children}</div>
       </main>

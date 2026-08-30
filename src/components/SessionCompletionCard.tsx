@@ -27,7 +27,7 @@ export const SessionCompletionCard = memo(function SessionCompletionCard({
   const timeLabel = formatDuration(elapsedSeconds);
 
   return (
-    <div className="flex flex-1 flex-col gap-3 bg-gradient-to-b from-slate-900 to-slate-800 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5">
+    <div className="flex flex-1 flex-col gap-3 bg-gradient-to-b from-slate-950 to-indigo-900 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5">
       <header className="flex items-center gap-3">
         <BackButton onBack={onDone} />
         <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
