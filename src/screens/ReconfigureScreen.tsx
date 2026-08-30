@@ -5,7 +5,7 @@ import type { TreatmentConfig } from '@/types';
 import { DEFAULT_CONFIG } from '@/constants/treatment';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { BackButton } from '@/components/core/BackButton';
-import { TreatmentSettingsForm } from '@/components/TreatmentSettingsForm';
+import { TreatmentSettingsForm } from '@/components/wizard/TreatmentSettingsForm';
 
 interface ReconfigureScreenProps {
   onBack: () => void;

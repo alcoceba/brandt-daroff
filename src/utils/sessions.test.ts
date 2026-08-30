@@ -10,6 +10,9 @@ import {
   getDaySessionsView,
   getNextSessionId,
   getDayProgress,
+  getTreatmentDayInfos,
+  chunkIntoWeeks,
+  getTreatmentSummary,
 } from './sessions';
 import type { SessionMap, SessionDurations, SessionStatus, TreatmentConfig } from '@/types';
 
@@ -266,6 +269,125 @@ describe('sessions utilities', () => {
 
     it('returns 0 for empty durations', () => {
       expect(sumInvestedSeconds({})).toBe(0);
+    });
+  });
+
+  describe('getTreatmentDayInfos', () => {
+    const config: TreatmentConfig = { sessionsPerDay: 2, totalDays: 3, cyclesPerSession: 5, positionDuration: 30, restBetweenPositions: 30, restBetweenCycles: 120 };
+
+    it('returns one entry per treatment day', () => {
+      const infos = getTreatmentDayInfos('2026-01-14', {}, config, '2026-01-14');
+      expect(infos).toHaveLength(3);
+      expect(infos[0]?.iso).toBe('2026-01-14');
+      expect(infos[0]?.isToday).toBe(true);
+      expect(infos[1]?.isFuture).toBe(true);
+      expect(infos[2]?.isFuture).toBe(true);
+    });
+
+    it('marks future days based on today', () => {
+      const infos = getTreatmentDayInfos('2026-01-14', {}, config, '2026-01-15');
+      expect(infos[0]?.isFuture).toBe(false);
+      expect(infos[1]?.isFuture).toBe(false);
+      expect(infos[2]?.isFuture).toBe(true);
+      expect(infos[1]?.isToday).toBe(true);
+    });
+
+    it('extends display days when sessions exist beyond totalDays', () => {
+      const sessions: SessionMap = { '2026-01-18': { 'session-1': 'completed' } };
+      const infos = getTreatmentDayInfos('2026-01-14', sessions, config, '2026-01-14');
+      expect(infos).toHaveLength(5);
+      expect(infos[4]?.progress.completedScheduled).toBe(1);
+    });
+
+    it('extends display days after treatment is finished', () => {
+      const sessions: SessionMap = { '2026-01-20': { 'session-1': 'completed' } };
+      const infos = getTreatmentDayInfos('2026-01-14', sessions, config, '2026-01-25');
+      expect(infos).toHaveLength(7);
+    });
+
+    it('computes progress for each day', () => {
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed', 'session-2': 'completed' },
+      };
+      const infos = getTreatmentDayInfos('2026-01-14', sessions, config, '2026-01-14');
+      expect(infos[0]?.progress.state).toBe('done');
+      expect(infos[1]?.progress.state).toBe('pending');
+    });
+  });
+
+  describe('chunkIntoWeeks', () => {
+    it('splits items into chunks of 7', () => {
+      const items = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      expect(chunkIntoWeeks(items)).toEqual([
+        [0, 1, 2, 3, 4, 5, 6],
+        [7, 8],
+      ]);
+    });
+
+    it('returns empty array for empty input', () => {
+      expect(chunkIntoWeeks([])).toEqual([]);
+    });
+  });
+
+  describe('getTreatmentSummary', () => {
+    const config: TreatmentConfig = { sessionsPerDay: 2, totalDays: 5, cyclesPerSession: 5, positionDuration: 30, restBetweenPositions: 30, restBetweenCycles: 120 };
+
+    it('returns zeroed summary when startDate is null', () => {
+      const summary = getTreatmentSummary(null, {}, {}, config, '2026-01-14');
+      expect(summary.totalSessions).toBe(10);
+      expect(summary.completedSessions).toBe(0);
+      expect(summary.sessionPct).toBe(0);
+      expect(summary.daysLeft).toBe(5);
+      expect(summary.sessionsToGo).toBe(10);
+      expect(summary.finished).toBe(false);
+    });
+
+    it('computes completion and remaining values', () => {
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed', 'session-2': 'completed' },
+        '2026-01-15': { 'session-1': 'completed' },
+      };
+      const durations: SessionDurations = {
+        '2026-01-14': { 'session-1': 100, 'session-2': 200 },
+      };
+      const summary = getTreatmentSummary('2026-01-14', sessions, durations, config, '2026-01-15');
+      expect(summary.completedSessions).toBe(3);
+      expect(summary.sessionPct).toBe(30);
+      expect(summary.completedDays).toBe(1);
+      expect(summary.streak).toBe(1);
+      expect(summary.investedSeconds).toBe(300);
+      expect(summary.daysLeft).toBe(4);
+      expect(summary.sessionsToGo).toBe(7);
+      expect(summary.finished).toBe(false);
+    });
+
+    it('counts extra sessions separately', () => {
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed', 'session-2': 'completed', 'session-3': 'completed' },
+      };
+      const summary = getTreatmentSummary('2026-01-14', sessions, {}, config, '2026-01-14');
+      expect(summary.completedSessions).toBe(2);
+      expect(summary.extrasCompleted).toBe(1);
+    });
+
+    it('marks treatment as finished when past totalDays', () => {
+      const summary = getTreatmentSummary('2026-01-14', {}, {}, config, '2026-01-25');
+      expect(summary.finished).toBe(true);
+      expect(summary.daysLeft).toBe(1);
+    });
+
+    it('marks treatment as finished when all days completed', () => {
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed', 'session-2': 'completed' },
+        '2026-01-15': { 'session-1': 'completed', 'session-2': 'completed' },
+        '2026-01-16': { 'session-1': 'completed', 'session-2': 'completed' },
+        '2026-01-17': { 'session-1': 'completed', 'session-2': 'completed' },
+        '2026-01-18': { 'session-1': 'completed', 'session-2': 'completed' },
+      };
+      const summary = getTreatmentSummary('2026-01-14', sessions, {}, config, '2026-01-18');
+      expect(summary.finished).toBe(true);
+      expect(summary.completedDays).toBe(5);
+      expect(summary.sessionsToGo).toBe(0);
     });
   });
 });

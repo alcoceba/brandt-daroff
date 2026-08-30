@@ -164,6 +164,23 @@ describe('WizardScreen', () => {
       fireEvent.click(screen.getByLabelText('common.back'));
       expect(screen.getByRole('button', { name: 'wizard.tellMeMore' })).toBeInTheDocument();
     });
+
+    it('resets to defaults and completes onboarding after going back from manual', () => {
+      render(<WizardScreen onDone={onDone} />);
+      goToChoice();
+      fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
+      expect(screen.getByText('wizard.manualTitle')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByLabelText('common.back'));
+      expect(screen.getByText((t) => t.includes('wizard.choiceTitle'))).toBeInTheDocument();
+
+      const defaultsButton = screen.getByRole('button', { name: /wizard.defaults/i });
+      expect(defaultsButton.className).toContain('border-brand-500');
+
+      fireEvent.click(screen.getByRole('button', { name: 'wizard.choiceConfirm' }));
+      expect(onDone).toHaveBeenCalledTimes(1);
+      expect(useTreatmentStore.getState().onboardingComplete).toBe(true);
+    });
   });
 
   describe('onboarding — manual step', () => {

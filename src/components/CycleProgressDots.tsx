@@ -8,36 +8,21 @@ interface CycleProgressDotsProps {
   isPaused?: boolean;
 }
 
-const COMPLETED_COLORS: Record<PositionKind, string> = {
-  sitting: 'bg-brand-500',
-  'lying-right': 'bg-brand-500',
-  'lying-left': 'bg-brand-500',
-  rest: 'bg-yellow-400',
-  'long-rest': 'bg-red-500',
-};
-
-const CURRENT_RING_COLORS: Record<PositionKind, string> = {
-  sitting: 'ring-brand-500',
-  'lying-right': 'ring-brand-500',
-  'lying-left': 'ring-brand-500',
-  rest: 'ring-yellow-400',
-  'long-rest': 'ring-red-500',
-};
-
-const PAUSED_COMPLETED_COLORS: Record<PositionKind, string> = {
-  sitting: 'bg-amber-500',
-  'lying-right': 'bg-amber-500',
-  'lying-left': 'bg-amber-500',
-  rest: 'bg-amber-600',
-  'long-rest': 'bg-red-700',
-};
-
-const PAUSED_CURRENT_RING_COLORS: Record<PositionKind, string> = {
-  sitting: 'ring-amber-500',
-  'lying-right': 'ring-amber-500',
-  'lying-left': 'ring-amber-500',
-  rest: 'ring-amber-600',
-  'long-rest': 'ring-red-700',
+const PALETTES: Record<'active' | 'paused', Record<PositionKind, { completed: string; ring: string }>> = {
+  active: {
+    sitting: { completed: 'bg-brand-500', ring: 'ring-brand-500' },
+    'lying-right': { completed: 'bg-brand-500', ring: 'ring-brand-500' },
+    'lying-left': { completed: 'bg-brand-500', ring: 'ring-brand-500' },
+    rest: { completed: 'bg-yellow-400', ring: 'ring-yellow-400' },
+    'long-rest': { completed: 'bg-red-500', ring: 'ring-red-500' },
+  },
+  paused: {
+    sitting: { completed: 'bg-amber-500', ring: 'ring-amber-500' },
+    'lying-right': { completed: 'bg-amber-500', ring: 'ring-amber-500' },
+    'lying-left': { completed: 'bg-amber-500', ring: 'ring-amber-500' },
+    rest: { completed: 'bg-amber-600', ring: 'ring-amber-600' },
+    'long-rest': { completed: 'bg-red-700', ring: 'ring-red-700' },
+  },
 };
 
 export const CycleProgressDots = memo(function CycleProgressDots({
@@ -46,8 +31,7 @@ export const CycleProgressDots = memo(function CycleProgressDots({
   kind,
   isPaused = false,
 }: CycleProgressDotsProps) {
-  const completedColor = isPaused ? PAUSED_COMPLETED_COLORS[kind] : COMPLETED_COLORS[kind];
-  const currentRingColor = isPaused ? PAUSED_CURRENT_RING_COLORS[kind] : CURRENT_RING_COLORS[kind];
+  const palette = PALETTES[isPaused ? 'paused' : 'active'][kind];
 
   return (
     <div className="flex items-center gap-2 sm:gap-3">
@@ -59,9 +43,9 @@ export const CycleProgressDots = memo(function CycleProgressDots({
             key={i}
             className={`h-2.5 w-2.5 rounded-full transition-all duration-500 ease-out sm:h-3 sm:w-3 ${
               isCompleted
-                ? `scale-100 ${completedColor}`
+                ? `scale-100 ${palette.completed}`
                 : isCurrent
-                  ? `scale-125 ring-2 bg-transparent ${currentRingColor}`
+                  ? `scale-125 ring-2 bg-transparent ${palette.ring}`
                   : 'scale-100 bg-slate-600'
             }`}
           />

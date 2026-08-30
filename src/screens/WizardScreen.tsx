@@ -7,7 +7,7 @@ import { WizardAboutDetailStep } from '@/components/wizard/WizardAboutDetailStep
 import { WizardAboutStep } from '@/components/wizard/WizardAboutStep';
 import { WizardChoiceStep } from '@/components/wizard/WizardChoiceStep';
 import { WizardDisclaimerStep } from '@/components/wizard/WizardDisclaimerStep';
-import { WizardFooter } from '@/components/wizard/WizardFooter';
+import { ProgressIndicator } from '@/components/core/ProgressIndicator';
 import { WizardLanguageStep } from '@/components/wizard/WizardLanguageStep';
 import { WizardManualStep } from '@/components/wizard/WizardManualStep';
 import { WizardShell } from '@/components/wizard/WizardShell';
@@ -104,6 +104,8 @@ export const WizardScreen = memo(function WizardScreen({
   const confirmChoice = () => {
     if (selectedChoice === 'defaults') {
       chooseDefaults();
+    } else if (selectedChoice === 'manual') {
+      setStep('manual');
     }
   };
 
@@ -132,6 +134,7 @@ export const WizardScreen = memo(function WizardScreen({
         break;
       case 'manual':
         setStep('choice');
+        setSelectedChoice('defaults');
         break;
       default:
         break;
@@ -139,10 +142,10 @@ export const WizardScreen = memo(function WizardScreen({
   };
 
   const footer = (
-    <WizardFooter
+    <ProgressIndicator
       showBack={step !== 'language'}
+      showProgress={!isReconfigure}
       onBack={handleBack}
-      showDots={!isReconfigure}
       steps={ONBOARDING_STEPS}
       current={dotsCurrent}
       activeClassName={dotsColors.active}

@@ -150,6 +150,112 @@ export function computeStreak(
   return streak;
 }
 
+function dayOffset(startIso: string, endIso: string): number {
+  const start = new Date(`${startIso}T00:00:00`).getTime();
+  const end = new Date(`${endIso}T00:00:00`).getTime();
+  return Math.floor((end - start) / 86_400_000);
+}
+
+export interface TreatmentDayInfo {
+  dayIdx: number;
+  iso: string;
+  isToday: boolean;
+  isFuture: boolean;
+  progress: DayProgress;
+}
+
+export function getTreatmentDayInfos(
+  startDate: string,
+  sessions: SessionMap,
+  config: TreatmentConfig,
+  todayIso: string,
+): TreatmentDayInfo[] {
+  const todayDayNumber = dayOffset(startDate, todayIso) + 1;
+  const lastSessionDayNumber = Object.keys(sessions).reduce(
+    (max, iso) => Math.max(max, dayOffset(startDate, iso) + 1),
+    0,
+  );
+  const finished = todayDayNumber > config.totalDays;
+  const displayDays = finished
+    ? Math.max(config.totalDays, lastSessionDayNumber)
+    : Math.max(config.totalDays, todayDayNumber, lastSessionDayNumber);
+
+  return Array.from({ length: displayDays }, (_, dayIdx) => {
+    const iso = addDays(startDate, dayIdx);
+    return {
+      dayIdx,
+      iso,
+      isToday: iso === todayIso,
+      isFuture: dayIdx + 1 > todayDayNumber,
+      progress: getDayProgress(sessions[iso], config.sessionsPerDay),
+    };
+  });
+}
+
+export function chunkIntoWeeks<T>(items: T[]): T[][] {
+  const weeks: T[][] = [];
+  for (let i = 0; i < items.length; i += 7) {
+    weeks.push(items.slice(i, i + 7));
+  }
+  return weeks;
+}
+
+export interface TreatmentSummary {
+  totalSessions: number;
+  completedSessions: number;
+  sessionPct: number;
+  completedDays: number;
+  streak: number;
+  investedSeconds: number;
+  extrasCompleted: number;
+  currentDayNumber: number;
+  rawDayNumber: number;
+  daysLeft: number;
+  sessionsToGo: number;
+  finished: boolean;
+}
+
+export function getTreatmentSummary(
+  startDate: string | null,
+  sessions: SessionMap,
+  sessionDurations: SessionDurations,
+  config: TreatmentConfig,
+  todayIso: string,
+): TreatmentSummary {
+  const totalSessions = config.sessionsPerDay * config.totalDays;
+  const completedSessions = countCompletedSessions(sessions, config.sessionsPerDay);
+  const sessionPct = totalSessions ? Math.round((completedSessions / totalSessions) * 100) : 0;
+  const completedDays = startDate ? countCompletedDays(sessions, config, startDate) : 0;
+  const streak = config.sessionsPerDay > 0 ? computeStreak(sessions, config, todayIso) : 0;
+  const investedSeconds = sumInvestedSeconds(sessionDurations);
+  const extrasCompleted = Math.max(0, countCompletedSessions(sessions) - completedSessions);
+
+  const rawDayNumber = startDate ? dayOffset(startDate, todayIso) + 1 : 1;
+  const currentDayNumber = startDate
+    ? Math.min(Math.max(rawDayNumber, 1), config.totalDays)
+    : 1;
+  const daysLeft = Math.max(0, config.totalDays - currentDayNumber + 1);
+  const sessionsToGo = Math.max(0, totalSessions - completedSessions);
+  const finished = startDate
+    ? rawDayNumber > config.totalDays || completedDays >= config.totalDays
+    : false;
+
+  return {
+    totalSessions,
+    completedSessions,
+    sessionPct,
+    completedDays,
+    streak,
+    investedSeconds,
+    extrasCompleted,
+    currentDayNumber,
+    rawDayNumber,
+    daysLeft,
+    sessionsToGo,
+    finished,
+  };
+}
+
 export function estimatedSessionSeconds(config: TreatmentConfig): number {
   const cycleSeconds = 2 * config.positionDuration + config.restBetweenPositions;
   const cycles = config.cyclesPerSession;

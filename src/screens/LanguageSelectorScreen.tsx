@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import type { Language } from '@/types';
 import { LANGUAGES } from '@/constants/languages';
-import { Logo } from '@/components/Logo';
+import { Logo } from '@/components/core/Logo';
 
 interface LanguageSelectorScreenProps {
   onSelect: (code: Language) => void;

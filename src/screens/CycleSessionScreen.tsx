@@ -1,24 +1,13 @@
-import { memo, useState } from 'react';
-import {
-  AlertTriangle,
-  ArrowRight,
-  MoreHorizontal,
-  Pause,
-  Play,
-  RotateCcw,
-  Volume2,
-  VolumeX,
-  X,
-} from 'lucide-react';
+import { memo } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { PositionIcon } from '@/components/PositionIcon';
-import { Timer } from '@/components/Timer';
-import { BackButton } from '@/components/core/BackButton';
-import { ConfirmDialog } from '@/components/core/ConfirmDialog';
-import { CycleProgressDots } from '@/components/CycleProgressDots';
-import { SessionCompletionCard } from '@/components/SessionCompletionCard';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { useCycleSession } from '@/hooks/useCycleSession';
+import { ConfirmDialog } from '@/components/core/ConfirmDialog';
+import { SessionCompletionCard } from '@/components/SessionCompletionCard';
+import { CycleControls } from '@/components/cycle/CycleControls';
+import { CyclePositionView } from '@/components/cycle/CyclePositionView';
+import { CycleTopBar } from '@/components/cycle/CycleTopBar';
 import type { PositionKind } from '@/types';
 
 const GLOW: Record<PositionKind, string> = {
@@ -38,7 +27,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   const { t } = useTranslation();
   const soundEnabled = useTreatmentStore((s) => s.settings.sound);
   const toggleSound = useTreatmentStore((s) => s.toggleSound);
-  const [topMenuOpen, setTopMenuOpen] = useState(false);
   const {
     config,
     position,
@@ -47,10 +35,8 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     isRunning,
     isPaused,
     secondsRemaining,
-    cycleIndex,
     cycleNumber,
     dayNumber,
-
     dialog,
     setDialog,
     skipChecked,
@@ -60,7 +46,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     extraCompletedCount,
     totalSessions,
     isExtraSession,
-
     advance,
     goHome,
     handleBack,
@@ -71,7 +56,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
   } = useCycleSession({ sessionId, onExit });
 
   const glowClass = isPaused ? 'bg-yellow-500/30' : GLOW[position.kind];
-
 
   if (showCompletion) {
     return (
@@ -99,104 +83,43 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
           />
         )}
       </div>
-      <header className="relative z-30 flex items-center gap-3">
-        <BackButton onBack={handleBack} />
-        <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
-        <div className="relative ml-auto flex items-center">
-          <button
-            type="button"
-            onClick={() => setTopMenuOpen((open) => !open)}
-            aria-label={t('cycle.moreActions')}
-            aria-expanded={topMenuOpen}
-            className="relative z-30 flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
-          >
-            {topMenuOpen ? <X size={22} /> : <MoreHorizontal size={22} />}
-          </button>
 
-          <div
-            aria-hidden={!topMenuOpen}
-            className={`absolute right-0 top-full z-20 mt-2 flex flex-col gap-2 transition-all duration-200 ${
-              topMenuOpen
-                ? 'translate-y-0 opacity-100'
-                : 'pointer-events-none -translate-y-2 opacity-0'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => setDialog('reset')}
-              aria-label={t('cycle.resetProcess')}
-              className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger active:scale-[0.98]"
-            >
-              <RotateCcw size={22} />
-            </button>
-            <button
-              type="button"
-              onClick={toggleSound}
-              aria-label={soundEnabled ? t('cycle.mute') : t('cycle.unmute')}
-              className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
-            >
-              {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
-            </button>
-          </div>
-        </div>
-      </header>
+      <CycleTopBar
+        title={t('cycle.title', { x: dayNumber })}
+        onBack={handleBack}
+        onReset={() => setDialog('reset')}
+        soundEnabled={soundEnabled}
+        onToggleSound={toggleSound}
+        moreActionsLabel={t('cycle.moreActions')}
+        muteLabel={t('cycle.mute')}
+        unmuteLabel={t('cycle.unmute')}
+        resetLabel={t('cycle.resetProcess')}
+      />
 
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-5">
-        <PositionIcon kind={position.kind} isPaused={isPaused} className="h-20 w-20 sm:h-28 sm:w-28" />
-        <p className="whitespace-pre-line text-center text-xl font-bold text-white leading-7 h-14 sm:text-2xl sm:leading-8 sm:h-16 flex items-center justify-center">
-          {t(position.labelKey)}
-        </p>
-        {!isTransition && (
-          <>
-            <Timer
-              secondsRemaining={secondsRemaining}
-              totalDuration={duration}
-              isRunning={isRunning}
-              kind={position.kind}
-            />
+      <CyclePositionView
+        position={position}
+        isTransition={isTransition}
+        isPaused={isPaused}
+        secondsRemaining={secondsRemaining}
+        duration={duration}
+        isRunning={isRunning}
+        cycleNumber={cycleNumber}
+        totalCycles={config.cyclesPerSession}
+        label={t(position.labelKey)}
+        cycleLabel={t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
+      />
 
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-lg font-bold text-white">
-                {t('cycle.cycle', { x: cycleNumber, total: config.cyclesPerSession })}
-              </p>
-              <CycleProgressDots total={config.cyclesPerSession} currentIndex={cycleIndex} kind={position.kind} isPaused={isPaused} />
-            </div>
-          </>
-        )}
-      </div>
-
-      {isTransition ? (
-        <button
-          type="button"
-          onClick={() => advance()}
-          className="relative z-10 flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-xl font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
-        >
-          <Play size={26} /> {t('cycle.start')}
-        </button>
-      ) : (
-        <div className="relative z-10 grid grid-cols-2 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
-          <button
-            type="button"
-            onClick={handlePauseResume}
-            aria-label={isRunning ? t('cycle.pause') : t('cycle.resume')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 border-brand-500 text-lg font-bold text-brand-500 transition-all duration-200 hover:bg-brand-500/10 hover:scale-[1.01] active:scale-[0.98]"
-          >
-            {isRunning ? <Pause size={24} /> : <Play size={24} />}
-            <span className="hidden sm:inline">
-              {isRunning ? t('cycle.pause') : t('cycle.resume')}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => advance(true)}
-            aria-label={t('cycle.next')}
-            className="flex min-h-touch items-center justify-center gap-2 rounded-xl bg-brand-600 text-lg font-bold text-white transition-all duration-200 hover:bg-brand-500 hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg hover:shadow-brand-500/20"
-          >
-            <ArrowRight size={24} />
-            <span className="hidden sm:inline">{t('cycle.next')}</span>
-          </button>
-        </div>
-      )}
+      <CycleControls
+        isTransition={isTransition}
+        isRunning={isRunning}
+        startLabel={t('cycle.start')}
+        pauseLabel={t('cycle.pause')}
+        resumeLabel={t('cycle.resume')}
+        nextLabel={t('cycle.next')}
+        onAdvance={() => advance()}
+        onAdvanceSkip={() => advance(true)}
+        onPauseResume={handlePauseResume}
+      />
 
       <ConfirmDialog
         open={dialog === 'reset'}
@@ -235,8 +158,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
                 checked={skipChecked}
                 onChange={(e) => setSkipChecked(e.target.checked)}
                 className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-brand-500 focus:ring-brand-500"
-              >
-              </input>
+              />
               {t('common.doNotShowAgain')}
             </label>
           </div>

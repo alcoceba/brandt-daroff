@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TreatmentConfig } from '@/types';
-import { TreatmentSettingsForm } from '@/components/TreatmentSettingsForm';
+import { TreatmentSettingsForm } from '@/components/wizard/TreatmentSettingsForm';
 
 interface WizardManualStepProps {
   values: TreatmentConfig;
