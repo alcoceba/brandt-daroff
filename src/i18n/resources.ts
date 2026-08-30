@@ -119,6 +119,10 @@ const en = {
   session: {
     sessionN: 'Session {{n}}',
   },
+  ready: {
+    title: 'All set!',
+    subtitle: "Let's begin",
+  },
   cycle: {
     title: 'Session · Day {{x}}',
     cycle: 'Cycle {{x}} of {{total}}',
@@ -325,6 +329,10 @@ const ca: Dict = {
   session: {
     sessionN: 'Sessió {{n}}',
   },
+  ready: {
+    title: 'Tot llest!',
+    subtitle: 'Comencem!',
+  },
   cycle: {
     title: 'Sessió · Dia {{x}}',
     cycle: 'Cicle {{x}} de {{total}}',
@@ -528,6 +536,10 @@ const es: Dict = {
   },
   session: {
     sessionN: 'Sesión {{n}}',
+  },
+  ready: {
+    title: '¡Todo listo!',
+    subtitle: '¡Empecemos!',
   },
   cycle: {
     title: 'Sesión · Día {{x}}',

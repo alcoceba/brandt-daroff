@@ -51,7 +51,7 @@ describe('App routing', () => {
     expect(screen.getByText('wizard.disclaimerTitle')).toBeInTheDocument();
   });
 
-  it('completing the wizard navigates to home', () => {
+  it('completing the wizard navigates to home via the ready screen', () => {
     render(<App />);
     passSplash();
     fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }));
@@ -59,6 +59,11 @@ describe('App routing', () => {
     fireEvent.click(screen.getByRole('button', { name: 'wizard.aboutContinue' }));
     fireEvent.click(screen.getByRole('button', { name: /wizard.defaults/i }));
     fireEvent.click(screen.getByRole('button', { name: 'wizard.choiceConfirm' }));
+
+    expect(screen.getByText('ready.title')).toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(3000));
+
     expect(screen.getByText('home.title')).toBeInTheDocument();
     expect(screen.getByText('home.day:{"x":1,"total":14}')).toBeInTheDocument();
   });

@@ -41,4 +41,4 @@ export interface SessionProgress {
   positionIndex: number;
 }
 
-export type Route = 'language' | 'wizard' | 'home' | 'cycle' | 'settings' | 'info' | 'reconfigure';
+export type Route = 'language' | 'wizard' | 'home' | 'cycle' | 'settings' | 'info' | 'reconfigure' | 'ready';

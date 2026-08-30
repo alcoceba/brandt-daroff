@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { ReconfigureScreen } from '@/screens/ReconfigureScreen';
 import i18n from '@/i18n';
 import type { Language, Route } from '@/types';
@@ -9,6 +10,7 @@ import { CycleSessionScreen } from '@/screens/CycleSessionScreen';
 import { SettingsScreen } from '@/screens/SettingsScreen';
 import { InfoScreen } from '@/screens/InfoScreen';
 import { SplashScreen } from '@/screens/SplashScreen';
+import { ReadyScreen } from '@/screens/ReadyScreen';
 import { AppLayout } from '@/layouts/AppLayout';
 import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
 
@@ -27,6 +29,14 @@ export default function App() {
   const [route, setRoute] = useState<Route>(onboardingComplete ? 'home' : 'wizard');
   const [sessionId, setSessionId] = useState<string | null>(null);
 
+  const navigateTo = (next: Route) => {
+    if ('startViewTransition' in document && document.startViewTransition) {
+      document.startViewTransition(() => flushSync(() => setRoute(next)));
+      return;
+    }
+    setRoute(next);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setSplashDone(true), 1200);
     return () => clearTimeout(timer);
@@ -39,7 +49,7 @@ export default function App() {
 
   const handleStartSession = (id: string) => {
     setSessionId(id);
-    setRoute('cycle');
+    navigateTo('cycle');
   };
 
   const showDevScenarios =
@@ -68,46 +78,49 @@ export default function App() {
         <WizardScreen
           mode="onboarding"
           detectedLanguage={detectLanguage()}
-          onDone={() => setRoute('home')}
+          onDone={() => navigateTo('ready')}
         />
       );
       break;
+    case 'ready':
+      screen = <ReadyScreen onDone={() => navigateTo('home')} />;
+      break;
     case 'cycle':
       screen = sessionId ? (
-        <CycleSessionScreen sessionId={sessionId} onExit={() => setRoute('home')} />
+        <CycleSessionScreen sessionId={sessionId} onExit={() => navigateTo('home')} />
       ) : (
         <HomeScreen
           onStartSession={handleStartSession}
-          onOpenSettings={() => setRoute('settings')}
-          onOpenInfo={() => setRoute('info')}
+          onOpenSettings={() => navigateTo('settings')}
+          onOpenInfo={() => navigateTo('info')}
         />
       );
       break;
     case 'settings':
       screen = (
         <SettingsScreen
-          onBack={() => setRoute('home')}
-          onReconfigure={() => setRoute('reconfigure')}
-          onFullReset={() => setRoute('wizard')}
+          onBack={() => navigateTo('home')}
+          onReconfigure={() => navigateTo('reconfigure')}
+          onFullReset={() => navigateTo('wizard')}
         />
       );
       break;
     case 'reconfigure':
-      screen = <ReconfigureScreen onBack={() => setRoute('settings')} />;
+      screen = <ReconfigureScreen onBack={() => navigateTo('settings')} />;
       break;
     case 'info':
-      screen = <InfoScreen onBack={() => setRoute('home')} />;
+      screen = <InfoScreen onBack={() => navigateTo('home')} />;
       break;
     case 'home':
     default:
       screen = (
         <HomeScreen
           onStartSession={handleStartSession}
-          onOpenSettings={() => setRoute('settings')}
-          onOpenInfo={() => setRoute('info')}
+          onOpenSettings={() => navigateTo('settings')}
+          onOpenInfo={() => navigateTo('info')}
         />
       );
   }
 
-  return <AppLayout hideFooter={route === 'wizard'}>{screen}</AppLayout>;
+  return <AppLayout hideFooter={route === 'wizard' || route === 'ready'}>{screen}</AppLayout>;
 }
