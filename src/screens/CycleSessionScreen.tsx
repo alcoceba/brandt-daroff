@@ -11,7 +11,7 @@ import { CycleTopBar } from '@/components/cycle/CycleTopBar';
 import type { PositionKind } from '@/types';
 
 const GLOW: Record<PositionKind, string> = {
-  sitting: 'bg-slate-700/0',
+  sitting: 'bg-yellow-500/25',
   'lying-right': 'bg-green-500/25',
   'lying-left': 'bg-green-500/25',
   rest: 'bg-yellow-500/25',
@@ -77,7 +77,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
         <div
           className={`absolute left-1/2 top-1/2 h-[50rem] w-[50rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px] transition-all duration-700 animate-glow-drift ${glowClass}`}
         />
-        {!isPaused && position.kind !== 'sitting' && (
+        {!isPaused && (
           <div
             className={`absolute left-1/3 top-2/3 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px] opacity-60 transition-all duration-700 animate-glow-drift-reverse ${glowClass}`}
           />
