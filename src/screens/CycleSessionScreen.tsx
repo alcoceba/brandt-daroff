@@ -110,8 +110,10 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
       />
 
       <CycleControls
+        kind={position.kind}
         isTransition={isTransition}
         isRunning={isRunning}
+        isPaused={isPaused}
         startLabel={t('cycle.start')}
         pauseLabel={t('cycle.pause')}
         resumeLabel={t('cycle.resume')}
