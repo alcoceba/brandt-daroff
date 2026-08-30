@@ -24,6 +24,16 @@ describe('WizardShell', () => {
     expect(screen.getByTestId('footer')).toBeInTheDocument();
   });
 
+  it('renders action when provided', () => {
+    render(
+      <WizardShell action={<button type="button">Action</button>}>
+        <div>Content</div>
+      </WizardShell>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();
+  });
+
   it('uses narrow inner layout by default', () => {
     const { container } = render(
       <WizardShell>

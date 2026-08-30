@@ -1,52 +1,34 @@
 import { memo } from 'react';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AboutStepCards } from '@/components/AboutStepCards';
 import { WizardHeader } from './WizardHeader';
 
 interface WizardAboutStepProps {
   onTellMeMore: () => void;
-  onStart: () => void;
   footer?: React.ReactNode;
 }
 
-export const WizardAboutStep = memo(function WizardAboutStep({
-  onTellMeMore,
-  onStart,
-}: WizardAboutStepProps) {
+export const WizardAboutStep = memo(function WizardAboutStep({ onTellMeMore }: WizardAboutStepProps) {
   const { t } = useTranslation();
 
   return (
-    <>
-      <div className="flex flex-1 flex-col justify-center gap-6">
-        <WizardHeader
-          icon={<BookOpen size={28} className="text-amber-400" />}
-          title={t('info.title')}
-          subtitle={t('wizard.aboutSubtitle')}
-          iconClassName="border-amber-500/40 bg-amber-500/15 shadow-amber-500/10"
-        />
-        <AboutStepCards />
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={onTellMeMore}
-            className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl border border-amber-500/50 bg-amber-600/10 text-base font-bold text-amber-300 transition-transform active:scale-[.99]"
-          >
-            <BookOpen size={18} className="text-amber-400" />
-            {t('wizard.tellMeMore')}
-          </button>
-          <button
-            type="button"
-            onClick={onStart}
-            className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 text-base font-bold text-slate-900 shadow-lg shadow-amber-500/25 transition-transform active:scale-[.99]"
-          >
-            {t('wizard.aboutContinue')}
-            <span className="animate-arrow-bounce">
-              <ArrowRight size={18} />
-            </span>
-          </button>
-        </div>
-      </div>
-    </>
+    <div className="flex flex-1 flex-col justify-center gap-6">
+      <WizardHeader
+        icon={<BookOpen size={28} className="text-amber-400" />}
+        title={t('info.title')}
+        subtitle={t('wizard.aboutSubtitle')}
+        iconClassName="border-amber-500/40 bg-amber-500/15 shadow-amber-500/10"
+      />
+      <AboutStepCards />
+      <button
+        type="button"
+        onClick={onTellMeMore}
+        className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl border border-amber-500/50 bg-amber-600/10 text-base font-bold text-amber-300 transition-transform active:scale-[.99]"
+      >
+        <BookOpen size={18} className="text-amber-400" />
+        {t('wizard.tellMeMore')}
+      </button>
+    </div>
   );
 });

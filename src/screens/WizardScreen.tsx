@@ -1,4 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Check, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 import type { Language, TreatmentConfig } from '@/types';
 import { DEFAULT_CONFIG } from '@/constants/treatment';
@@ -38,6 +40,7 @@ export const WizardScreen = memo(function WizardScreen({
   detectedLanguage,
   mode = 'onboarding',
 }: WizardScreenProps) {
+  const { t } = useTranslation();
   const setConfig = useTreatmentStore((s) => s.setConfig);
   const completeOnboarding = useTreatmentStore((s) => s.completeOnboarding);
   const storedConfig = useTreatmentStore((s) => s.config);
@@ -154,6 +157,8 @@ export const WizardScreen = memo(function WizardScreen({
   );
 
   let screenContent: React.ReactNode;
+  let action: React.ReactNode = null;
+
   switch (step) {
     case 'language':
       screenContent = (
@@ -162,23 +167,63 @@ export const WizardScreen = memo(function WizardScreen({
           detectedLanguage={detectedLanguage}
           storedLanguage={storedLanguage}
           onSelect={applyLanguage}
-          onConfirm={() => setStep('disclaimer')}
         />
+      );
+      action = (
+        <button
+          type="button"
+          onClick={() => setStep('disclaimer')}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 text-base font-bold text-white shadow-lg shadow-brand-500/20 transition-transform active:scale-[.99]"
+        >
+          {t('common.confirm')}
+          <span className="animate-arrow-bounce">
+            <ArrowRight size={18} />
+          </span>
+        </button>
       );
       break;
     case 'disclaimer':
-      screenContent = <WizardDisclaimerStep onContinue={() => setStep('about')} />;
+      screenContent = <WizardDisclaimerStep />;
+      action = (
+        <button
+          type="button"
+          onClick={() => setStep('about')}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-red-600 text-base font-bold text-white shadow-lg shadow-red-500/20 transition-transform active:scale-[.99]"
+        >
+          <Check size={18} />
+          {t('wizard.disclaimerContinue')}
+        </button>
+      );
       break;
     case 'about':
-      screenContent = (
-        <WizardAboutStep
-          onTellMeMore={() => setStep('about-detail')}
-          onStart={() => setStep('choice')}
-        />
+      screenContent = <WizardAboutStep onTellMeMore={() => setStep('about-detail')} />;
+      action = (
+        <button
+          type="button"
+          onClick={() => setStep('choice')}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 text-base font-bold text-slate-900 shadow-lg shadow-amber-500/25 transition-transform active:scale-[.99]"
+        >
+          {t('wizard.aboutContinue')}
+          <span className="animate-arrow-bounce">
+            <ArrowRight size={18} />
+          </span>
+        </button>
       );
       break;
     case 'about-detail':
-      screenContent = <WizardAboutDetailStep onStart={() => setStep('choice')} />;
+      screenContent = <WizardAboutDetailStep />;
+      action = (
+        <button
+          type="button"
+          onClick={() => setStep('choice')}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 text-base font-bold text-slate-900 shadow-lg shadow-amber-500/25 transition-transform active:scale-[.99]"
+        >
+          {t('wizard.letsStart')}
+          <span className="animate-arrow-bounce">
+            <ArrowRight size={18} />
+          </span>
+        </button>
+      );
       break;
     case 'choice':
       screenContent = (
@@ -187,14 +232,34 @@ export const WizardScreen = memo(function WizardScreen({
           isReconfigure={isReconfigure}
           isUsingDefaults={isUsingDefaults}
           onSelectChoice={selectChoice}
-          onConfirm={confirmChoice}
         />
+      );
+      action = (
+        <button
+          type="button"
+          onClick={confirmChoice}
+          disabled={selectedChoice === null}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 text-base font-bold text-white shadow-lg shadow-brand-500/20 transition-transform active:scale-[.99] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isReconfigure ? t('common.confirm') : t('wizard.choiceConfirm')}
+          <span className="animate-pulse-soft">
+            <Sparkles size={18} />
+          </span>
+        </button>
       );
       break;
     case 'manual':
     default:
-      screenContent = (
-        <WizardManualStep values={values} mode={mode} onChange={update} onSave={save} />
+      screenContent = <WizardManualStep values={values} onChange={update} />;
+      action = (
+        <button
+          type="button"
+          onClick={save}
+          className="flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 text-base font-bold text-white shadow-lg shadow-brand-500/20 transition-transform active:scale-[.99]"
+        >
+          <Check size={20} />
+          {mode === 'reconfigure' ? t('wizard.saveOnly') : t('wizard.save')}
+        </button>
       );
       break;
   }
@@ -202,6 +267,7 @@ export const WizardScreen = memo(function WizardScreen({
   return (
     <WizardShell
       footer={footer}
+      action={action}
       wide={step === 'about-detail' || step === 'manual'}
     >
       {screenContent}

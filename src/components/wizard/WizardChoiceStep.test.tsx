@@ -10,7 +10,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure={false}
         isUsingDefaults={false}
         onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
       />,
     );
 
@@ -25,7 +24,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure
         isUsingDefaults={false}
         onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
       />,
     );
 
@@ -40,7 +38,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure={false}
         isUsingDefaults={false}
         onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
       />,
     );
 
@@ -56,7 +53,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure={false}
         isUsingDefaults={false}
         onSelectChoice={onSelectChoice}
-        onConfirm={vi.fn()}
       />,
     );
 
@@ -72,42 +68,11 @@ describe('WizardChoiceStep', () => {
         isReconfigure={false}
         isUsingDefaults={false}
         onSelectChoice={onSelectChoice}
-        onConfirm={vi.fn()}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: /wizard.manual/i }));
     expect(onSelectChoice).toHaveBeenCalledWith('manual');
-  });
-
-  it('calls onConfirm when confirm button is clicked in onboarding mode', () => {
-    const onConfirm = vi.fn();
-    render(
-      <WizardChoiceStep
-        selectedChoice="defaults"
-        isReconfigure={false}
-        isUsingDefaults={false}
-        onSelectChoice={vi.fn()}
-        onConfirm={onConfirm}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'wizard.choiceConfirm' }));
-    expect(onConfirm).toHaveBeenCalledTimes(1);
-  });
-
-  it('uses common.confirm label in reconfigure mode', () => {
-    render(
-      <WizardChoiceStep
-        selectedChoice="defaults"
-        isReconfigure
-        isUsingDefaults={false}
-        onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByRole('button', { name: 'common.confirm' })).toBeInTheDocument();
   });
 
   it('shows using-now indicator for defaults when using defaults in reconfigure mode', () => {
@@ -117,7 +82,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure
         isUsingDefaults
         onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
       />,
     );
 
@@ -131,7 +95,6 @@ describe('WizardChoiceStep', () => {
         isReconfigure
         isUsingDefaults={false}
         onSelectChoice={vi.fn()}
-        onConfirm={vi.fn()}
       />,
     );
 
