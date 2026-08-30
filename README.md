@@ -19,7 +19,7 @@ A frontend-only PWA built with React, Vite, and TypeScript.
 
 ## Tech stack
 
-- **React 18** — UI library
+- **React 19** — UI library
 - **Vite 5** — build tool and dev server
 - **TypeScript 5** — typed JavaScript
 - **Tailwind CSS 3** — utility-first styling

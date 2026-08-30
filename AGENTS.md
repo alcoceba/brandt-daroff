@@ -77,7 +77,7 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
 ## Technical spec
 
 ### Stack
-- **React 18 + Vite + TypeScript**
+- **React 19 + Vite + TypeScript**
 - **Tailwind CSS** (mobile-first, large tap targets, high contrast)
 - **vite-plugin-pwa** (offline + installable)
 - **zustand** + localStorage (state + persistence, no backend)
