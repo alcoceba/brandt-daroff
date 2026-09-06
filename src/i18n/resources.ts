@@ -117,6 +117,9 @@ const en = {
     dayDetailExtra: 'Day {{n}} · {{completed}} of {{total}} + {{extras}} extra',
     dayDetailHint: 'Tap a day to see its details',
     dayAria: 'Day {{n}}: {{completed}} of {{total}} sessions completed',
+    treatmentCalendar: 'Treatment schedule',
+    weekTitle: 'Week {{n}}',
+    daySelected: 'Day {{n}}',
   },
   session: {
     sessionN: 'Session {{n}}',
@@ -124,6 +127,12 @@ const en = {
   ready: {
     title: 'All set!',
     subtitle: "Let's begin",
+  },
+  sessionReady: {
+    title: "Let's begin!",
+    resumeTitle: "Let's continue!",
+    subtitle: 'Day {{day}} · Session {{session}} of {{totalSessions}}',
+    subtitleExtra: 'Day {{day}} · Extra session {{n}}',
   },
   cycle: {
     title: 'Session · Day {{x}}',
@@ -329,6 +338,9 @@ const ca: Dict = {
     dayDetailExtra: 'Dia {{n}} · {{completed}} de {{total}} + {{extras}} extra',
     dayDetailHint: 'Toca un dia per veure’n els detalls',
     dayAria: 'Dia {{n}}: {{completed}} de {{total}} sessions completades',
+    treatmentCalendar: 'Calendari del tractament',
+    weekTitle: 'Setmana {{n}}',
+    daySelected: 'Dia {{n}}',
   },
   session: {
     sessionN: 'Sessió {{n}}',
@@ -336,6 +348,12 @@ const ca: Dict = {
   ready: {
     title: 'Tot llest!',
     subtitle: 'Comencem!',
+  },
+  sessionReady: {
+    title: 'Comencem!',
+    resumeTitle: 'Continuem!',
+    subtitle: 'Dia {{day}} · Sessió {{session}} de {{totalSessions}}',
+    subtitleExtra: 'Dia {{day}} · Sessió extra {{n}}',
   },
   cycle: {
     title: 'Sessió · Dia {{x}}',
@@ -539,6 +557,9 @@ const es: Dict = {
     dayDetailExtra: 'Día {{n}} · {{completed}} de {{total}} + {{extras}} extra',
     dayDetailHint: 'Toca un día para ver sus detalles',
     dayAria: 'Día {{n}}: {{completed}} de {{total}} sesiones completadas',
+    treatmentCalendar: 'Calendario del tratamiento',
+    weekTitle: 'Semana {{n}}',
+    daySelected: 'Día {{n}}',
   },
   session: {
     sessionN: 'Sesión {{n}}',
@@ -546,6 +567,12 @@ const es: Dict = {
   ready: {
     title: '¡Todo listo!',
     subtitle: '¡Empecemos!',
+  },
+  sessionReady: {
+    title: '¡Empecemos!',
+    resumeTitle: '¡Continuemos!',
+    subtitle: 'Día {{day}} · Sesión {{session}} de {{totalSessions}}',
+    subtitleExtra: 'Día {{day}} · Sesión extra {{n}}',
   },
   cycle: {
     title: 'Sesión · Día {{x}}',

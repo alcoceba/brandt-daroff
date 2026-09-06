@@ -86,8 +86,9 @@ export const TodaySessionCard = memo(function TodaySessionCard({
             )}
           </div>
           <ChevronRight
-            size={22}
-            className={`shrink-0 transition-all duration-300 group-hover:translate-x-1 ${
+            size={28}
+            strokeWidth={2.5}
+            className={`shrink-0 animate-arrow-sway transition-all duration-300 ${
               isInProgress ? 'text-state-progress/70' : 'text-brand-500'
             }`}
           />

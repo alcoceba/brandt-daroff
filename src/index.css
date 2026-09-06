@@ -27,6 +27,11 @@
   ::view-transition-new(*) {
     animation-duration: 0.001s !important;
   }
+  .animate-arrow-sway,
+  .animate-coffee-bob,
+  .animate-scale-in {
+    animation: none !important;
+  }
 }
 
 @keyframes scale-in {

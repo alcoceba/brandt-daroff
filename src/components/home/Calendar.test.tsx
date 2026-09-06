@@ -31,23 +31,21 @@ describe('Calendar component', () => {
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveStyle({ width: '0%' });
 
-    const weeks = container.querySelectorAll('.grid-cols-7');
-    expect(weeks.length).toBeGreaterThan(0);
-    expect(weeks[0]?.children).toHaveLength(3);
+    const dayButtons = screen.getAllByRole('button');
+    expect(dayButtons).toHaveLength(3);
 
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('chunks days into rows of 7', () => {
+  it('renders all treatment days in a responsive grid', () => {
     useTreatmentStore.getState().setConfig({ totalDays: 14, sessionsPerDay: 3 });
     useTreatmentStore.setState({ startDate: '2026-01-14' });
 
-    const { container } = render(<Calendar />);
-    const weeks = container.querySelectorAll('.grid-cols-7');
-    expect(weeks).toHaveLength(2);
-    weeks.forEach((week) => expect(week.children).toHaveLength(7));
+    render(<Calendar />);
+    const dayButtons = screen.getAllByRole('button');
+    expect(dayButtons).toHaveLength(14);
   });
 
   it('handles completed, pending, future and today states', () => {
@@ -179,5 +177,16 @@ describe('Calendar component', () => {
     expect(
       screen.getByText('home.dayDetailExtra:{"n":2,"completed":2,"total":2,"extras":1}'),
     ).toBeInTheDocument();
+  });
+
+  it('renders checkmark on done days', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 3, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    const { container } = render(<Calendar />);
+
+    expect(container.querySelector('.lucide-check')).toBeInTheDocument();
   });
 });

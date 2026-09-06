@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { useCycleSession } from '@/hooks/useCycleSession';
@@ -39,8 +38,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     dayNumber,
     dialog,
     setDialog,
-    skipChecked,
-    setSkipChecked,
     showCompletion,
     completedCount,
     extraCompletedCount,
@@ -51,7 +48,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
     handleBack,
     handlePauseResume,
     confirmReset,
-    handleSafetyConfirm,
     sessionElapsedSeconds,
   } = useCycleSession({ sessionId, onExit });
 
@@ -134,40 +130,6 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
           setDialog('none');
           confirmReset();
         }}
-        onCancel={() => setDialog('none')}
-      />
-      <ConfirmDialog
-        open={dialog === 'safety'}
-        title={
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={20} className="text-yellow-400" />
-            {t('safety.title')}
-          </div>
-        }
-        body={
-          <div className="flex flex-col gap-3">
-            <p className="text-sm leading-relaxed text-slate-300">
-              {t('safety.prefix')}{' '}
-              <span className="font-semibold text-white">{t('safety.weakness')}</span>,{' '}
-              <span className="font-semibold text-white">{t('safety.numbness')}</span>{' '}
-              {t('common.or')}{' '}
-              <span className="font-semibold text-white">{t('safety.vision')}</span>,{' '}
-              {t('safety.suffix')}
-            </p>
-            <label className="flex items-center gap-2 text-sm text-slate-400">
-              <input
-                type="checkbox"
-                checked={skipChecked}
-                onChange={(e) => setSkipChecked(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-brand-500 focus:ring-brand-500"
-              />
-              {t('common.doNotShowAgain')}
-            </label>
-          </div>
-        }
-        confirmLabel={t('cycle.start')}
-        single
-        onConfirm={handleSafetyConfirm}
         onCancel={() => setDialog('none')}
       />
     </div>

@@ -39,8 +39,6 @@ describe('CycleSessionScreen', () => {
       dayNumber: 2,
       dialog: 'none',
       setDialog: vi.fn(),
-      skipChecked: false,
-      setSkipChecked: vi.fn(),
       showCompletion: false,
       completedCount: 1,
       extraCompletedCount: 0,
@@ -51,7 +49,6 @@ describe('CycleSessionScreen', () => {
       handleBack: vi.fn(),
       handlePauseResume: vi.fn(),
       confirmReset: vi.fn(),
-      handleSafetyConfirm: vi.fn(),
       sessionElapsedSeconds: () => 120,
       ...overrides,
     };
@@ -172,24 +169,12 @@ describe('CycleSessionScreen', () => {
     expect(confirmReset).toHaveBeenCalledTimes(1);
   });
 
-  it('renders the safety dialog and confirms it', () => {
-    const handleSafetyConfirm = vi.fn();
-    const setSkipChecked = vi.fn();
-    mockedUseCycleSession.mockReturnValue(
-      baseMock({ dialog: 'safety', handleSafetyConfirm, setSkipChecked }),
-    );
+  it('does not render the safety dialog when starting a session', () => {
+    mockedUseCycleSession.mockReturnValue(baseMock());
     render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
 
-    const dialog = screen.getByRole('dialog');
-    expect(dialog).toBeInTheDocument();
-    expect(screen.getByText('safety.title')).toBeInTheDocument();
-
-    const checkbox = screen.getByRole('checkbox');
-    fireEvent.click(checkbox);
-    expect(setSkipChecked).toHaveBeenCalledWith(true);
-
-    fireEvent.click(within(dialog).getByRole('button', { name: 'cycle.start' }));
-    expect(handleSafetyConfirm).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.queryByText('safety.title')).not.toBeInTheDocument();
   });
 
   it('renders the session completion card and returns home', () => {

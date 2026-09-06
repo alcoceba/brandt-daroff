@@ -68,12 +68,19 @@ describe('App routing', () => {
     expect(screen.getByText('home.day:{"x":1,"total":14}')).toBeInTheDocument();
   });
 
-  it('starting a session navigates to the cycle screen', () => {
+  it('starting a session navigates to the cycle screen via session-ready screen', () => {
     useTreatmentStore.getState().completeOnboarding();
     render(<App />);
     passSplash();
     const startButton = screen.getByRole('button', { name: /home.start/i });
     fireEvent.click(startButton);
+
+    expect(screen.getByText('sessionReady.title')).toBeInTheDocument();
+    expect(
+      screen.getByText('sessionReady.subtitle:{"day":1,"session":1,"totalSessions":3}'),
+    ).toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(2500));
     expect(screen.getByText('cycle.title:{"x":1}')).toBeInTheDocument();
   });
 

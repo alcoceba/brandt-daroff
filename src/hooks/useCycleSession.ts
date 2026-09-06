@@ -9,7 +9,7 @@ import { cueChange } from '@/utils/vibration';
 import { countCompletedSessions, getSessionNumber } from '@/utils/sessions';
 import type { PositionDef, SessionProgress } from '@/types';
 
-type Dialog = 'none' | 'reset' | 'safety';
+type Dialog = 'none' | 'reset';
 
 interface UseCycleSessionParams {
   sessionId: string;
@@ -20,8 +20,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const config = useTreatmentStore((s) => s.config);
   const startDate = useTreatmentStore((s) => s.startDate);
   const settings = useTreatmentStore((s) => s.settings);
-  const skipSafetyWarning = useTreatmentStore((s) => s.skipSafetyWarning);
-  const toggleSkipSafetyWarning = useTreatmentStore((s) => s.toggleSkipSafetyWarning);
   const setSessionStatus = useTreatmentStore((s) => s.setSessionStatus);
   const saveSessionProgress = useTreatmentStore((s) => s.saveSessionProgress);
   const clearSessionProgress = useTreatmentStore((s) => s.clearSessionProgress);
@@ -38,8 +36,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   )[0];
   const [cycleIndex, setCycleIndex] = useState(restored?.cycleIndex ?? 0);
   const [positionIndex, setPositionIndex] = useState(restored?.positionIndex ?? 0);
-  const [dialog, setDialog] = useState<Dialog>(restored || skipSafetyWarning ? 'none' : 'safety');
-  const [skipChecked, setSkipChecked] = useState(false);
+  const [dialog, setDialog] = useState<Dialog>('none');
   const [showCompletion, setShowCompletion] = useState(false);
   const [intentionallyPaused, setIntentionallyPaused] = useState(false);
   const sessionStartRef = useRef(performance.now());
@@ -181,11 +178,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     saveSessionProgress(todayISO(), sessionId, { cycleIndex: 0, positionIndex: 0 });
   };
 
-  const handleSafetyConfirm = () => {
-    if (skipChecked) toggleSkipSafetyWarning();
-    setDialog('none');
-  };
-
   const isPaused = intentionallyPaused && !isRunning && !isTransition;
 
   return {
@@ -202,8 +194,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     dayNumber,
     dialog,
     setDialog,
-    skipChecked,
-    setSkipChecked,
     showCompletion,
     completedCount,
     extraCompletedCount,
@@ -215,7 +205,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     handleBack,
     handlePauseResume,
     confirmReset,
-    handleSafetyConfirm,
     sessionElapsedSeconds,
   };
 }

@@ -11,6 +11,7 @@ import { SettingsScreen } from '@/screens/SettingsScreen';
 import { InfoScreen } from '@/screens/InfoScreen';
 import { SplashScreen } from '@/screens/SplashScreen';
 import { ReadyScreen } from '@/screens/ReadyScreen';
+import { SessionReadyScreen } from '@/screens/SessionReadyScreen';
 import { AppLayout } from '@/layouts/AppLayout';
 import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
 
@@ -49,7 +50,7 @@ export default function App() {
 
   const handleStartSession = (id: string) => {
     setSessionId(id);
-    navigateTo('cycle');
+    navigateTo('session-ready');
   };
 
   const showDevScenarios =
@@ -84,6 +85,20 @@ export default function App() {
       break;
     case 'ready':
       screen = <ReadyScreen onDone={() => navigateTo('home')} />;
+      break;
+    case 'session-ready':
+      screen = sessionId ? (
+        <SessionReadyScreen
+          sessionId={sessionId}
+          onDone={() => navigateTo('cycle')}
+        />
+      ) : (
+        <HomeScreen
+          onStartSession={handleStartSession}
+          onOpenSettings={() => navigateTo('settings')}
+          onOpenInfo={() => navigateTo('info')}
+        />
+      );
       break;
     case 'cycle':
       screen = sessionId ? (
@@ -122,5 +137,11 @@ export default function App() {
       );
   }
 
-  return <AppLayout hideFooter={route === 'wizard' || route === 'ready'}>{screen}</AppLayout>;
+  return (
+    <AppLayout
+      hideFooter={route === 'wizard' || route === 'ready' || route === 'session-ready'}
+    >
+      {screen}
+    </AppLayout>
+  );
 }

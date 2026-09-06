@@ -28,14 +28,30 @@ export const SessionCompletionCard = memo(function SessionCompletionCard({
   const timeLabel = formatDuration(elapsedSeconds);
 
   return (
-    <div className="flex flex-1 flex-col gap-3 bg-gradient-to-b from-slate-950 to-indigo-900 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5">
-      <header className="flex items-center gap-3">
+    <div className="relative flex min-h-dvh flex-1 flex-col gap-3 px-3 py-4 sm:min-h-0 sm:gap-4 sm:px-5 sm:py-5 overflow-hidden">
+      {/* Blurred ambient glow combining yellow, red, and green closely clustered */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        {/* Green glow */}
+        <div
+          className="absolute left-[44%] top-[42%] h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500/25 blur-[90px] animate-glow-drift"
+        />
+        {/* Yellow glow */}
+        <div
+          className="absolute left-[56%] top-[40%] h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-yellow-500/25 blur-[85px] animate-glow-drift-reverse"
+        />
+        {/* Red glow */}
+        <div
+          className="absolute left-[50%] top-[52%] h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/25 blur-[100px] animate-glow-drift"
+        />
+      </div>
+
+      <header className="relative z-10 flex items-center gap-3">
         <BackButton onBack={onDone} />
         <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
       </header>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-        <Trophy className="h-24 w-24 text-state-done" strokeWidth={1.5} />
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6 text-center">
+        <Trophy className="h-24 w-24 text-state-done drop-shadow-md" strokeWidth={1.5} />
         <div>
           <h2 className="text-3xl font-bold text-white">{t('cycle.completionTitle')}</h2>
           <p className="mt-2 text-lg text-slate-300">{t('cycle.completionBody')}</p>
