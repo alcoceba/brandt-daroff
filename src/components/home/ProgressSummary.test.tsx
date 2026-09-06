@@ -88,7 +88,7 @@ describe('ProgressSummary component', () => {
     render(<ProgressSummary />);
 
     expect(screen.getByText('home.sessionsSummary:{"done":1,"total":4}')).toBeInTheDocument();
-    expect(screen.getByText('home.extraDone:{"count":1}')).toBeInTheDocument();
+    expect(screen.getByText('home.extraSessionCount:{"count":1}')).toBeInTheDocument();
   });
 
   it('shows the plural extras pill', () => {
@@ -101,6 +101,6 @@ describe('ProgressSummary component', () => {
 
     render(<ProgressSummary />);
 
-    expect(screen.getByText('home.extrasDone:{"count":2}')).toBeInTheDocument();
+    expect(screen.getByText('home.extraSessionsCount:{"count":2}')).toBeInTheDocument();
   });
 });

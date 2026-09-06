@@ -58,14 +58,14 @@ export const ProgressSummary = memo(function ProgressSummary() {
               className="inline-flex items-center gap-1 font-medium text-brand-400"
               aria-label={
                 extrasCompleted === 1
-                  ? t('home.extraDone', { count: extrasCompleted })
-                  : t('home.extrasDone', { count: extrasCompleted })
+                  ? t('home.extraSessionCount', { count: extrasCompleted })
+                  : t('home.extraSessionsCount', { count: extrasCompleted })
               }
             >
               <Target size={12} className="text-brand-400" />
               {extrasCompleted === 1
-                ? t('home.extraDone', { count: extrasCompleted })
-                : t('home.extrasDone', { count: extrasCompleted })}
+                ? t('home.extraSessionCount', { count: extrasCompleted })
+                : t('home.extraSessionsCount', { count: extrasCompleted })}
             </span>
           )}
         </div>

@@ -292,17 +292,16 @@ describe('sessions utilities', () => {
       expect(infos[1]?.isToday).toBe(true);
     });
 
-    it('extends display days when sessions exist beyond totalDays', () => {
+    it('limits display days to totalDays even when sessions exist beyond totalDays', () => {
       const sessions: SessionMap = { '2026-01-18': { 'session-1': 'completed' } };
       const infos = getTreatmentDayInfos('2026-01-14', sessions, config, '2026-01-14');
-      expect(infos).toHaveLength(5);
-      expect(infos[4]?.progress.completedScheduled).toBe(1);
+      expect(infos).toHaveLength(3);
     });
 
-    it('extends display days after treatment is finished', () => {
+    it('does not extend display days after treatment is finished', () => {
       const sessions: SessionMap = { '2026-01-20': { 'session-1': 'completed' } };
       const infos = getTreatmentDayInfos('2026-01-14', sessions, config, '2026-01-25');
-      expect(infos).toHaveLength(7);
+      expect(infos).toHaveLength(3);
     });
 
     it('computes progress for each day', () => {

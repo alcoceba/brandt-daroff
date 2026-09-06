@@ -171,16 +171,8 @@ export function getTreatmentDayInfos(
   todayIso: string,
 ): TreatmentDayInfo[] {
   const todayDayNumber = dayOffset(startDate, todayIso) + 1;
-  const lastSessionDayNumber = Object.keys(sessions).reduce(
-    (max, iso) => Math.max(max, dayOffset(startDate, iso) + 1),
-    0,
-  );
-  const finished = todayDayNumber > config.totalDays;
-  const displayDays = finished
-    ? Math.max(config.totalDays, lastSessionDayNumber)
-    : Math.max(config.totalDays, todayDayNumber, lastSessionDayNumber);
 
-  return Array.from({ length: displayDays }, (_, dayIdx) => {
+  return Array.from({ length: config.totalDays }, (_, dayIdx) => {
     const iso = addDays(startDate, dayIdx);
     return {
       dayIdx,
