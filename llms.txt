@@ -1,30 +1,47 @@
-# Brandt-Daroff — VPPB Home Treatment App
+# Brandt-Daroff — BPPV Home Treatment App
 
-A frontend-only Progressive Web App (PWA) that guides patients through Brandt-Daroff exercises for BPPV (benign paroxysmal positional vertigo) at home.
+> URL: https://alcoceba.github.io/brandt-daroff/
+> Full documentation for LLMs: https://alcoceba.github.io/brandt-daroff/llms-full.txt
+> Repository: https://github.com/alcoceba/brandt-daroff
+
+A free, privacy-first, offline Progressive Web App (PWA) that guides patients through Brandt-Daroff vestibular rehabilitation exercises for BPPV (benign paroxysmal positional vertigo / VPPB) at home.
+
+## Target audience
+
+Patients diagnosed with BPPV by an ENT specialist, neurologist, or healthcare provider who have been instructed to perform home vestibular habituation exercises. This application is a clinical timer and tracking aid, not a diagnostic or prescribing tool.
+
+## Clinical safety warning
+
+The application includes persistent safety warnings. Patients must stop exercises immediately and seek prompt medical evaluation if they experience:
+- Sudden weakness in a face or limb
+- Numbness or loss of sensation in an arm or leg
+- Vision changes (double vision, partial vision loss)
+- Severe speech difficulty or confusion
 
 ## What it does
-- Step-by-step timer for each exercise position (sitting, lying right, rest, lying left, long rest)
-- Visual circular progress ring and countdown per position
-- Full treatment tracking with a 7-day-row progress grid and completion status
-- Extra sessions: available only after the daily scheduled goal is met; tracked separately from protocol progress
-- Configurable durations, cycles per session, sessions per day, and total treatment days
-- Two operation modes: full treatment progress tracking and a quick timer mode without tracking
-- Clinical safety warnings and an emergency stop during exercise cycles
-- Sound and vibration cues for position changes
-- Progress ring and progress bar animate from 0 on app start
+
+- Guided step-by-step timer for each exercise position (Sitting -> Lying right 45° -> Rest -> Lying left 45° -> Long rest)
+- Visual countdown ring and clear position illustrations
+- Protocol tracking: default 14-day schedule, 3 sessions/day, 5 cycles/session
+- Extra sessions: tracked separately without inflating scheduled protocol progress
+- Two operating modes: Full Treatment Progress tracking and Quick Timer (no tracking)
+- Sound (Web Audio API) and vibration (navigator.vibrate) cues for position transitions
+- Early advance option ("Dizziness has passed -> Next") when vertigo subsides before 30s
+- Emergency stop and pause controls always reachable
+- Multilingual interface: English, Catalan (Català), Spanish (Castellano)
 
 ## Architecture
-- React 18 + Vite + TypeScript
-- Tailwind CSS for styling
-- Zustand + localStorage for state and offline persistence
-- react-i18next for multi-language support (English, Catalan, Spanish)
-- PWA via vite-plugin-pwa with offline service worker
-- No backend; all data stays on the device
 
-## Project conventions
-- Mobile-first, high contrast, large tap targets
-- No personal/medical data leaves the device
-- Medical protocol defaults are respected; user can override durations
-- Code and comments in English; UI strings in English / Catalan / Spanish via i18n
-- i18n plurals use explicit camelCase singular/plural keys (no `_one`/`_other` suffixes or nested objects)
-- Build commands: npm run dev | build | preview | lint | typecheck | test | deploy
+- React 19 + Vite + TypeScript
+- Tailwind CSS with high contrast, mobile-first design (>=56px tap targets)
+- Zustand + localStorage for client-side persistence (zero backend, zero analytics trackers by default, no personal health data leaves the device)
+- react-i18next with type-safe dictionaries
+- Service worker via vite-plugin-pwa for complete offline functionality
+- Ready for mobile bundling via Capacitor (Android/iOS)
+
+## Static informative pages & resources
+
+- English guide: https://alcoceba.github.io/brandt-daroff/info/en/
+- Catalan guide: https://alcoceba.github.io/brandt-daroff/info/ca/
+- Spanish guide: https://alcoceba.github.io/brandt-daroff/info/es/
+- Machine-readable full clinical guide: https://alcoceba.github.io/brandt-daroff/llms-full.txt

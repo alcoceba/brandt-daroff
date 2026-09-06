@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://alcoceba.github.io/brandt-daroff/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://alcoceba.github.io/brandt-daroff/info/en/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://alcoceba.github.io/brandt-daroff/info/ca/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alcoceba.github.io/brandt-daroff/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+  </url>
+  <url>
+    <loc>https://alcoceba.github.io/brandt-daroff/info/ca/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://alcoceba.github.io/brandt-daroff/info/ca/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alcoceba.github.io/brandt-daroff/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+  </url>
+  <url>
+    <loc>https://alcoceba.github.io/brandt-daroff/info/es/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://alcoceba.github.io/brandt-daroff/info/ca/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alcoceba.github.io/brandt-daroff/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alcoceba.github.io/brandt-daroff/info/en/"/>
+  </url>
+</urlset>

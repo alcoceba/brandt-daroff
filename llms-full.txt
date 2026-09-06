@@ -1,0 +1,135 @@
+# Brandt-Daroff Exercises for BPPV: Clinical Guide & Web Application Reference
+
+Application URL: https://alcoceba.github.io/brandt-daroff/
+Web App Repository: https://github.com/alcoceba/brandt-daroff
+English Guide: https://alcoceba.github.io/brandt-daroff/info/en/
+Catalan Guide: https://alcoceba.github.io/brandt-daroff/info/ca/
+Spanish Guide: https://alcoceba.github.io/brandt-daroff/info/es/
+
+---
+
+## 1. Executive Summary & Purpose
+
+Brandt-Daroff is a vestibular habituation and particle dispersion exercise designed for home rehabilitation of Benign Paroxysmal Positional Vertigo (BPPV).
+
+The Brandt-Daroff Web Application is an open-source, offline-first Progressive Web App (PWA) created to provide clear, accessible, and clinically safe home guidance for patients performing these exercises. It provides visual countdown timers, auditory and haptic cues, session logging, and persistent clinical safety guardrails.
+
+---
+
+## 2. Clinical Safety & Emergency Red Flags
+
+### Medical Disclaimer
+This application and documentation are intended solely for patient educational guidance and adherence support. They do NOT provide medical diagnosis, nor do they replace in-person consultation with an otolaryngologist (ENT), neurologist, audiologist, or primary care physician.
+
+### Warning & Red Flags (Persistent Clinical Alert)
+Brandt-Daroff exercises induce transient vertigo as part of the therapeutic habituation process. However, patients must IMMEDIATELY STOP the exercise and seek emergency medical attention if they experience any "red flag" neurological signs:
+- Focal motor weakness (facial drooping, inability to raise an arm, leg weakness)
+- Unilateral or bilateral numbness, sensory loss, or tingling
+- Acute vision changes (diplopia/double vision, sudden visual field deficits)
+- Dysarthria (slurred speech) or dysphagia (difficulty swallowing)
+- Sudden severe occipital or cervical headache unlike prior episodes
+- Loss of consciousness, syncope, or inability to stand/walk without severe ataxia
+
+---
+
+## 3. Pathophysiology of BPPV (VPPB)
+
+Benign Paroxysmal Positional Vertigo (BPPV) is the most frequent peripheral vestibular disorder, accounting for roughly 20-30% of vestibular complaints in neuro-otology clinics.
+
+### Underlying Mechanism
+1. **Otoconia Dislodgement**: Calcium carbonate crystals (otoconia) normally embedded in the gelatinous matrix of the utricular macula detach due to aging, head trauma, vestibular neuritis, ischemia, or prolonged recumbency.
+2. **Canalithiasis**: These free-floating particles migrate into one or more of the fluid-filled semicircular canals (most commonly the posterior semicircular canal, ~85-90% of cases, followed by the horizontal canal).
+3. **Abnormal Cupular Deflection**: Rapid changes in head position with respect to gravity cause the dense otoconial debris to move within the endolymph. This movement generates hydrodynamic drag, deflecting the sensory cupula and producing mismatched vestibular neural firing that leads to transient, paroxysmal vertigo accompanied by rotational or linear nystagmus.
+
+---
+
+## 4. The Brandt-Daroff Method: Mechanism & Evidence
+
+Introduced in 1980 by Dr. Thomas Brandt and Dr. Robert B. Daroff, this protocol was designed as a repetitive home therapeutic regimen.
+
+### Mechanism of Action
+- **Debris Dispersion & Loosening**: The rapid, alternating 90° lateral movements help dislodge adherent otolith clusters from the cupula (cupulolithiasis) and disperse canalicular debris into the common crus or back into the utricle where endolymphatic dark cells can reabsorb the calcium carbonate crystals.
+- **Central Vestibular Habituation**: Repetitive stimulation fatigues the vestibulo-ocular response, training central nervous system compensation to reduce vertigo sensation and autonomic symptoms over time.
+
+### Efficacy
+When completed systematically:
+- Clinical studies demonstrate a success rate of approximately 95% complete symptom resolution within 10 to 14 days of compliant practice.
+- It is especially valuable when canal-repositioning maneuvers (e.g., Epley, Semont) are partially successful, unavailable, or when multiple canals or persistent residual motion sensitivity remain.
+
+---
+
+## 5. Step-by-Step Exercise Protocol (The 5 Positions of a Cycle)
+
+One complete cycle consists of five sequential positions. A standard treatment session consists of five cycles.
+
+### Step 1: Upright Starting Position (Sitting on Bed Edge)
+- **Position**: Sit upright on the edge of the bed with feet hanging freely or touching the floor.
+- **Instruction**: Look straight ahead. Remain calm and steady.
+- **Duration**: Transition period; click "Start" when ready.
+
+### Step 2: Lateral Tilt to the Right (Head Turned Upward 45°)
+- **Position**: Swiftly lie down onto your right side while simultaneously rotating your head 45 degrees upward toward the ceiling.
+- **Instruction**: Maintain this position for 30 seconds. If vertigo is triggered, stay still until the spinning completely subsides, then wait an additional 30 seconds.
+- **Duration**: 30 seconds (or tap "Dizziness has passed -> Next" if dizzy spell ends sooner).
+
+### Step 3: Return to Upright Sitting
+- **Position**: Sit back up straight on the edge of the bed in the original upright posture.
+- **Instruction**: Rest quietly looking forward. Vertigo may occasionally re-occur upon sitting upright.
+- **Duration**: 30 seconds rest.
+
+### Step 4: Lateral Tilt to the Left (Head Turned Upward 45°)
+- **Position**: Swiftly lie down onto your left side while rotating your head 45 degrees upward toward the ceiling.
+- **Instruction**: Maintain this position for 30 seconds (or until vertigo resolves plus 30 seconds).
+- **Duration**: 30 seconds.
+
+### Step 5: Inter-Cycle Rest
+- **Position**: Return upright to the seated position on the bed.
+- **Instruction**: Rest quietly for 2 minutes before initiating the next cycle. This rest period allows cupular recovery and prevents excessive nausea.
+- **Duration**: 2 minutes (120 seconds).
+
+---
+
+## 6. Treatment Schedule & Dosimetry
+
+- **Cycles per Session**: 5 complete cycles per session.
+- **Sessions per Day**: 3 sessions daily (Morning, Midday, Evening).
+- **Total Daily Time**: Approximately 12-15 minutes per session.
+- **Protocol Duration**: 14 consecutive days.
+- **Discontinuation Rule**: Continue the exercises until experiencing two consecutive days completely free of vertigo symptoms during all positions.
+
+---
+
+## 7. Practical Tips for Patients
+
+1. **Environment**: Perform exercises on the side of a bed or a firm padded mat. Ensure the surrounding area is free of sharp objects, hard furniture, or obstacles in case of sudden imbalance.
+2. **Expect Initial Dizziness**: Feeling dizzy during the first 2-4 days is normal and expected; it confirms that the maneuver is moving the crystals. The intensity diminishes as treatment progresses.
+3. **Smooth, Deliberate Movements**: Transition between sitting and lying within 1 to 2 seconds, but avoid jerky violent movements that strain the cervical spine.
+4. **Hydration & Safety**: Keep a glass of water nearby. Wait at least 15-20 minutes after a session before walking long distances, climbing stairs, or driving.
+
+---
+
+## 8. Frequently Asked Questions (FAQ)
+
+### Q: Why do I feel more dizzy during the first few days?
+A: When you lie down rapidly, the dislodged crystals move through the canal fluid, stimulating the nerve endings. This dizziness is a sign that the maneuver is mobilizing the particles. With repeated cycles, the crystals disperse or dissolve, and symptoms progressively decline.
+
+### Q: What if I can only do 2 sessions a day instead of 3?
+A: 3 sessions per day is the optimal evidence-based protocol. If you miss a session, do not double the next session. Resume regular schedule.
+
+### Q: Is Brandt-Daroff better than the Epley maneuver?
+A: The Epley maneuver is a targeted particle repositioning maneuver typically performed by a clinician for canalithiasis of the posterior canal. Brandt-Daroff is designed specifically for patient self-administration at home and is ideal for residual dizziness, uncertain lateralization, or bilateral involvement.
+
+### Q: What if I experience neck pain or have cervical spine limitations?
+A: Patients with severe cervical spondylosis, neck injuries, or severe vascular risk factors (e.g., vertebral artery insufficiency) should consult their physician before performing rapid lateral head movements.
+
+---
+
+## 9. Web Application Technical & Privacy Model
+
+The Brandt-Daroff PWA (Progressive Web App) is engineered to meet strict medical accessibility and privacy standards:
+
+- **100% Client-Side**: No user tracking, no third-party behavioral profiling, no login required. Treatment records, progress counters, and configuration parameters are stored strictly in browser `localStorage`.
+- **Offline Reliability**: Powered by a Service Worker (`vite-plugin-pwa`), the entire application functions without an internet connection once loaded.
+- **Accessible UI**: Minimum 56px touch targets, high contrast dark palette (`#0f172a`), responsive SVG circular timer, and multi-modal sensory cues (visual, auditory Web Audio beeps, and haptic vibration).
+- **Language Localization**: Full translation coverage in English, Catalan (`ca`), and Spanish (`es`).
+- **Clean URLs**: Standalone informational resources accessible at `/info/en/`, `/info/ca/`, `/info/es/`.
