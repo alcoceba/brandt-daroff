@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from './Button';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -54,7 +55,7 @@ export const ConfirmDialog = memo(function ConfirmDialog({
       onClick={single ? undefined : onCancel}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-2xl"
+        className="w-full max-w-sm rounded-2xl border border-slate-700/90 bg-slate-800/95 p-5 shadow-2xl backdrop-blur-md"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="confirm-title" className="text-lg font-bold text-white">
@@ -62,21 +63,21 @@ export const ConfirmDialog = memo(function ConfirmDialog({
         </h2>
         <p className="mt-2 text-sm text-slate-300">{body}</p>
         <div className="mt-5 flex flex-col gap-2">
-          <button
-            type="button"
+          <Button
+            variant={danger ? 'solid-danger' : 'primary'}
+            fullWidth
             onClick={onConfirm}
-            className={`min-h-touch rounded-xl font-bold text-white ${danger ? 'bg-state-danger' : 'bg-brand-600'}`}
           >
             {confirmLabel ?? t('common.confirm')}
-          </button>
+          </Button>
           {!single && (
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              fullWidth
               onClick={onCancel}
-              className="min-h-touch rounded-xl border border-slate-700 font-semibold text-slate-200"
             >
               {cancelLabel ?? t('common.cancel')}
-            </button>
+            </Button>
           )}
         </div>
       </div>

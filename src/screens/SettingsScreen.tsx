@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '@/constants/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { BackButton } from '@/components/core/BackButton';
+import { Button } from '@/components/core/Button';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { LanguageSettingsScreen } from '@/screens/LanguageSettingsScreen';
 
@@ -55,65 +56,70 @@ export const SettingsScreen = memo(function SettingsScreen({
 
       <section className="flex flex-col gap-2">
         <SectionTitle>{t('settings.feedback')}</SectionTitle>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          fullWidth
           onClick={toggleSound}
-          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+          className="gap-4 px-4 text-lg"
         >
           {settings.sound ? <Volume2 size={24} /> : <VolumeX size={24} />}
           <span className="flex-1 text-left">{t('settings.sound')}</span>
           <span className={`text-sm font-bold ${settings.sound ? 'text-brand-500' : 'text-slate-400'}`}>
             {settings.sound ? t('common.yes') : t('common.no')}
           </span>
-        </button>
+        </Button>
         {typeof navigator !== 'undefined' && !!navigator.vibrate && (
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            fullWidth
             onClick={toggleVibration}
-            className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+            className="gap-4 px-4 text-lg"
           >
             {settings.vibration ? <Vibrate size={24} /> : <VibrateOff size={24} />}
             <span className="flex-1 text-left">{t('settings.vibration')}</span>
             <span className={`text-sm font-bold ${settings.vibration ? 'text-brand-500' : 'text-slate-400'}`}>
               {settings.vibration ? t('common.yes') : t('common.no')}
             </span>
-          </button>
+          </Button>
         )}
       </section>
 
       <section className="flex flex-col gap-2">
         <SectionTitle>{t('settings.manage')}</SectionTitle>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          fullWidth
           onClick={() => setShowLanguage(true)}
-          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+          className="gap-4 px-4 text-lg"
         >
           <Globe size={24} />
           <span className="flex-1 text-left">{t('settings.language')}</span>
           {activeLang && <span className="text-sm text-slate-400">{activeLang.label}</span>}
           <ChevronRight size={20} className="text-slate-500" />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          fullWidth
           onClick={onReconfigure}
-          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+          className="gap-4 px-4 text-lg"
         >
           <SlidersHorizontal size={24} />
           <span className="flex-1 text-left">{t('home.reconfigure')}</span>
           <ChevronRight size={20} className="text-slate-500" />
-        </button>
+        </Button>
       </section>
 
       <section className="flex flex-col gap-2">
         <SectionTitle>{t('settings.dangerZone')}</SectionTitle>
-        <button
-          type="button"
+        <Button
+          variant="danger"
+          fullWidth
           onClick={() => setResetOpen(true)}
-          className="flex w-full min-h-touch items-center gap-4 rounded-xl border border-state-danger/50 bg-slate-800 px-4 text-lg font-semibold text-state-danger active:scale-[.99]"
+          className="gap-4 px-4 text-lg"
         >
           <AlertTriangle size={24} />
           <span className="flex-1 text-left">{t('home.reset')}</span>
-        </button>
+        </Button>
       </section>
 
       <ConfirmDialog

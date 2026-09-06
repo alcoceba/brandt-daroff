@@ -37,7 +37,7 @@ export const WizardChoiceStep = memo(function WizardChoiceStep({
           type="button"
           onClick={() => onSelectChoice('defaults')}
           className={`flex min-h-touch w-full items-center gap-4 rounded-xl border p-5 text-left transition-all active:scale-[.99] ${
-            selectedChoice === 'defaults' ? 'border-brand-500 bg-brand-600/20' : 'border-slate-700 bg-slate-800'
+            selectedChoice === 'defaults' ? 'border-brand-500 bg-brand-600/20' : 'border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/80 backdrop-blur-sm shadow-sm'
           }`}
         >
           <div className="flex flex-1 flex-col">
@@ -57,7 +57,7 @@ export const WizardChoiceStep = memo(function WizardChoiceStep({
           type="button"
           onClick={() => onSelectChoice('manual')}
           className={`flex min-h-touch w-full items-center gap-4 rounded-xl border p-5 text-left transition-all active:scale-[.99] ${
-            selectedChoice === 'manual' ? 'border-brand-500 bg-brand-600/20' : 'border-slate-700 bg-slate-800'
+            selectedChoice === 'manual' ? 'border-brand-500 bg-brand-600/20' : 'border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/80 backdrop-blur-sm shadow-sm'
           }`}
         >
           <div className="flex flex-1 flex-col">

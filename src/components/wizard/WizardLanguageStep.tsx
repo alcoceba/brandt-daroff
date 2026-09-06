@@ -46,7 +46,7 @@ export const WizardLanguageStep = memo(function WizardLanguageStep({
                 type="button"
                 onClick={() => onSelect(code)}
                 className={`flex w-full min-h-touch items-center gap-3 rounded-xl border px-4 text-lg font-semibold transition-all active:scale-[.99] ${
-                  active ? 'border-brand-500 bg-brand-600/20 text-white' : 'border-slate-700 bg-slate-800 text-white'
+                  active ? 'border-brand-500 bg-brand-600/20 text-white' : 'border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/80 text-white backdrop-blur-sm shadow-sm'
                 }`}
               >
                 <span className="flex-1 text-left">{label}</span>

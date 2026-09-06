@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { useCycleSession } from '@/hooks/useCycleSession';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
-import { SessionCompletionCard } from '@/components/SessionCompletionCard';
+import { SessionCompletionCard } from '@/components/cycle/SessionCompletionCard';
 import { CycleControls } from '@/components/cycle/CycleControls';
 import { CyclePositionView } from '@/components/cycle/CyclePositionView';
 import { CycleTopBar } from '@/components/cycle/CycleTopBar';

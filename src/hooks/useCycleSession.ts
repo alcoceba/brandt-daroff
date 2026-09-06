@@ -43,6 +43,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const [showCompletion, setShowCompletion] = useState(false);
   const [intentionallyPaused, setIntentionallyPaused] = useState(false);
   const sessionStartRef = useRef(performance.now());
+  const completedDurationRef = useRef<number | null>(null);
   const { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete } = useCountdown();
 
   const position: PositionDef = POSITIONS[positionIndex];
@@ -52,6 +53,23 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const isRest = position.kind === 'rest' || position.kind === 'long-rest';
   const midPoint = Math.floor(duration / 2);
   const cycleNumber = cycleIndex + 1;
+
+  const sessionElapsedSeconds = useCallback(() => {
+    if (completedDurationRef.current !== null) {
+      return completedDurationRef.current;
+    }
+    return Math.max(0, Math.round((performance.now() - sessionStartRef.current) / 1000));
+  }, []);
+
+  const finishSession = useCallback(() => {
+    stop();
+    const elapsed = sessionElapsedSeconds();
+    completedDurationRef.current = elapsed;
+    clearSessionProgress(todayISO(), sessionId);
+    setSessionStatus(todayISO(), sessionId, 'completed');
+    setSessionDuration(todayISO(), sessionId, elapsed);
+    setShowCompletion(true);
+  }, [stop, sessionElapsedSeconds, clearSessionProgress, setSessionStatus, setSessionDuration, sessionId]);
 
   useBeepCues({
     secondsRemaining,
@@ -78,15 +96,13 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   }, [stop, onExit]);
 
   const advance = useCallback((skipTransition = false) => {
+    if (showCompletion) return;
     setIntentionallyPaused(false);
     if (positionIndex < POSITIONS.length - 1) {
       const isLastCycle = cycleIndex === config.cyclesPerSession - 1;
       const isBeforeLongRest = positionIndex === POSITIONS.length - 2;
       if (isLastCycle && isBeforeLongRest) {
-        clearSessionProgress(todayISO(), sessionId);
-        setSessionStatus(todayISO(), sessionId, 'completed');
-        setSessionDuration(todayISO(), sessionId, sessionElapsedSeconds());
-        setShowCompletion(true);
+        finishSession();
         return;
       }
       const nextPos = positionIndex + 1;
@@ -106,11 +122,8 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
       saveSessionProgress(todayISO(), sessionId, { cycleIndex: nextCycle, positionIndex: nextPos });
       return;
     }
-    clearSessionProgress(todayISO(), sessionId);
-    setSessionStatus(todayISO(), sessionId, 'completed');
-    setSessionDuration(todayISO(), sessionId, sessionElapsedSeconds());
-    setShowCompletion(true);
-  }, [positionIndex, cycleIndex, config, setSessionStatus, saveSessionProgress, clearSessionProgress, setSessionDuration, sessionId]);
+    finishSession();
+  }, [showCompletion, positionIndex, cycleIndex, config, finishSession, setSessionStatus, saveSessionProgress, sessionId]);
 
   const advanceRef = useRef(advance);
   advanceRef.current = advance;
@@ -128,6 +141,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const bypassRef = useRef(false);
 
   useEffect(() => {
+    if (showCompletion) return;
     if (isTransition) return;
     if (duration <= 0) {
       if (bypassRef.current) return;
@@ -144,7 +158,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     }
     cueChange(settings.vibration);
     start(duration);
-  }, [cycleIndex, positionIndex, position.kind, isTransition, duration, start, advance, settings.sound, settings.vibration]);
+  }, [cycleIndex, positionIndex, position.kind, isTransition, duration, start, advance, settings.sound, settings.vibration, showCompletion]);
 
   const handlePauseResume = async () => {
     if (isRunning) {
@@ -160,6 +174,8 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
 
   const confirmReset = () => {
     stop();
+    completedDurationRef.current = null;
+    setShowCompletion(false);
     setCycleIndex(0);
     setPositionIndex(0);
     saveSessionProgress(todayISO(), sessionId, { cycleIndex: 0, positionIndex: 0 });
@@ -169,9 +185,6 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     if (skipChecked) toggleSkipSafetyWarning();
     setDialog('none');
   };
-
-  const sessionElapsedSeconds = () =>
-    Math.round((performance.now() - sessionStartRef.current) / 1000);
 
   const isPaused = intentionallyPaused && !isRunning && !isTransition;
 

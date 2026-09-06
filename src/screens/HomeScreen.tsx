@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { Calendar } from '@/components/Calendar';
+import { Calendar } from '@/components/home/Calendar';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { HomeActions } from '@/components/home/HomeActions';
 import { HomeHeader } from '@/components/home/HomeHeader';

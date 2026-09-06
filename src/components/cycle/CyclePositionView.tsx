@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { PositionIcon } from '@/components/PositionIcon';
-import { Timer } from '@/components/Timer';
-import { CycleProgressDots } from '@/components/CycleProgressDots';
+import { PositionIcon } from '@/components/cycle/PositionIcon';
+import { Timer } from '@/components/cycle/Timer';
+import { CycleProgressDots } from '@/components/cycle/CycleProgressDots';
 import type { PositionDef } from '@/types';
 
 interface CyclePositionViewProps {

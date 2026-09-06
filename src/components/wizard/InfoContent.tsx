@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, Clock, Ear, Lightbulb, Move, TrendingUp } from 'lucide-react';
 import { WizardInfoSection } from './WizardInfoSection';
-import { AboutStepCards } from '@/components/AboutStepCards';
+import { AboutStepCards } from '@/components/wizard/AboutStepCards';
 
 export const InfoContent = memo(function InfoContent() {
   const { t } = useTranslation();

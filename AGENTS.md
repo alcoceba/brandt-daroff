@@ -99,17 +99,13 @@ src/
   store/
     useTreatmentStore.ts
   components/
-    AboutStepCards.tsx
-    Calendar.tsx
-    CycleProgressDots.tsx
-    PositionIcon.tsx
-    ProgressSummary.tsx
-    SessionCompletionCard.tsx
-    Timer.tsx
     core/
       BackButton.tsx
+      Button.tsx
+      ButtonGroup.tsx
       CircularProgress.tsx
       ConfirmDialog.tsx
+      CountdownRing.tsx
       Logo.tsx
       ProgressIndicator.tsx
       StepDots.tsx
@@ -117,15 +113,21 @@ src/
     cycle/
       CycleControls.tsx
       CyclePositionView.tsx
+      CycleProgressDots.tsx
       CycleTopBar.tsx
+      PositionIcon.tsx
+      SessionCompletionCard.tsx
+      Timer.tsx
     home/
+      Calendar.tsx
       HomeActions.tsx
       HomeHeader.tsx
-      HomeActions.tsx
       MotivationCard.tsx
+      ProgressSummary.tsx
       TodaySessionCard.tsx
       TreatmentCompleteCard.tsx
     wizard/
+      AboutStepCards.tsx
       InfoContent.tsx
       TreatmentSettingsForm.tsx
       WizardAboutDetailStep.tsx

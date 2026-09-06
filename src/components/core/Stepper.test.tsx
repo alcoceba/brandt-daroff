@@ -64,4 +64,16 @@ describe('Stepper component', () => {
     
     expect(defaultProps.onChange).toHaveBeenCalledWith(50);
   });
+
+  it('should disable decrease button when value is less than or equal to min', () => {
+    render(<Stepper {...defaultProps} value={10} min={10} />);
+    const decreaseBtn = screen.getByRole('button', { name: 'decrease' });
+    expect(decreaseBtn).toBeDisabled();
+  });
+
+  it('should disable increase button when value is greater than or equal to max', () => {
+    render(<Stepper {...defaultProps} value={50} max={50} />);
+    const increaseBtn = screen.getByRole('button', { name: 'increase' });
+    expect(increaseBtn).toBeDisabled();
+  });
 });

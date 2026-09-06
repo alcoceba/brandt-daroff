@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AboutStepCards } from '@/components/AboutStepCards';
+import { AboutStepCards } from '@/components/wizard/AboutStepCards';
 import { WizardHeader } from './WizardHeader';
 
 interface WizardAboutStepProps {

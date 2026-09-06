@@ -164,7 +164,7 @@ export function DevScenariosScreen() {
         </span>
       </div>
 
-      <div className="rounded-2xl border border-slate-700 bg-slate-800/60 p-5">
+      <div className="rounded-2xl border border-slate-700/80 bg-slate-800/80 p-5 backdrop-blur-sm shadow-md">
         <div className="flex items-center gap-2">
           <Play className="h-4 w-4 text-brand-500" />
           <h2 className="text-sm font-bold text-white">Manual state builder</h2>
@@ -228,7 +228,7 @@ export function DevScenariosScreen() {
                 key={name}
                 type="button"
                 onClick={() => seedScenario(name)}
-                className="group flex min-h-touch items-center rounded-xl border border-slate-700 bg-slate-800/60 px-4 text-left transition-all duration-200 hover:border-brand-500 hover:bg-slate-800 active:scale-[0.98]"
+                className="group flex min-h-touch items-center rounded-xl border border-slate-700/80 bg-slate-800/80 px-4 text-left transition-all duration-200 hover:border-brand-500 hover:bg-slate-700/80 active:scale-[0.98] shadow-sm"
               >
                 <span className="font-semibold text-slate-200 group-hover:text-white">
                   {getScenarioLabel(name)}
@@ -243,7 +243,7 @@ export function DevScenariosScreen() {
         <button
           type="button"
           onClick={handleCopy}
-          className="group flex min-h-touch items-center justify-center gap-2 rounded-xl bg-slate-700 px-4 py-3 text-lg font-semibold text-white transition-all duration-200 hover:bg-slate-600 active:scale-[0.98]"
+          className="group flex min-h-touch items-center justify-center gap-2 rounded-xl border border-slate-600/80 bg-slate-700/80 px-4 py-3 text-lg font-semibold text-white transition-all duration-200 hover:bg-slate-600 hover:border-slate-500 active:scale-[0.98] shadow-sm"
         >
           <Copy size={20} />
           <span>{copied ? 'Copied to clipboard' : 'Copy current localStorage state'}</span>

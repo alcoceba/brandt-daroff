@@ -3,6 +3,7 @@ import { Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDuration } from '@/utils/format';
 import { BackButton } from '@/components/core/BackButton';
+import { Button } from '@/components/core/Button';
 
 interface SessionCompletionCardProps {
   dayNumber: number;
@@ -43,30 +44,31 @@ export const SessionCompletionCard = memo(function SessionCompletionCard({
           )}
         </div>
         <div className="grid w-full max-w-xs grid-cols-1 gap-3">
-          <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4">
+          <div className="rounded-2xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-md">
             <p className="text-sm text-slate-400">{t('cycle.timeInvested')}</p>
             <p className="text-2xl font-bold text-white">{timeLabel}</p>
           </div>
-          <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4">
+          <div className="rounded-2xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-md">
             <p className="text-sm text-slate-400">{t('cycle.completionTotalSessions')}</p>
             <p className="text-2xl font-bold text-white">
               {completedCount} / {totalSessions}
             </p>
           </div>
           {extraCompletedCount > 0 && (
-            <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4">
+            <div className="rounded-2xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-md">
               <p className="text-sm text-slate-400">{t('cycle.completionExtraSessions')}</p>
               <p className="text-2xl font-bold text-white">{extraCompletedCount}</p>
             </div>
           )}
         </div>
-        <button
-          type="button"
+        <Button
+          variant="primary"
+          fullWidth
           onClick={onDone}
-          className="min-h-touch w-full max-w-xs rounded-xl bg-brand-600 text-lg font-bold text-white"
+          className="max-w-xs text-lg"
         >
           {t('cycle.done')}
-        </button>
+        </Button>
       </div>
     </div>
   );

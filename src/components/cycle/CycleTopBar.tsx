@@ -37,7 +37,7 @@ export const CycleTopBar = memo(function CycleTopBar({
           onClick={() => setMenuOpen((open) => !open)}
           aria-label={moreActionsLabel}
           aria-expanded={menuOpen}
-          className="relative z-30 flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
+          className="relative z-30 flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600/80 bg-slate-800/60 text-slate-200 backdrop-blur-sm transition-all duration-200 hover:border-slate-500 hover:bg-slate-700/80 hover:text-white active:scale-[0.98] shadow-sm"
         >
           {menuOpen ? <X size={22} /> : <MoreHorizontal size={22} />}
         </button>
@@ -54,7 +54,7 @@ export const CycleTopBar = memo(function CycleTopBar({
             type="button"
             onClick={onReset}
             aria-label={resetLabel}
-            className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 text-state-danger transition-all duration-200 hover:bg-state-danger/10 hover:border-state-danger active:scale-[0.98]"
+            className="flex h-14 w-14 items-center justify-center rounded-xl border border-state-danger/50 bg-slate-800/80 text-state-danger backdrop-blur-sm transition-all duration-200 hover:bg-state-danger/20 hover:border-state-danger active:scale-[0.98] shadow-md"
           >
             <RotateCcw size={22} />
           </button>
@@ -62,7 +62,7 @@ export const CycleTopBar = memo(function CycleTopBar({
             type="button"
             onClick={onToggleSound}
             aria-label={soundEnabled ? muteLabel : unmuteLabel}
-            className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600 text-slate-200 transition-all duration-200 hover:border-slate-500 hover:bg-slate-800 hover:text-white active:scale-[0.98]"
+            className="flex h-14 w-14 items-center justify-center rounded-xl border border-slate-600/80 bg-slate-800/80 text-slate-200 backdrop-blur-sm transition-all duration-200 hover:border-slate-500 hover:bg-slate-700/80 hover:text-white active:scale-[0.98] shadow-md"
           >
             {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
           </button>

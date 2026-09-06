@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { ProgressSummary } from '@/components/ProgressSummary';
+import { ProgressSummary } from '@/components/home/ProgressSummary';
 import { todayISO } from '@/utils/date';
 import {
   chunkIntoWeeks,
@@ -162,7 +162,7 @@ export const Calendar = memo(function Calendar() {
 
       <ProgressSummary />
 
-      <section className="rounded-2xl border border-slate-700/70 bg-slate-800/50 p-3 sm:p-4">
+      <section className="rounded-2xl border border-slate-700/80 bg-slate-800/75 p-3 sm:p-4 backdrop-blur-sm shadow-xl">
         <MilestoneBar pct={pctDone} animatedPct={animatedPct} />
 
         <div className="flex flex-col gap-1.5 sm:gap-2">

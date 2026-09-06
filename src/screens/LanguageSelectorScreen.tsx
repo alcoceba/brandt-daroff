@@ -2,6 +2,7 @@ import { memo } from 'react';
 import type { Language } from '@/types';
 import { LANGUAGES } from '@/constants/languages';
 import { Logo } from '@/components/core/Logo';
+import { Button } from '@/components/core/Button';
 
 interface LanguageSelectorScreenProps {
   onSelect: (code: Language) => void;
@@ -15,13 +16,14 @@ export const LanguageSelectorScreen = memo(function LanguageSelectorScreen({ onS
         {LANGUAGES.map(({ code, label }) => {
           return (
             <li key={code}>
-              <button
-                type="button"
+              <Button
+                variant="outline"
+                fullWidth
                 onClick={() => onSelect(code)}
-                className="flex w-full min-h-touch items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 px-4 text-lg font-semibold text-white active:scale-[.99]"
+                className="gap-3 text-lg"
               >
                 <span>{label}</span>
-              </button>
+              </Button>
             </li>
           );
         })}

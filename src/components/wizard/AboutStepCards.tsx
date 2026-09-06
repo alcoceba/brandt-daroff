@@ -25,7 +25,7 @@ export function AboutStepCards({ variant = 'summary' }: AboutStepCardsProps) {
 
   if (variant === 'summary') {
     return (
-      <div className="flex flex-col gap-4 rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
+      <div className="flex flex-col gap-4 rounded-xl border border-slate-700/80 bg-slate-800/75 p-4 backdrop-blur-sm shadow-md">
         <p className="text-sm leading-relaxed text-slate-300">
           {t('wizard.aboutSummary')}
         </p>
@@ -46,7 +46,7 @@ export function AboutStepCards({ variant = 'summary' }: AboutStepCardsProps) {
             )}
           </div>
           <div className={`flex-1 ${index !== steps.length - 1 ? 'pb-6' : ''}`}>
-            <div className="flex items-center gap-4 rounded-xl border border-slate-700 bg-slate-800 p-4">
+            <div className="flex items-center gap-4 rounded-xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-md">
               <div className="flex shrink-0 items-center justify-center rounded-xl bg-white/95 p-2 shadow-inner">
                 <img
                   src={`${import.meta.env.BASE_URL}steps/step-${item.image}.png`}

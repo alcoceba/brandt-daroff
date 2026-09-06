@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Minus, Plus } from 'lucide-react';
+import { Button } from '@/components/core/Button';
 
 interface StepperProps {
   label: string;
@@ -13,10 +14,20 @@ interface StepperProps {
   onChange: (v: number) => void;
 }
 
-export const Stepper = memo(function Stepper({ label, unit, description, icon, value, step, min, max, onChange }: StepperProps) {
+export const Stepper = memo(function Stepper({
+  label,
+  unit,
+  description,
+  icon,
+  value,
+  step,
+  min,
+  max,
+  onChange,
+}: StepperProps) {
   const clamp = (v: number) => Math.min(Math.max(v, min), max);
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800 p-4">
+    <div className="rounded-xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-sm">
       <div className="flex items-start gap-3">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="flex flex-col gap-0.5">
@@ -25,26 +36,28 @@ export const Stepper = memo(function Stepper({ label, unit, description, icon, v
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <button
-          type="button"
+        <Button
+          size="icon"
+          variant="secondary"
           aria-label="decrease"
+          disabled={value <= min}
           onClick={() => onChange(clamp(value - step))}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg bg-slate-700 text-white"
         >
           <Minus size={24} />
-        </button>
+        </Button>
         <span className="text-3xl font-bold tabular-nums text-white">
           {value}
           <span className="ml-1 text-base font-normal text-slate-400">{unit}</span>
         </span>
-        <button
-          type="button"
+        <Button
+          size="icon"
+          variant="secondary"
           aria-label="increase"
+          disabled={value >= max}
           onClick={() => onChange(clamp(value + step))}
-          className="grid min-h-touch min-w-touch place-items-center rounded-lg bg-slate-700 text-white"
         >
           <Plus size={24} />
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -148,4 +148,53 @@ describe('useCycleSession hook', () => {
     expect(result.current.cycleIndex).toBe(0);
     expect(result.current.positionIndex).toBe(0);
   });
+
+  it('should stop timer and freeze elapsed seconds when cycles finish naturally', () => {
+    useTreatmentStore.getState().setConfig({ cyclesPerSession: 1 });
+
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    // 1. Sitting -> advance to lying right
+    act(() => { result.current.advance(); });
+    // 2. Lying right (30s)
+    act(() => { vi.advanceTimersByTime(30100); });
+    // 3. Rest (30s)
+    act(() => { vi.advanceTimersByTime(30100); });
+    // 4. Lying left (30s)
+    act(() => { vi.advanceTimersByTime(30100); });
+
+    expect(result.current.showCompletion).toBe(true);
+    expect(result.current.isRunning).toBe(false);
+
+    const elapsed = result.current.sessionElapsedSeconds();
+    expect(elapsed).toBeGreaterThan(0);
+
+    // Advancing time further should NOT increment the elapsed seconds
+    act(() => { vi.advanceTimersByTime(15000); });
+    expect(result.current.sessionElapsedSeconds()).toBe(elapsed);
+  });
+
+  it('should stop timer and freeze elapsed seconds when advancing early on the final position', () => {
+    useTreatmentStore.getState().setConfig({ cyclesPerSession: 1 });
+
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    // 1. Sitting
+    act(() => { result.current.advance(); });
+    // 2. Lying right
+    act(() => { result.current.advance(); });
+    // 3. Rest
+    act(() => { result.current.advance(); });
+    // 4. Lying left - advance early while timer is running
+    act(() => { result.current.advance(); });
+
+    expect(result.current.showCompletion).toBe(true);
+    expect(result.current.isRunning).toBe(false);
+
+    const elapsed = result.current.sessionElapsedSeconds();
+    // Advancing time further should NOT change elapsed seconds or re-trigger advance
+    act(() => { vi.advanceTimersByTime(60000); });
+    expect(result.current.sessionElapsedSeconds()).toBe(elapsed);
+    expect(result.current.showCompletion).toBe(true);
+  });
 });

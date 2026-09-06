@@ -29,7 +29,7 @@ export const ProgressSummary = memo(function ProgressSummary() {
     summary;
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-700/70 bg-slate-800/50 p-4">
+    <div className="flex items-center gap-4 rounded-2xl border border-slate-700/80 bg-slate-800/75 p-4 backdrop-blur-sm shadow-xl">
       <CircularProgress value={completedSessions / totalSessions} size={72} strokeWidth={6}>
         <span className="text-sm font-bold text-white">{sessionPct}%</span>
       </CircularProgress>
