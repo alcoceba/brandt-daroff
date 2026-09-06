@@ -1,7 +1,7 @@
 # Brandt-Daroff — BPPV Home Treatment App
 
-> URL: https://alcoceba.github.io/brandt-daroff/
-> Full documentation for LLMs: https://alcoceba.github.io/brandt-daroff/llms-full.txt
+> URL: __SITE_URL__/
+> Full documentation for LLMs: __SITE_URL__/llms-full.txt
 > Repository: https://github.com/alcoceba/brandt-daroff
 
 A free, privacy-first, offline Progressive Web App (PWA) that guides patients through Brandt-Daroff vestibular rehabilitation exercises for BPPV (benign paroxysmal positional vertigo / VPPB) at home.
@@ -41,7 +41,7 @@ The application includes persistent safety warnings. Patients must stop exercise
 
 ## Static informative pages & resources
 
-- English guide: https://alcoceba.github.io/brandt-daroff/info/en/
-- Catalan guide: https://alcoceba.github.io/brandt-daroff/info/ca/
-- Spanish guide: https://alcoceba.github.io/brandt-daroff/info/es/
-- Machine-readable full clinical guide: https://alcoceba.github.io/brandt-daroff/llms-full.txt
+- English guide: __SITE_URL__/info/en/
+- Catalan guide: __SITE_URL__/info/ca/
+- Spanish guide: __SITE_URL__/info/es/
+- Machine-readable full clinical guide: __SITE_URL__/llms-full.txt

@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://alcoceba.github.io/brandt-daroff/sitemap.xml

@@ -1,10 +1,22 @@
 import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
-  base: '/brandt-daroff/',
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const siteUrl = env.VITE_SITE_URL || process.env.VITE_SITE_URL || 'https://alcoceba.github.io/brandt-daroff';
+  let basePath = '/';
+  try {
+    const url = new URL(siteUrl);
+    const path = url.pathname.replace(/\/+$/, '');
+    basePath = path ? `${path}/` : '/';
+  } catch {
+    basePath = '/brandt-daroff/';
+  }
+
+  return {
+    base: basePath,
   plugins: [
     react(),
     VitePWA({
@@ -50,4 +62,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+};
 });

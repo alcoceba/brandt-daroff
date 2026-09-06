@@ -5,8 +5,9 @@
   "license": "CC-BY-NC-4.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev": "node scripts/generate-static.mjs && vite",
+    "generate:static": "node scripts/generate-static.mjs",
+    "build": "node scripts/generate-static.mjs && tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
