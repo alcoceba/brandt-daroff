@@ -39,4 +39,16 @@ describe('CountdownRing', () => {
     );
     expect(screen.getByText('Custom')).toBeInTheDocument();
   });
+
+  it('handles totalDuration = 0 gracefully without center time text', () => {
+    const { container } = render(
+      <CountdownRing
+        secondsRemaining={0}
+        totalDuration={0}
+        isRunning={false}
+        strokeColor="#22c55e"
+      />,
+    );
+    expect(container.querySelector('.timer-text')).toBeNull();
+  });
 });

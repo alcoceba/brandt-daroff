@@ -36,6 +36,21 @@ describe('ConfirmDialog component', () => {
     expect(screen.getByRole('button', { name: 'Cancel Option' })).toBeInTheDocument();
   });
 
+  it('should use default i18n labels when labels are not provided', () => {
+    render(
+      <ConfirmDialog
+        open={true}
+        title="Title"
+        body="Body"
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'common.confirm' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'common.cancel' })).toBeInTheDocument();
+  });
+
   it('should trigger onConfirm when confirm button is clicked', () => {
     render(<ConfirmDialog {...defaultProps} />);
     

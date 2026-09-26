@@ -35,6 +35,20 @@ describe('Button', () => {
     expect(button).toHaveClass('bg-state-danger');
   });
 
+  it('renders warning variant', () => {
+    render(<Button variant="warning">Warning</Button>);
+    const button = screen.getByRole('button', { name: 'Warning' });
+    expect(button).toHaveClass('border-amber-500/50');
+    expect(button).toHaveClass('text-amber-300');
+  });
+
+  it('renders solid-warning variant', () => {
+    render(<Button variant="solid-warning">Continue</Button>);
+    const button = screen.getByRole('button', { name: 'Continue' });
+    expect(button).toHaveClass('bg-amber-500');
+    expect(button).toHaveClass('text-slate-900');
+  });
+
   it('renders ghost variant', () => {
     render(<Button variant="ghost">Skip</Button>);
     const button = screen.getByRole('button', { name: 'Skip' });

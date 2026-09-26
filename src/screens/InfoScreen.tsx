@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { BackButton } from '@/components/core/BackButton';
+import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { InfoContent } from '@/components/wizard/InfoContent';
 import { WizardInfoSection } from '@/components/wizard/WizardInfoSection';
 
@@ -14,10 +14,7 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-3 py-5 sm:px-5">
-      <header className="flex items-center gap-3">
-        <BackButton onBack={onBack} />
-        <h1 className="text-xl font-bold text-white">{t('info.title')}</h1>
-      </header>
+      <ScreenHeader title={t('info.title')} onBack={onBack} />
 
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-4">
         <WizardInfoSection

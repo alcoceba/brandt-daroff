@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Card } from '@/components/core/Card';
 
 interface WizardInfoSectionProps {
   icon: React.ReactNode;
@@ -12,12 +13,12 @@ export const WizardInfoSection = memo(function WizardInfoSection({
   children,
 }: WizardInfoSectionProps) {
   return (
-    <div className="rounded-xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-sm">
+    <Card>
       <div className="flex items-center gap-2">
         {icon}
         <h2 className="text-sm font-bold text-white">{title}</h2>
       </div>
       <div className="mt-2 text-xs leading-relaxed text-slate-300">{children}</div>
-    </div>
+    </Card>
   );
 });

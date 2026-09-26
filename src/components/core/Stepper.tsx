@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/core/Button';
+import { Card } from '@/components/core/Card';
 
 interface StepperProps {
   label: string;
@@ -27,7 +28,7 @@ export const Stepper = memo(function Stepper({
 }: StepperProps) {
   const clamp = (v: number) => Math.min(Math.max(v, min), max);
   return (
-    <div className="rounded-xl border border-slate-700/80 bg-slate-800/80 p-4 backdrop-blur-sm shadow-sm">
+    <Card>
       <div className="flex items-start gap-3">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="flex flex-col gap-0.5">
@@ -59,6 +60,6 @@ export const Stepper = memo(function Stepper({
           <Plus size={24} />
         </Button>
       </div>
-    </div>
+    </Card>
   );
 });

@@ -19,6 +19,13 @@ describe('Calendar component', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('handles totalSessions = 0 gracefully', () => {
+    useTreatmentStore.getState().setConfig({ totalDays: 0, sessionsPerDay: 0 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    render(<Calendar />);
+    expect(screen.getAllByText(/0%/).length).toBeGreaterThan(0);
+  });
+
   it('renders progress bar and day grid with startDate', () => {
     useTreatmentStore.getState().setConfig({ totalDays: 3, sessionsPerDay: 3 });
     useTreatmentStore.setState({ startDate: '2026-01-14' });

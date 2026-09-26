@@ -61,4 +61,14 @@ describe('SessionReadyScreen', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(onDone).toHaveBeenCalledTimes(1);
   });
+
+  it('falls back gracefully when startDate is null and sessionId is not standard', () => {
+    useTreatmentStore.setState({ startDate: null });
+    const onDone = vi.fn();
+    render(<SessionReadyScreen sessionId="custom-id" onDone={onDone} />);
+
+    expect(
+      screen.getByText('sessionReady.subtitle:{"day":1,"session":1,"totalSessions":3}'),
+    ).toBeInTheDocument();
+  });
 });

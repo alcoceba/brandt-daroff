@@ -197,4 +197,84 @@ describe('useCycleSession hook', () => {
     expect(result.current.sessionElapsedSeconds()).toBe(elapsed);
     expect(result.current.showCompletion).toBe(true);
   });
+
+  it('restores in-progress session state from store', () => {
+    const today = todayISO();
+    useTreatmentStore.getState().saveSessionProgress(today, 'session-1', {
+      cycleIndex: 2,
+      positionIndex: 3,
+    });
+
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    expect(result.current.cycleIndex).toBe(2);
+    expect(result.current.positionIndex).toBe(3);
+    expect(useTreatmentStore.getState().sessions[today]?.['session-1']).toBe('in-progress');
+  });
+
+  it('automatically advances when position duration is 0', () => {
+    useTreatmentStore.getState().setConfig({ restBetweenPositions: 0 });
+
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    // Advance from Sitting to Lying Right (30s)
+    act(() => {
+      result.current.advance();
+    });
+    expect(result.current.position.kind).toBe('lying-right');
+
+    // Advance from Lying Right to Rest (duration 0) -> should automatically bypass to Lying Left!
+    act(() => {
+      result.current.advance();
+    });
+    expect(result.current.position.kind).toBe('lying-left');
+  });
+
+  it('resets session to start on confirmReset', () => {
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    act(() => {
+      result.current.advance(); // now in lying-right
+    });
+    expect(result.current.positionIndex).toBe(1);
+
+    act(() => {
+      result.current.confirmReset();
+    });
+
+    expect(result.current.positionIndex).toBe(0);
+    expect(result.current.cycleIndex).toBe(0);
+    expect(result.current.isTransition).toBe(true);
+  });
+
+  it('goHome sets session status and calls onExit', () => {
+    const exitMock = vi.fn();
+    const today = todayISO();
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit: exitMock }));
+
+    act(() => {
+      result.current.goHome('pending');
+    });
+
+    expect(useTreatmentStore.getState().sessions[today]?.['session-1']).toBe('pending');
+    expect(exitMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('finishes session when advance is called on last cycle and last position', () => {
+    const today = todayISO();
+    useTreatmentStore.getState().setConfig({ cyclesPerSession: 1 });
+    useTreatmentStore.getState().saveSessionProgress(today, 'session-1', {
+      cycleIndex: 0,
+      positionIndex: 4,
+    });
+
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    // Advance from position 4 of last cycle
+    act(() => {
+      result.current.advance();
+    });
+
+    expect(result.current.showCompletion).toBe(true);
+  });
 });

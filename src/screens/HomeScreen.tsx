@@ -30,19 +30,16 @@ export const HomeScreen = memo(function HomeScreen({
   onOpenInfo,
 }: HomeScreenProps) {
   const { t } = useTranslation();
-  const { config, sessions, startDate, sessionDurations, setSessionStatus, clearSessionProgress, resetTreatment } =
+  const { config, sessions, startDate, sessionDurations, resetTreatment } =
     useTreatmentStore((s) => ({
       config: s.config,
       sessions: s.sessions,
       startDate: s.startDate,
       sessionDurations: s.sessionDurations,
-      setSessionStatus: s.setSessionStatus,
-      clearSessionProgress: s.clearSessionProgress,
       resetTreatment: s.resetTreatment,
     }));
 
   const [completeNoticeDismissed, setCompleteNoticeDismissed] = useState(false);
-  const [restartSlot, setRestartSlot] = useState<string | null>(null);
   const [newTreatmentDialogOpen, setNewTreatmentDialogOpen] = useState(false);
 
   const today = todayISO();
@@ -82,12 +79,8 @@ export const HomeScreen = memo(function HomeScreen({
       onStartSession(getNextSessionId(todaySessions, config.sessionsPerDay));
       return;
     }
-    if (activeStatus === 'completed') {
-      setRestartSlot(activeSession.id);
-      return;
-    }
     onStartSession(activeSession.id);
-  }, [activeSession, activeStatus, todaySessions, config.sessionsPerDay, onStartSession]);
+  }, [activeSession, todaySessions, config.sessionsPerDay, onStartSession]);
 
   const handleStartExtra = useCallback(() => {
     onStartSession(getNextSessionId(todaySessions, config.sessionsPerDay));
@@ -98,14 +91,6 @@ export const HomeScreen = memo(function HomeScreen({
     setCompleteNoticeDismissed(false);
     setNewTreatmentDialogOpen(false);
   }, [resetTreatment]);
-
-  const confirmRestart = useCallback(() => {
-    if (!restartSlot) return;
-    setSessionStatus(today, restartSlot, 'pending');
-    clearSessionProgress(today, restartSlot);
-    onStartSession(restartSlot);
-    setRestartSlot(null);
-  }, [restartSlot, setSessionStatus, clearSessionProgress, onStartSession, today]);
 
   const buttonLabel = !activeSession
     ? t('home.addExtraSession')
@@ -177,17 +162,6 @@ export const HomeScreen = memo(function HomeScreen({
         settingsLabel={t('home.settings')}
         onOpenInfo={onOpenInfo}
         onOpenSettings={onOpenSettings}
-      />
-
-      <ConfirmDialog
-        open={restartSlot !== null}
-        title={t('home.restartSession')}
-        body={t('home.confirmRestartSession')}
-        confirmLabel={t('home.restartSession')}
-        cancelLabel={t('common.cancel')}
-        danger
-        onConfirm={confirmRestart}
-        onCancel={() => setRestartSlot(null)}
       />
 
       <ConfirmDialog

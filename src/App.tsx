@@ -72,6 +72,14 @@ export default function App() {
     );
   }
 
+  const homeScreen = (
+    <HomeScreen
+      onStartSession={handleStartSession}
+      onOpenSettings={() => navigateTo('settings')}
+      onOpenInfo={() => navigateTo('info')}
+    />
+  );
+
   let screen: React.ReactNode;
   switch (route) {
     case 'wizard':
@@ -93,22 +101,14 @@ export default function App() {
           onDone={() => navigateTo('cycle')}
         />
       ) : (
-        <HomeScreen
-          onStartSession={handleStartSession}
-          onOpenSettings={() => navigateTo('settings')}
-          onOpenInfo={() => navigateTo('info')}
-        />
+        homeScreen
       );
       break;
     case 'cycle':
       screen = sessionId ? (
         <CycleSessionScreen sessionId={sessionId} onExit={() => navigateTo('home')} />
       ) : (
-        <HomeScreen
-          onStartSession={handleStartSession}
-          onOpenSettings={() => navigateTo('settings')}
-          onOpenInfo={() => navigateTo('info')}
-        />
+        homeScreen
       );
       break;
     case 'settings':
@@ -128,13 +128,7 @@ export default function App() {
       break;
     case 'home':
     default:
-      screen = (
-        <HomeScreen
-          onStartSession={handleStartSession}
-          onOpenSettings={() => navigateTo('settings')}
-          onOpenInfo={() => navigateTo('info')}
-        />
-      );
+      screen = homeScreen;
   }
 
   return (

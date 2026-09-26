@@ -145,6 +145,51 @@ describe('HomeScreen', () => {
     expect(screen.getByText('home.day:{"x":1,"total":14}')).toBeInTheDocument();
   });
 
+  it('cancels starting new treatment when cancel is clicked', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    useTreatmentStore.setState({ startDate: addDays(todayISO(), -15) });
+    renderScreen();
+
+    fireEvent.click(screen.getByRole('button', { name: 'home.startNewTreatment' }));
+    expect(screen.getByText('home.confirmStartNewTreatment')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.cancel' }));
+    expect(screen.queryByText('home.confirmStartNewTreatment')).not.toBeInTheDocument();
+  });
+
+  it('shows different motivation messages depending on time of day and progress', () => {
+    vi.useFakeTimers();
+    useTreatmentStore.getState().completeOnboarding();
+
+    // Morning, 0 completed
+    vi.setSystemTime(new Date(2026, 0, 15, 9, 0, 0));
+    const { unmount: u1 } = renderScreen();
+    expect(screen.getByText('home.motivationStartDay')).toBeInTheDocument();
+    u1();
+
+    // Afternoon, 0 completed
+    vi.setSystemTime(new Date(2026, 0, 15, 16, 0, 0));
+    const { unmount: u2 } = renderScreen();
+    expect(screen.getByText('home.motivationNoSessionsAfternoon')).toBeInTheDocument();
+    u2();
+
+    // Night (>= 20h)
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-1', 'completed');
+    vi.setSystemTime(new Date(2026, 0, 15, 21, 0, 0));
+    const { unmount: u3 } = renderScreen();
+    expect(screen.getByText('home.motivationLateReminder')).toBeInTheDocument();
+    u3();
+
+    // With progress > 0 in morning
+    useTreatmentStore.getState().setSessionStatus(todayISO(), 'session-1', 'completed');
+    vi.setSystemTime(new Date(2026, 0, 15, 10, 0, 0));
+    const { unmount: u4 } = renderScreen();
+    expect(screen.getByText('home.motivationProgress')).toBeInTheDocument();
+    u4();
+
+    vi.useRealTimers();
+  });
+
   it('opens settings and info screens', () => {
     useTreatmentStore.getState().completeOnboarding();
     renderScreen();
@@ -154,5 +199,11 @@ describe('HomeScreen', () => {
 
     fireEvent.click(screen.getByText('home.settings').closest('button') as HTMLButtonElement);
     expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles null startDate gracefully with default day 1', () => {
+    useTreatmentStore.setState({ startDate: null });
+    renderScreen();
+    expect(screen.getByText('home.day:{"x":1,"total":14}')).toBeInTheDocument();
   });
 });

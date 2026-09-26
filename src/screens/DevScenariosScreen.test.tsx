@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { DevScenariosScreen } from './DevScenariosScreen';
 
 const { seedScenarioMock, clearStoredStateMock, copyCurrentStateMock } = vi.hoisted(() => ({
@@ -67,12 +67,22 @@ describe('DevScenariosScreen', () => {
     expect(clearStoredStateMock).toHaveBeenCalledTimes(1);
   });
 
-  it('copies current state when copy button is clicked', async () => {
+  it('copies current state when copy button is clicked and resets after timeout', async () => {
+    vi.useFakeTimers();
     render(<DevScenariosScreen />);
 
-    fireEvent.click(screen.getByRole('button', { name: /copy current/i }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /copy current/i }));
+    });
 
     expect(copyCurrentStateMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Copied to clipboard')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(1600);
+    });
+    expect(screen.getByText('Copy current localStorage state')).toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it('renders manual state builder inputs', () => {
@@ -90,6 +100,17 @@ describe('DevScenariosScreen', () => {
     fireEvent.change(screen.getByLabelText('Sessions completed'), { target: { value: '10' } });
 
     expect(screen.getByText(/max 6 sessions possible by day 2/i)).toBeInTheDocument();
+  });
+
+  it('shows error when day is out of bounds or sessions are negative', () => {
+    render(<DevScenariosScreen />);
+
+    fireEvent.change(screen.getByLabelText('Day'), { target: { value: '0' } });
+    expect(screen.getByText('Day must be between 1 and 14.')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Day'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Sessions completed'), { target: { value: '-1' } });
+    expect(screen.getByText('Sessions completed cannot be negative.')).toBeInTheDocument();
   });
 
   it('disables generate button while there is an error', () => {

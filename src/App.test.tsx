@@ -17,10 +17,16 @@ describe('App routing', () => {
     useTreatmentStore.getState().fullReset();
     vi.clearAllMocks();
     vi.useFakeTimers();
+    vi.stubGlobal('location', {
+      ...window.location,
+      search: '',
+      href: 'http://localhost/',
+    });
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   it('shows a splash screen on first render', () => {
@@ -101,6 +107,70 @@ describe('App routing', () => {
     expect(infoButton).toBeDefined();
     fireEvent.click(infoButton!);
     expect(screen.getByText('info.title')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
+    expect(screen.getByText('home.title')).toBeInTheDocument();
+  });
+
+  it('navigates from settings to reconfigure and back', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    render(<App />);
+    passSplash();
+
+    fireEvent.click(findButtonByText('home.settings')!);
+    fireEvent.click(findButtonByText('home.reconfigure')!);
+    expect(screen.getByRole('button', { name: 'wizard.save' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
+    expect(screen.getByText('settings.title')).toBeInTheDocument();
+  });
+
+  it('exits cycle session and returns to home', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    render(<App />);
+    passSplash();
+
+    fireEvent.click(screen.getByRole('button', { name: /home.start/i }));
+    act(() => vi.advanceTimersByTime(2500));
+
+    expect(screen.getByText('cycle.title:{"x":1}')).toBeInTheDocument();
+
+    // Click back button to exit directly to home
+    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
+    expect(screen.getByText('home.title')).toBeInTheDocument();
+  });
+
+  it('uses document.startViewTransition if available', () => {
+    const mockStartViewTransition = vi.fn((cb: () => void) => cb());
+    Object.defineProperty(document, 'startViewTransition', {
+      value: mockStartViewTransition,
+      configurable: true,
+      writable: true,
+    });
+
+    useTreatmentStore.getState().completeOnboarding();
+    render(<App />);
+    passSplash();
+
+    const infoButton = findButtonByText('info.title');
+    fireEvent.click(infoButton!);
+
+    expect(mockStartViewTransition).toHaveBeenCalled();
+    expect(screen.getByText('info.title')).toBeInTheDocument();
+
+    // Cleanup
+    delete (document as unknown as { startViewTransition?: unknown }).startViewTransition;
+  });
+
+  it('renders dev scenarios screen when dev=scenarios query parameter is present', () => {
+    vi.stubGlobal('location', {
+      ...window.location,
+      search: '?dev=scenarios',
+      href: 'http://localhost/?dev=scenarios',
+    });
+
+    render(<App />);
+    expect(screen.getByText(/Dev scenarios/i)).toBeInTheDocument();
   });
 
   it('full reset returns to the language step of the wizard', () => {

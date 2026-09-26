@@ -74,4 +74,75 @@ describe('sound utilities', () => {
     // Rest cue plays 2 frequencies [1320, 880]
     expect(mockContextInstance.createOscillator).toHaveBeenCalledTimes(2);
   });
+
+  it('resumes suspended audio context', async () => {
+    const resumeMock = vi.fn().mockResolvedValue(undefined);
+    class SuspendedContext {
+      state = 'suspended';
+      resume = resumeMock;
+      currentTime = 0;
+      destination = {};
+      createOscillator = vi.fn(() => ({
+        type: 'sine',
+        frequency: { value: 0 },
+        connect: vi.fn(),
+        start: vi.fn(),
+        stop: vi.fn(),
+      }));
+      createGain = vi.fn(() => ({
+        gain: { value: 1, setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+        connect: vi.fn(),
+      }));
+    }
+    const audioContextSpy = vi.spyOn(global, 'AudioContext').mockImplementation(function (this: unknown) {
+      return new SuspendedContext() as unknown as AudioContext;
+    });
+
+    await playBeep(true);
+    expect(resumeMock).toHaveBeenCalledTimes(1);
+    audioContextSpy.mockRestore();
+  });
+
+  it('handles environment with no AudioContext or only webkitAudioContext', async () => {
+    vi.resetModules();
+    const originalAC = window.AudioContext;
+    // @ts-expect-error delete for testing
+    delete window.AudioContext;
+
+    // Test with webkitAudioContext
+    const mockResume = vi.fn().mockResolvedValue(undefined);
+    class WebkitContext {
+      state = 'running';
+      resume = mockResume;
+      currentTime = 0;
+      destination = {};
+      createOscillator = vi.fn(() => ({
+        type: 'sine',
+        frequency: { value: 0 },
+        connect: vi.fn(),
+        start: vi.fn(),
+        stop: vi.fn(),
+      }));
+      createGain = vi.fn(() => ({
+        gain: { value: 1, setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+        connect: vi.fn(),
+      }));
+    }
+    const mockWebkit = vi.fn().mockImplementation(function (this: unknown) {
+      return new WebkitContext();
+    });
+    (window as unknown as { webkitAudioContext: unknown }).webkitAudioContext = mockWebkit;
+
+    const soundModule1 = await import('./sound');
+    await soundModule1.playBeep(true);
+    expect(mockWebkit).toHaveBeenCalled();
+
+    // Test with neither
+    vi.resetModules();
+    delete (window as unknown as { webkitAudioContext?: unknown }).webkitAudioContext;
+    const soundModule2 = await import('./sound');
+    await expect(soundModule2.playBeep(true)).resolves.toBeUndefined();
+
+    window.AudioContext = originalAC;
+  });
 });

@@ -32,4 +32,23 @@ describe('PositionIcon component', () => {
     expect(svg).toHaveClass('text-yellow-400');
     expect(svg).toHaveClass('animate-coffee-bob');
   });
+
+  it('should render lying-left and long-rest icons properly', () => {
+    const { container: leftContainer } = render(<PositionIcon kind="lying-left" />);
+    expect(leftContainer.querySelector('svg')).toHaveClass('animate-arrow-sway');
+
+    const { container: longRestContainer } = render(<PositionIcon kind="long-rest" />);
+    expect(longRestContainer.querySelector('svg')).toHaveClass('text-red-500');
+  });
+
+  it('should apply paused colors when isPaused is true', () => {
+    const { container: sittingPaused } = render(<PositionIcon kind="sitting" isPaused={true} />);
+    expect(sittingPaused.querySelector('svg')).toHaveClass('text-amber-600');
+
+    const { container: lyingPaused } = render(<PositionIcon kind="lying-right" isPaused={true} />);
+    expect(lyingPaused.querySelector('svg')).toHaveClass('text-amber-500');
+
+    const { container: longRestPaused } = render(<PositionIcon kind="long-rest" isPaused={true} />);
+    expect(longRestPaused.querySelector('svg')).toHaveClass('text-red-700');
+  });
 });

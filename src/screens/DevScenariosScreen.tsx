@@ -29,11 +29,6 @@ const GROUPS: { title: string; names: ScenarioName[] }[] = [
   { title: 'Resume', names: ['in-progress'] },
 ];
 
-function parseNumber(value: string, min: number, max: number): number {
-  const parsed = parseInt(value, 10);
-  if (Number.isNaN(parsed)) return min;
-  return Math.max(min, Math.min(max, parsed));
-}
 
 function distributeSessions(
   day: number,
@@ -122,7 +117,8 @@ export function DevScenariosScreen() {
   }, [day, sessions, maxSessions]);
 
   const handleDayChange = (value: string) => {
-    setDay(parseNumber(value, 1, DEFAULT_CONFIG.totalDays));
+    const parsed = parseInt(value, 10);
+    setDay(Number.isNaN(parsed) ? 0 : parsed);
   };
 
   const handleSessionsChange = (value: string) => {

@@ -39,6 +39,15 @@ describe('sessions utilities', () => {
       expect(countCompletedSessions(sessions)).toBe(5);
       expect(countCompletedSessions(sessions, 3)).toBe(4);
     });
+
+    it('counts completed sessions with non-standard session ids', () => {
+      const sessions: SessionMap = {
+        '2026-07-19': {
+          'quick-session': 'completed',
+        },
+      };
+      expect(countCompletedSessions(sessions, 3)).toBe(1);
+    });
   });
 
   describe('isTreatmentComplete', () => {
@@ -135,6 +144,10 @@ describe('sessions utilities', () => {
         '2026-07-20': { 'session-1': 'completed', 'session-2': 'pending' },
       };
       expect(computeStreak(sessions, config, '2026-07-20')).toBe(0);
+    });
+
+    it('returns 0 when config.sessionsPerDay <= 0', () => {
+      expect(computeStreak({}, { ...config, sessionsPerDay: 0 }, '2026-07-20')).toBe(0);
     });
   });
 
@@ -253,6 +266,12 @@ describe('sessions utilities', () => {
       const progress = getDayProgress({ 'session-4': 'completed' }, 3);
       expect(progress.completedScheduled).toBe(0);
       expect(progress.extrasCompleted).toBe(1);
+      expect(progress.ratio).toBe(0);
+      expect(progress.state).toBe('pending');
+    });
+
+    it('handles sessionsPerDay <= 0', () => {
+      const progress = getDayProgress({ 'session-1': 'completed' }, 0);
       expect(progress.ratio).toBe(0);
       expect(progress.state).toBe('pending');
     });

@@ -169,6 +169,18 @@ describe('CycleSessionScreen', () => {
     expect(confirmReset).toHaveBeenCalledTimes(1);
   });
 
+  it('cancels reset from the reset dialog', () => {
+    const setDialog = vi.fn();
+    mockedUseCycleSession.mockReturnValue(baseMock({ dialog: 'reset', setDialog }));
+    render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
+
+    const dialog = screen.getByRole('dialog');
+    const cancelBtn = within(dialog).getByRole('button', { name: 'common.cancel' });
+    fireEvent.click(cancelBtn);
+
+    expect(setDialog).toHaveBeenCalledWith('none');
+  });
+
   it('does not render the safety dialog when starting a session', () => {
     mockedUseCycleSession.mockReturnValue(baseMock());
     render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
@@ -188,5 +200,11 @@ describe('CycleSessionScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'cycle.done' }));
     expect(goHome).toHaveBeenCalledTimes(1);
     expect(goHome).toHaveBeenCalledWith('completed');
+  });
+
+  it('renders paused glow styling when isPaused is true', () => {
+    mockedUseCycleSession.mockReturnValue(baseMock({ isPaused: true }));
+    const { container } = render(<CycleSessionScreen sessionId={sessionId} onExit={onExit} />);
+    expect(container.querySelector('.bg-yellow-500\\/30')).toBeInTheDocument();
   });
 });

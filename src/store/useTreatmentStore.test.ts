@@ -96,4 +96,17 @@ describe('useTreatmentStore', () => {
     useTreatmentStore.getState().fullReset();
     expect(useTreatmentStore.getState().sessionDurations).toEqual({});
   });
+
+  it('migrates persisted state without sessionDurations correctly', () => {
+    const migrate = useTreatmentStore.persist.getOptions().migrate;
+    expect(migrate).toBeDefined();
+
+    const oldState = { language: 'en', config: DEFAULT_CONFIG } as Record<string, unknown>;
+    const migrated = migrate!(oldState, 4) as Record<string, unknown>;
+    expect(migrated.sessionDurations).toEqual({});
+
+    const stateWithDurations = { language: 'en', sessionDurations: { '2026-01-01': { 'session-1': 50 } } };
+    const migratedWithDurations = migrate!(stateWithDurations, 4) as typeof stateWithDurations;
+    expect(migratedWithDurations.sessionDurations['2026-01-01']['session-1']).toBe(50);
+  });
 });

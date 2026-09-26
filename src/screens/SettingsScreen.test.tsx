@@ -45,6 +45,9 @@ describe('SettingsScreen', () => {
     expect(screen.getByText('settings.language')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /English/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Català' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
+    expect(screen.getByText('settings.title')).toBeInTheDocument();
   });
 
   it('calls onReconfigure when reconfigure row is clicked', () => {
@@ -78,5 +81,19 @@ describe('SettingsScreen', () => {
     expect(onFullReset).toHaveBeenCalledTimes(1);
     expect(useTreatmentStore.getState().onboardingComplete).toBe(false);
     expect(useTreatmentStore.getState().sessions).toEqual({});
+  });
+
+  it('cancels full reset when cancel is clicked in the reset dialog', () => {
+    render(<SettingsScreen onBack={onBack} onReconfigure={onReconfigure} onFullReset={onFullReset} />);
+
+    const resetButton = screen.getByRole('button', { name: /home.reset/i });
+    fireEvent.click(resetButton);
+
+    const dialog = screen.getByRole('dialog');
+    const cancelBtn = within(dialog).getByRole('button', { name: 'common.cancel' });
+    fireEvent.click(cancelBtn);
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(onFullReset).not.toHaveBeenCalled();
   });
 });

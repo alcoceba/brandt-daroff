@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { MoreHorizontal, RotateCcw, Volume2, VolumeX, X } from 'lucide-react';
-import { BackButton } from '@/components/core/BackButton';
+import { ScreenHeader } from '@/components/core/ScreenHeader';
 
 interface CycleTopBarProps {
   title: string;
@@ -28,9 +28,11 @@ export const CycleTopBar = memo(function CycleTopBar({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="relative z-30 flex items-center gap-3">
-      <BackButton onBack={onBack} />
-      <h1 className="text-xl font-bold text-white">{title}</h1>
+    <ScreenHeader
+      title={title}
+      onBack={onBack}
+      className="relative z-30"
+      rightAction={
       <div className="relative ml-auto flex items-center">
         <button
           type="button"
@@ -68,6 +70,7 @@ export const CycleTopBar = memo(function CycleTopBar({
           </button>
         </div>
       </div>
-    </header>
+      }
+    />
   );
 });

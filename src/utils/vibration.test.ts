@@ -38,4 +38,14 @@ describe('vibration utilities', () => {
 
     expect(vibrateSpy).toHaveBeenCalledWith([120, 60, 120]);
   });
+
+  it('should return safely when navigator.vibrate is undefined', () => {
+    const originalVibrate = navigator.vibrate;
+    // @ts-expect-error test unsupported vibrate
+    delete navigator.vibrate;
+
+    expect(() => vibrate(true)).not.toThrow();
+
+    navigator.vibrate = originalVibrate;
+  });
 });

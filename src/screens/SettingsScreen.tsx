@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '@/constants/languages';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { BackButton } from '@/components/core/BackButton';
+import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { Button } from '@/components/core/Button';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { LanguageSettingsScreen } from '@/screens/LanguageSettingsScreen';
@@ -49,10 +49,7 @@ export const SettingsScreen = memo(function SettingsScreen({
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-3 py-5 sm:px-5">
-      <header className="flex items-center gap-3">
-        <BackButton onBack={onBack} />
-        <h1 className="text-xl font-bold text-white">{t('settings.title')}</h1>
-      </header>
+      <ScreenHeader title={t('settings.title')} onBack={onBack} />
 
       <section className="flex flex-col gap-2">
         <SectionTitle>{t('settings.feedback')}</SectionTitle>

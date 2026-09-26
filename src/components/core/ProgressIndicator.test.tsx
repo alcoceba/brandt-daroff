@@ -39,6 +39,12 @@ describe('ProgressIndicator', () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
+  it('handles back button click when onBack is not provided', () => {
+    render(<ProgressIndicator steps={['a', 'b']} current="a" />);
+    const backBtn = screen.getByRole('button', { name: /back/i });
+    expect(() => fireEvent.click(backBtn)).not.toThrow();
+  });
+
   it('uses custom label when provided', () => {
     render(<ProgressIndicator steps={['a', 'b']} current="a" label="custom label" />);
     expect(screen.getByText('custom label')).toBeInTheDocument();

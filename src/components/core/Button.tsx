@@ -1,6 +1,14 @@
 import { memo, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger' | 'solid-danger' | 'ghost';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'danger'
+  | 'solid-danger'
+  | 'warning'
+  | 'solid-warning'
+  | 'ghost';
 export type ButtonSize = 'md' | 'lg' | 'icon';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,6 +29,10 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     'border border-state-danger/50 bg-slate-800/80 font-semibold text-state-danger shadow-sm backdrop-blur-sm hover:border-state-danger hover:bg-state-danger/10',
   'solid-danger':
     'bg-state-danger font-bold text-white shadow-lg shadow-red-500/20 hover:bg-red-500 hover:shadow-red-500/30',
+  warning:
+    'border border-amber-500/50 bg-amber-600/10 font-bold text-amber-300 shadow-sm hover:border-amber-500 hover:bg-amber-600/20',
+  'solid-warning':
+    'bg-amber-500 font-bold text-slate-900 shadow-lg shadow-amber-500/25 hover:bg-amber-400 hover:shadow-amber-500/35',
   ghost:
     'font-semibold text-slate-300 hover:text-white',
 };

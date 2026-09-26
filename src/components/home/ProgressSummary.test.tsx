@@ -103,4 +103,30 @@ describe('ProgressSummary component', () => {
 
     expect(screen.getByText('home.extraSessionsCount:{"count":2}')).toBeInTheDocument();
   });
+
+  it('shows plural streaks and single dayLeft and single sessionToGo', () => {
+    const store = useTreatmentStore.getState();
+    // 2 total days, 1 session per day. Day 1: completed. Day 2 (today 2026-01-15): 0 completed.
+    store.setConfig({ totalDays: 2, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.dayLeft:{"count":1}')).toBeInTheDocument();
+    expect(screen.getByText('home.sessionToGo:{"count":1}')).toBeInTheDocument();
+  });
+
+  it('shows plural streaks and plural sessionsToGo', () => {
+    const store = useTreatmentStore.getState();
+    store.setConfig({ totalDays: 4, sessionsPerDay: 1 });
+    useTreatmentStore.setState({ startDate: '2026-01-13' });
+    store.setSessionStatus('2026-01-13', 'session-1', 'completed');
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.streaks:{"count":2}')).toBeInTheDocument();
+    expect(screen.getByText('home.sessionsToGo:{"count":2}')).toBeInTheDocument();
+  });
 });

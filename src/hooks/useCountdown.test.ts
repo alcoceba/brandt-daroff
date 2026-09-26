@@ -123,4 +123,50 @@ describe('useCountdown hook', () => {
     expect(result.current.isRunning).toBe(false);
     expect(result.current.secondsRemaining).toBe(0);
   });
+
+  it('handles resume when already running and pause when already paused', () => {
+    const { result } = renderHook(() => useCountdown());
+
+    // Calling pause while stopped does not crash
+    act(() => {
+      result.current.pause();
+    });
+    expect(result.current.isRunning).toBe(false);
+
+    // Calling stop while stopped does not crash
+    act(() => {
+      result.current.stop();
+    });
+    expect(result.current.isRunning).toBe(false);
+
+    act(() => {
+      result.current.start(10);
+    });
+    expect(result.current.isRunning).toBe(true);
+
+    // Calling resume while already running returns early
+    act(() => {
+      result.current.resume();
+    });
+    expect(result.current.isRunning).toBe(true);
+
+    // Calling start while already running cancels previous RAF
+    act(() => {
+      result.current.start(20);
+    });
+    expect(result.current.secondsRemaining).toBe(20);
+  });
+
+  it('cancels animation frame on unmount', () => {
+    const cancelSpy = vi.spyOn(window, 'cancelAnimationFrame');
+    const { result, unmount } = renderHook(() => useCountdown());
+
+    act(() => {
+      result.current.start(30);
+    });
+
+    unmount();
+    expect(cancelSpy).toHaveBeenCalled();
+    cancelSpy.mockRestore();
+  });
 });

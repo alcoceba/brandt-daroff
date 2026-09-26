@@ -49,6 +49,19 @@ describe('TodaySessionCard', () => {
     expect(screen.getByText('+2 extras')).toBeInTheDocument();
   });
 
+  it('shows single extra done label when extrasCompletedToday is 1', () => {
+    render(
+      <TodaySessionCard
+        {...baseProps}
+        goalReached
+        hasInProgress={false}
+        extrasCompletedToday={1}
+        buttonLabel="Extra session"
+      />,
+    );
+    expect(screen.getByText('+1 extra')).toBeInTheDocument();
+  });
+
   it('shows extra badge on the sublabel', () => {
     render(<TodaySessionCard {...baseProps} showExtraBadge buttonSubLabel="Session 4" />);
     expect(screen.getByText('Extra')).toBeInTheDocument();

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDuration } from '@/utils/format';
-import { BackButton } from '@/components/core/BackButton';
+import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { Button } from '@/components/core/Button';
 
 interface SessionCompletionCardProps {
@@ -45,10 +45,11 @@ export const SessionCompletionCard = memo(function SessionCompletionCard({
         />
       </div>
 
-      <header className="relative z-10 flex items-center gap-3">
-        <BackButton onBack={onDone} />
-        <h1 className="text-xl font-bold text-white">{t('cycle.title', { x: dayNumber })}</h1>
-      </header>
+      <ScreenHeader
+        title={t('cycle.title', { x: dayNumber })}
+        onBack={onDone}
+        className="relative z-10"
+      />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6 text-center">
         <Trophy className="h-24 w-24 text-state-done drop-shadow-md" strokeWidth={1.5} />
