@@ -436,6 +436,7 @@ const ca: Dict = {
     close: 'Tanca',
     or: 'o',
     doNotShowAgain: 'No tornar a mostrar',
+    today: 'Avui',
   },
 };
 
@@ -655,6 +656,7 @@ const es: Dict = {
     close: 'Cerrar',
     or: 'o',
     doNotShowAgain: 'No volver a mostrar',
+    today: 'Hoy',
   },
 };
 
