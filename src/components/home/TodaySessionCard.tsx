@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { ChevronRight, ListChecks, Sparkles } from 'lucide-react';
+import { ChevronRight, ListChecks, Play, Plus, Sparkles } from 'lucide-react';
 
 interface TodaySessionCardProps {
   todaysSessionsLabel: string;
@@ -34,6 +34,8 @@ export const TodaySessionCard = memo(function TodaySessionCard({
   extrasDoneLabel,
   onStart,
 }: TodaySessionCardProps) {
+  const isAddExtraAction = buttonSubLabel === null;
+
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -60,40 +62,64 @@ export const TodaySessionCard = memo(function TodaySessionCard({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onStart}
-        className={`group w-full overflow-hidden rounded-2xl border text-left transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] ${
-          isInProgress
-            ? 'border-state-progress/40 bg-gradient-to-r from-state-progress/10 to-state-progress/5 hover:border-state-progress/60 hover:shadow-lg hover:shadow-state-progress/10'
-            : 'border-brand-500/40 bg-gradient-to-r from-brand-500/10 to-brand-500/5 hover:border-brand-500/70 hover:from-brand-500/15 hover:to-brand-500/8 hover:shadow-lg hover:shadow-brand-500/15'
-        }`}
-      >
-        <div className="flex items-center gap-4 p-5">
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-lg font-bold text-white">{buttonLabel}</span>
-            {buttonSubLabel && (
-              <span className="flex items-center gap-2 text-sm font-medium text-brand-400">
-                <span className={isInProgress ? 'text-state-progress' : 'text-brand-400'}>
-                  {buttonSubLabel}
-                </span>
-                {showExtraBadge && (
-                  <span className="rounded-full bg-brand-500/20 px-2 py-0.5 text-xs font-bold text-brand-400">
-                    {extraBadgeLabel}
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute -inset-0.5 rounded-2xl blur-md transition-opacity duration-500 animate-aura-pulse ${
+            isInProgress ? 'bg-state-progress/30' : 'bg-brand-500/30'
+          }`}
+        />
+
+        <button
+          type="button"
+          onClick={onStart}
+          className={`group relative w-full overflow-hidden rounded-2xl border text-left transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] ${
+            isInProgress
+              ? 'border-state-progress/40 bg-gradient-to-r from-state-progress/15 via-slate-900/90 to-state-progress/5 animate-breathe-progress hover:border-state-progress/80'
+              : 'border-brand-500/40 bg-gradient-to-r from-brand-500/15 via-slate-900/90 to-brand-500/5 animate-breathe-brand hover:border-brand-500/80'
+          }`}
+        >
+          <div className="relative flex items-center gap-3.5 p-4 sm:gap-4 sm:p-5">
+            <div
+              aria-hidden="true"
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105 ${
+                isInProgress
+                  ? 'bg-state-progress/20 text-state-progress ring-1 ring-state-progress/40 shadow-sm shadow-state-progress/20'
+                  : 'bg-brand-500/20 text-brand-400 ring-1 ring-brand-500/40 shadow-sm shadow-brand-500/20'
+              }`}
+            >
+              {isAddExtraAction ? (
+                <Plus className="h-5 w-5" strokeWidth={2.5} />
+              ) : (
+                <Play className="ml-0.5 h-5 w-5 fill-current" strokeWidth={2.5} />
+              )}
+            </div>
+
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="text-lg font-bold text-white tracking-tight">{buttonLabel}</span>
+              {buttonSubLabel && (
+                <span className="flex items-center gap-2 text-sm font-medium text-brand-400">
+                  <span className={isInProgress ? 'text-state-progress' : 'text-brand-400'}>
+                    {buttonSubLabel}
                   </span>
-                )}
-              </span>
-            )}
+                  {showExtraBadge && (
+                    <span className="rounded-full bg-brand-500/20 px-2 py-0.5 text-xs font-bold text-brand-400">
+                      {extraBadgeLabel}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            <ChevronRight
+              size={28}
+              strokeWidth={2.5}
+              className={`shrink-0 transition-colors duration-300 ${
+                isInProgress ? 'text-state-progress/70' : 'text-brand-500'
+              }`}
+            />
           </div>
-          <ChevronRight
-            size={28}
-            strokeWidth={2.5}
-            className={`shrink-0 animate-arrow-sway transition-all duration-300 ${
-              isInProgress ? 'text-state-progress/70' : 'text-brand-500'
-            }`}
-          />
-        </div>
-      </button>
+        </button>
+      </div>
     </section>
   );
 });

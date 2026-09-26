@@ -2,9 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * ── App background gradient ──────────────────────────────────────────
+ * Change these two values to re-theme the entire app background.
+ * Examples:
+ *   Emerald  → --app-bg-from: #020617;  --app-bg-to: #022c22;
+ *   Amber    → --app-bg-from: #020617;  --app-bg-to: #451a03;
+ *   Neutral  → --app-bg-from: #09090b;  --app-bg-to: #18181b;
+ *   Purple   → --app-bg-from: #020617;  --app-bg-to: #3b0764;
+ */
+:root {
+  --app-bg-from: #020617;
+  --app-bg-to: #053f30;
+}
+
 @layer base {
   html {
-    background-color: #020617;
+    background-color: var(--app-bg-from);
   }
   html,
   body,
@@ -12,13 +26,18 @@
     @apply min-h-dvh;
   }
   body {
-    @apply bg-gradient-to-b from-slate-950 to-indigo-900 text-slate-100 antialiased;
-    background-color: #020617;
+    @apply text-slate-100 antialiased;
+    background: linear-gradient(to bottom, var(--app-bg-from), var(--app-bg-to));
+    background-color: var(--app-bg-from);
     -webkit-tap-highlight-color: transparent;
   }
   button {
     touch-action: manipulation;
   }
+}
+
+.app-gradient {
+  background: linear-gradient(to bottom, var(--app-bg-from), var(--app-bg-to));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -29,9 +48,57 @@
   }
   .animate-arrow-sway,
   .animate-coffee-bob,
-  .animate-scale-in {
+  .animate-scale-in,
+  .animate-breathe-brand,
+  .animate-breathe-progress,
+  .animate-aura-pulse {
     animation: none !important;
   }
+}
+
+@keyframes border-breathe-brand {
+  0%, 100% {
+    border-color: rgba(34, 197, 94, 0.35);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0), 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    border-color: rgba(74, 222, 128, 0.85);
+    box-shadow: 0 0 20px 2px rgba(34, 197, 94, 0.35), 0 0 38px 4px rgba(34, 197, 94, 0.12);
+  }
+}
+
+@keyframes border-breathe-progress {
+  0%, 100% {
+    border-color: rgba(245, 158, 11, 0.35);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0), 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    border-color: rgba(251, 191, 36, 0.85);
+    box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.35), 0 0 38px 4px rgba(245, 158, 11, 0.12);
+  }
+}
+
+@keyframes aura-pulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.02);
+  }
+}
+
+.animate-breathe-brand {
+  animation: border-breathe-brand 3.2s ease-in-out infinite;
+}
+
+.animate-breathe-progress {
+  animation: border-breathe-progress 3.2s ease-in-out infinite;
+}
+
+.animate-aura-pulse {
+  animation: aura-pulse 3.2s ease-in-out infinite;
 }
 
 @keyframes scale-in {

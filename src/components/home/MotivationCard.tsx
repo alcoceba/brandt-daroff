@@ -9,7 +9,7 @@ interface MotivationCardProps {
 export const MotivationCard = memo(function MotivationCard({ message }: MotivationCardProps) {
   if (!message) return null;
   return (
-    <Card className="rounded-2xl border-slate-700/80 bg-slate-800/75 flex items-start gap-3 shadow-md">
+    <Card className="flex items-start gap-3 rounded-2xl shadow-md">
       <Sparkles className="h-5 w-5 text-brand-400 shrink-0 mt-0.5" strokeWidth={1.5} />
       <p className="text-sm text-slate-300 leading-relaxed">{message}</p>
     </Card>
