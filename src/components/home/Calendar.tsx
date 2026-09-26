@@ -218,7 +218,7 @@ export const Calendar = memo(function Calendar() {
               </span>
               {dayInfos[selectedDay]?.isToday && (
                 <span className="rounded-full bg-brand-500/20 px-2 py-0.5 text-[10px] font-bold text-brand-400">
-                  {t('common.today', 'Avui')}
+                  {t('common.today')}
                 </span>
               )}
             </div>
