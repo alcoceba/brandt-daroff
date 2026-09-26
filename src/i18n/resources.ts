@@ -214,6 +214,7 @@ const en = {
     close: 'Close',
     or: 'or',
     doNotShowAgain: 'Do not show again',
+    today: 'Today',
   },
 };
 
