@@ -166,6 +166,10 @@ describe('Calendar component', () => {
     fireEvent.click(dayButtons[1]); // today
 
     expect(screen.getByText('home.dayDetailInProgress:{"n":2}')).toBeInTheDocument();
+    expect(screen.getByText('common.today')).toBeInTheDocument();
+
+    fireEvent.click(dayButtons[0]); // not today
+    expect(screen.queryByText('common.today')).not.toBeInTheDocument();
   });
 
   it('shows extra day detail when a day has extra completions', () => {
