@@ -6,11 +6,19 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
   ],
-  ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs', 'storybook-static'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
+  overrides: [
+    {
+      files: ['**/*.stories.@(ts|tsx)'],
+      rules: {
+        'react-refresh/only-export-components': 'off',
+      },
+    },
+  ],
 };
