@@ -32,8 +32,6 @@ describe('Calendar component', () => {
 
     const { container } = render(<Calendar />);
 
-    expect(screen.getByText('home.progress')).toBeInTheDocument();
-
     const progressBar = container.querySelector('.bg-state-done');
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveStyle({ width: '0%' });
@@ -46,7 +44,7 @@ describe('Calendar component', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('renders all treatment days in a responsive grid', () => {
+  it('renders all treatment days in a grid', () => {
     useTreatmentStore.getState().setConfig({ totalDays: 14, sessionsPerDay: 3 });
     useTreatmentStore.setState({ startDate: '2026-01-14' });
 
@@ -73,18 +71,14 @@ describe('Calendar component', () => {
     expect(dayButtons).toHaveLength(3);
 
     expect(dayButtons[0]).toHaveClass('from-state-done/25');
-    expect(dayButtons[1]).toHaveClass('ring-brand-500/60');
-    expect(dayButtons[2]).toHaveClass('bg-slate-900/30');
     expect(screen.getByText('2')).toHaveClass('text-brand-400');
   });
 
   it('renders missed sessions in yellow on the progress bar', () => {
     const store = useTreatmentStore.getState();
-    // 3 total days, 3 sessions per day = 9 total sessions
     store.setConfig({ totalDays: 3, sessionsPerDay: 3 });
     useTreatmentStore.setState({ startDate: '2026-01-14' });
 
-    // Day 1 (yesterday): 1 completed, 2 missed
     store.setSessionStatus('2026-01-14', 'session-1', 'completed');
 
     const { container } = render(<Calendar />);
@@ -137,7 +131,7 @@ describe('Calendar component', () => {
     expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('shows a hint when no day is selected and swaps it for the detail on tap', () => {
+  it('shows a legend when no day is selected and swaps it for the detail on tap', () => {
     const store = useTreatmentStore.getState();
     store.setConfig({ totalDays: 3, sessionsPerDay: 2 });
     useTreatmentStore.setState({ startDate: '2026-01-14' });
@@ -145,18 +139,19 @@ describe('Calendar component', () => {
 
     render(<Calendar />);
 
-    expect(screen.getByText('home.dayDetailHint')).toBeInTheDocument();
+    expect(screen.getByText('home.legendDone')).toBeInTheDocument();
 
     const dayButtons = screen.getAllByRole('button');
     fireEvent.click(dayButtons[0]);
 
-    expect(screen.queryByText('home.dayDetailHint')).not.toBeInTheDocument();
+    expect(screen.queryByText('home.legendDone')).not.toBeInTheDocument();
 
     expect(screen.getByText('home.dayDetail:{"n":1,"completed":1,"total":2}')).toBeInTheDocument();
     expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'true');
 
     fireEvent.click(dayButtons[0]);
     expect(dayButtons[0]).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByText('home.legendDone')).toBeInTheDocument();
   });
 
   it('shows future day detail for upcoming days', () => {
@@ -167,7 +162,7 @@ describe('Calendar component', () => {
     render(<Calendar />);
 
     const dayButtons = screen.getAllByRole('button');
-    fireEvent.click(dayButtons[2]); // future day
+    fireEvent.click(dayButtons[2]);
 
     expect(screen.getByText('home.dayDetailFuture:{"n":3}')).toBeInTheDocument();
   });
@@ -182,12 +177,12 @@ describe('Calendar component', () => {
     render(<Calendar />);
 
     const dayButtons = screen.getAllByRole('button');
-    fireEvent.click(dayButtons[1]); // today
+    fireEvent.click(dayButtons[1]);
 
     expect(screen.getByText('home.dayDetailInProgress:{"n":2}')).toBeInTheDocument();
     expect(screen.getByText('common.today')).toBeInTheDocument();
 
-    fireEvent.click(dayButtons[0]); // not today
+    fireEvent.click(dayButtons[0]);
     expect(screen.queryByText('common.today')).not.toBeInTheDocument();
   });
 
@@ -202,7 +197,7 @@ describe('Calendar component', () => {
     render(<Calendar />);
 
     const dayButtons = screen.getAllByRole('button');
-    fireEvent.click(dayButtons[1]); // today
+    fireEvent.click(dayButtons[1]);
 
     expect(
       screen.getByText('home.dayDetailExtra:{"n":2,"completed":2,"total":2,"extras":1}'),

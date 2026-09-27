@@ -118,6 +118,13 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
 
         {/* Compiled Tailwind CSS + theme variables */}
         <style dangerouslySetInnerHTML={{ __html: compiledCss }} />
+
+        {/* Privacy-friendly analytics by GoatCounter (no cookies, GDPR compliant) */}
+        <script
+          data-goatcounter="https://alcoceba.goatcounter.com/count"
+          async
+          src="//gc.zgo.at/count.js"
+        />
       </head>
 
       <body className="app-gradient min-h-screen text-slate-100 antialiased selection:bg-brand-500/30 selection:text-white">

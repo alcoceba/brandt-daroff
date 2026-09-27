@@ -7,7 +7,21 @@ import { todayISO } from '@/utils/date';
 import { formatLongDuration } from '@/utils/format';
 import { getTreatmentSummary } from '@/utils/sessions';
 
-export const ProgressSummary = memo(function ProgressSummary() {
+const MILESTONES = [25, 50, 75];
+
+interface ProgressSummaryProps {
+  pct?: number;
+  animatedPct?: number;
+  missedPct?: number;
+  animatedMissedPct?: number;
+}
+
+export const ProgressSummary = memo(function ProgressSummary({
+  pct = 0,
+  animatedPct = 0,
+  missedPct: _missedPct = 0,
+  animatedMissedPct = 0,
+}: ProgressSummaryProps) {
   const { t } = useTranslation();
   const { startDate, sessions, sessionDurations, config } = useTreatmentStore((s) => ({
     startDate: s.startDate,
@@ -38,95 +52,117 @@ export const ProgressSummary = memo(function ProgressSummary() {
   } = summary;
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-700/80 bg-slate-800/75 p-4 backdrop-blur-sm shadow-xl">
-      <CircularProgress
-        value={totalSessions > 0 ? completedSessions / totalSessions : 0}
-        secondaryValue={totalSessions > 0 ? missedSessions / totalSessions : 0}
-        size={72}
-        strokeWidth={6}
-      >
-        <span className="text-sm font-bold text-white">{sessionPct}%</span>
-      </CircularProgress>
+    <div className="flex flex-col gap-3 rounded-2xl border border-slate-700/80 bg-slate-800/75 p-4 backdrop-blur-sm shadow-xl">
+      <div className="flex items-center gap-4">
+        <CircularProgress
+          value={totalSessions > 0 ? completedSessions / totalSessions : 0}
+          secondaryValue={totalSessions > 0 ? missedSessions / totalSessions : 0}
+          size={72}
+          strokeWidth={6}
+        >
+          <span className="text-sm font-bold text-emerald-400">{sessionPct}%</span>
+        </CircularProgress>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <p className="text-sm font-semibold text-white">
-          {t('home.sessionsSummary', { done: completedSessions, total: totalSessions })}
-        </p>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <p className="text-sm font-semibold text-white">
+            {t('home.sessionsSummary', { done: completedSessions, total: totalSessions })}
+          </p>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
-          {streak > 0 && (
-            <span
-              className="inline-flex items-center gap-1"
-              aria-label={streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
-            >
-              <Flame size={12} className="text-amber-400" />
-              {streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
-            </span>
-          )}
-          <span className="inline-flex items-center gap-1" aria-label={t('home.timeInvested')}>
-            <Clock size={12} className="text-brand-400" />
-            {investedLabel}
-          </span>
-          {missedSessions > 0 && (
-            <span
-              className="inline-flex items-center gap-1 font-medium text-amber-400"
-              aria-label={
-                missedSessions === 1
-                  ? t('home.missedSessionCount', { count: missedSessions })
-                  : t('home.missedSessionsCount', { count: missedSessions })
-              }
-            >
-              <AlertCircle size={12} className="text-amber-400" />
-              {missedSessions === 1
-                ? t('home.missedSessionCount', { count: missedSessions })
-                : t('home.missedSessionsCount', { count: missedSessions })}
-            </span>
-          )}
-          {extrasCompleted > 0 && (
-            <span
-              className="inline-flex items-center gap-1 font-medium text-brand-400"
-              aria-label={
-                extrasCompleted === 1
-                  ? t('home.extraSessionCount', { count: extrasCompleted })
-                  : t('home.extraSessionsCount', { count: extrasCompleted })
-              }
-            >
-              <Target size={12} className="text-brand-400" />
-              {extrasCompleted === 1
-                ? t('home.extraSessionCount', { count: extrasCompleted })
-                : t('home.extraSessionsCount', { count: extrasCompleted })}
-            </span>
-          )}
-        </div>
-
-        {!finished && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
-            <span
-              className="inline-flex items-center gap-1"
-              aria-label={
-                daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })
-              }
-            >
-              <CalendarDays size={12} className="text-slate-400" />
-              {daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })}
+            {streak > 0 && (
+              <span
+                className="inline-flex items-center gap-1"
+                aria-label={streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
+              >
+                <Flame size={12} className="text-amber-400" />
+                {streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1" aria-label={t('home.timeInvested')}>
+              <Clock size={12} className="text-brand-400" />
+              {investedLabel}
             </span>
-            {sessionsToGo > 0 && (
+            {missedSessions > 0 && (
+              <span
+                className="inline-flex items-center gap-1 font-medium text-amber-400"
+                aria-label={
+                  missedSessions === 1
+                    ? t('home.missedSessionCount', { count: missedSessions })
+                    : t('home.missedSessionsCount', { count: missedSessions })
+                }
+              >
+                <AlertCircle size={12} className="text-amber-400" />
+                {missedSessions === 1
+                  ? t('home.missedSessionCount', { count: missedSessions })
+                  : t('home.missedSessionsCount', { count: missedSessions })}
+              </span>
+            )}
+            {extrasCompleted > 0 && (
               <span
                 className="inline-flex items-center gap-1 font-medium text-brand-400"
                 aria-label={
-                  sessionsToGo === 1
-                    ? t('home.sessionToGo', { count: sessionsToGo })
-                    : t('home.sessionsToGo', { count: sessionsToGo })
+                  extrasCompleted === 1
+                    ? t('home.extraSessionCount', { count: extrasCompleted })
+                    : t('home.extraSessionsCount', { count: extrasCompleted })
                 }
               >
                 <Target size={12} className="text-brand-400" />
-                {sessionsToGo === 1
-                  ? t('home.sessionToGo', { count: sessionsToGo })
-                  : t('home.sessionsToGo', { count: sessionsToGo })}
+                {extrasCompleted === 1
+                  ? t('home.extraSessionCount', { count: extrasCompleted })
+                  : t('home.extraSessionsCount', { count: extrasCompleted })}
               </span>
             )}
           </div>
-        )}
+
+          {!finished && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
+              <span
+                className="inline-flex items-center gap-1"
+                aria-label={
+                  daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })
+                }
+              >
+                <CalendarDays size={12} className="text-slate-400" />
+                {daysLeft === 1 ? t('home.dayLeft', { count: daysLeft }) : t('home.daysLeft', { count: daysLeft })}
+              </span>
+              {sessionsToGo > 0 && (
+                <span
+                  className="inline-flex items-center gap-1 font-medium text-brand-400"
+                  aria-label={
+                    sessionsToGo === 1
+                      ? t('home.sessionToGo', { count: sessionsToGo })
+                      : t('home.sessionsToGo', { count: sessionsToGo })
+                  }
+                >
+                  <Target size={12} className="text-brand-400" />
+                  {sessionsToGo === 1
+                    ? t('home.sessionToGo', { count: sessionsToGo })
+                    : t('home.sessionsToGo', { count: sessionsToGo })}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="relative flex h-2.5 sm:h-3 overflow-hidden rounded-full bg-slate-700 shadow-inner">
+        <div
+          className="h-full bg-state-done transition-all duration-700"
+          style={{ width: `${animatedPct}%` }}
+        />
+        <div
+          className="h-full bg-amber-400 transition-all duration-700"
+          style={{ width: `${animatedMissedPct}%` }}
+        />
+        {MILESTONES.map((pctMark) => (
+          <div
+            key={pctMark}
+            className={`absolute top-0 h-full w-px transition-colors duration-700 ${
+              pct >= pctMark ? 'bg-state-done/70' : 'bg-slate-600'
+            }`}
+            style={{ left: `${pctMark}%` }}
+          />
+        ))}
       </div>
     </div>
   );

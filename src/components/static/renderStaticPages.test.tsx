@@ -27,6 +27,8 @@ describe('renderStaticPages', () => {
     expect(html).not.toContain('Guia clínica');
     expect(html).not.toContain('Guía clínica');
     expect(html).not.toContain('Clinical Patient Guide');
+    expect(html).toContain('data-goatcounter="https://alcoceba.goatcounter.com/count"');
+    expect(html).toContain('//gc.zgo.at/count.js');
     expect(html).toContain(compiledCss);
   });
 

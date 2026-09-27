@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { ReconfigureScreen } from '@/screens/ReconfigureScreen';
 import i18n from '@/i18n';
@@ -14,6 +14,7 @@ import { ReadyScreen } from '@/screens/ReadyScreen';
 import { SessionReadyScreen } from '@/screens/SessionReadyScreen';
 import { AppLayout } from '@/layouts/AppLayout';
 import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
+import { trackPageView } from '@/utils/analytics';
 
 function detectLanguage(): Language {
   const lang = (navigator.language ?? '').toLowerCase();
@@ -29,6 +30,7 @@ export default function App() {
   const [splashDone, setSplashDone] = useState(false);
   const [route, setRoute] = useState<Route>(onboardingComplete ? 'home' : 'wizard');
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const isFirstRoute = useRef(true);
 
   const navigateTo = (next: Route) => {
     if ('startViewTransition' in document && document.startViewTransition) {
@@ -47,6 +49,16 @@ export default function App() {
     void i18n.changeLanguage(language);
     document.documentElement.lang = language;
   }, [language]);
+
+  useEffect(() => {
+    if (!splashDone) return;
+    if (isFirstRoute.current) {
+      isFirstRoute.current = false;
+      return;
+    }
+    const basePath = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
+    trackPageView(`${basePath}/#${route}`, `Brandt-Daroff — ${route}`);
+  }, [route, splashDone]);
 
   const handleStartSession = (id: string) => {
     setSessionId(id);

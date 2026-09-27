@@ -405,16 +405,16 @@ export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> =
     },
     header: {
       appName: 'Brandt-Daroff',
-      appTagline: 'Exercise timer & reference tool',
+      appTagline: 'Exercise timer and reference tool',
       launchToolText: 'Open Session Assistant',
     },
     hero: {
-      badge: 'Exercise Information & Reference',
+      badge: 'Exercise Information and Reference',
       title: 'Brandt-Daroff Exercises in Benign Paroxysmal Positional Vertigo (BPPV)',
       lead:
         'This page provides an informational overview of the Brandt-Daroff exercise method commonly used for vestibular habituation in BPPV, detailing the postural sequence and essential safety warnings.',
       keyPoints: [
-        { label: 'Reported mechanism', value: 'Otolithic dispersal & habituation' },
+        { label: 'Reported mechanism', value: 'Otolithic dispersal and habituation' },
         { label: 'Typical duration', value: '10 to 14 days (based on symptoms)' },
         { label: 'Common regimen', value: '3 daily sessions of 5 cycles' },
       ],
@@ -431,7 +431,7 @@ export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> =
       ],
     },
     warning: {
-      disclaimerTitle: 'Medical Disclaimer & Limitation of Liability',
+      disclaimerTitle: 'Medical Disclaimer and Limitation of Liability',
       disclaimerText:
         'This website and application are provided strictly for informational and practical reference. The creator is not a doctor or healthcare professional, and this content does not constitute or replace medical diagnosis, advice, or treatment. These exercises should only be undertaken if a qualified medical professional has diagnosed BPPV. Use of this application and information is entirely at your own risk, and the author disclaims any and all liability for consequences, misuse, or issues arising from use.',
       title: 'Warning Signs — When to Stop and Seek Immediate Medical Care',
@@ -497,7 +497,7 @@ export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> =
         },
         {
           number: 5,
-          title: 'Return to upright sitting & inter-cycle rest',
+          title: 'Return to upright sitting and inter-cycle rest',
           duration: '2 full minutes rest',
           text: 'Return to the upright seated starting position and rest for 2 full minutes before starting the subsequent cycle. This rest period is essential to prevent nausea and avoid fatigue.',
           note: 'Do not shorten this 2-minute rest interval.',
@@ -505,7 +505,7 @@ export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> =
       ],
     },
     protocolSection: {
-      title: 'Common Regimen, Managing Dizziness & Practical Tips',
+      title: 'Common Regimen, Managing Dizziness and Practical Tips',
       recommendedLabel: 'Common Regimen:',
       recommendedText:
         'Typically described as 3 sessions per day (morning, midday, evening), each consisting of 5 cycles. The routine is usually continued daily until achieving 2 consecutive days completely free of dizziness during exercise performance.',

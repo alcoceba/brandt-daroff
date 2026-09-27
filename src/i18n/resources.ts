@@ -122,6 +122,9 @@ const en = {
     treatmentCalendar: 'Treatment schedule',
     weekTitle: 'Week {{n}}',
     daySelected: 'Day {{n}}',
+    legendDone: 'Done',
+    legendPartial: 'Partial',
+    legendPending: 'Pending',
   },
   session: {
     sessionN: 'Session {{n}}',
@@ -346,6 +349,9 @@ const ca: Dict = {
     treatmentCalendar: 'Calendari del tractament',
     weekTitle: 'Setmana {{n}}',
     daySelected: 'Dia {{n}}',
+    legendDone: 'Fet',
+    legendPartial: 'Parcial',
+    legendPending: 'Pendent',
   },
   session: {
     sessionN: 'Sessió {{n}}',
@@ -568,6 +574,9 @@ const es: Dict = {
     treatmentCalendar: 'Calendario del tratamiento',
     weekTitle: 'Semana {{n}}',
     daySelected: 'Día {{n}}',
+    legendDone: 'Completado',
+    legendPartial: 'Parcial',
+    legendPending: 'Pendiente',
   },
   session: {
     sessionN: 'Sesión {{n}}',

@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useState } from 'react';
-import { CalendarDays, Check, TrendingUp } from 'lucide-react';
+import { CalendarDays, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { ProgressSummary } from '@/components/home/ProgressSummary';
@@ -12,62 +12,25 @@ import {
   type TreatmentDayInfo,
 } from '@/utils/sessions';
 
-const MILESTONES = [25, 50, 75];
-
 function dayCellClasses(progress: DayProgress, isFuture: boolean): string {
   if (isFuture) {
-    return 'border-slate-800/60 bg-slate-900/30 text-slate-500 opacity-60 hover:opacity-90';
+    return 'border-slate-800/60 bg-slate-900/30 text-slate-500 opacity-40 hover:opacity-70';
   }
   if (progress.state === 'done') {
-    return 'border-state-done/40 bg-gradient-to-br from-state-done/25 to-state-done/10 text-state-done shadow-sm';
+    return 'border-state-done/35 bg-gradient-to-b from-state-done/25 to-state-done/10 shadow-sm hover:border-state-done/60';
   }
   if (progress.state === 'in-progress') {
-    return 'border-state-progress/50 bg-gradient-to-br from-state-progress/20 to-state-progress/5 text-state-progress shadow-sm';
+    return 'border-state-progress/45 bg-gradient-to-b from-state-progress/20 to-state-progress/5 shadow-sm hover:border-state-progress/65';
   }
   if (progress.state === 'partial') {
-    return 'border-brand-500/40 bg-gradient-to-br from-brand-500/15 to-brand-500/5 text-brand-400 shadow-sm';
+    return 'border-amber-400/35 bg-gradient-to-b from-amber-400/20 to-amber-400/5 shadow-sm hover:border-amber-400/60';
   }
-  return 'border-slate-700/60 bg-gradient-to-br from-slate-700/30 to-slate-800/30 text-slate-400';
+  return 'border-slate-700/50 bg-slate-800/40 hover:border-slate-600';
 }
-
-interface MilestoneBarProps {
-  pct: number;
-  animatedPct: number;
-  animatedMissedPct?: number;
-}
-
-const MilestoneBar = memo(function MilestoneBar({
-  pct,
-  animatedPct,
-  animatedMissedPct = 0,
-}: MilestoneBarProps) {
-  return (
-    <div className="relative mb-3 flex h-2 overflow-hidden rounded-full bg-slate-700 sm:mb-4 sm:h-2.5">
-      <div
-        className="h-full bg-state-done transition-all duration-700"
-        style={{ width: `${animatedPct}%` }}
-      />
-      <div
-        className="h-full bg-amber-400 transition-all duration-700"
-        style={{ width: `${animatedMissedPct}%` }}
-      />
-      {MILESTONES.map((pctMark) => (
-        <div
-          key={pctMark}
-          className={`absolute top-0 h-full w-px transition-colors duration-700 ${
-            pct >= pctMark ? 'bg-state-done/70' : 'bg-slate-600'
-          }`}
-          style={{ left: `${pctMark}%` }}
-        />
-      ))}
-    </div>
-  );
-});
 
 interface DayCellProps {
   dayInfo: TreatmentDayInfo;
   isSelected: boolean;
-  sessionsPerDay: number;
   ariaLabel: string;
   onSelect: (dayIdx: number) => void;
 }
@@ -75,11 +38,22 @@ interface DayCellProps {
 const DayCell = memo(function DayCell({
   dayInfo,
   isSelected,
-  sessionsPerDay,
   ariaLabel,
   onSelect,
 }: DayCellProps) {
   const { dayIdx, isToday, isFuture, progress } = dayInfo;
+
+  const numColour = isToday
+    ? 'text-brand-400 font-bold'
+    : progress.state === 'done'
+      ? 'text-state-done font-bold'
+      : progress.state === 'in-progress'
+        ? 'text-state-progress font-bold'
+        : progress.state === 'partial'
+          ? 'text-amber-400 font-bold'
+          : isFuture
+            ? 'text-slate-600'
+            : 'text-slate-300';
 
   return (
     <button
@@ -87,49 +61,31 @@ const DayCell = memo(function DayCell({
       aria-label={ariaLabel}
       aria-pressed={isSelected}
       onClick={() => onSelect(dayIdx)}
-      className={`relative flex min-h-[52px] flex-col items-center justify-between rounded-xl border p-1.5 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:min-h-[56px] sm:p-2 ${
+      className={`relative flex min-h-[52px] sm:min-h-[56px] flex-col items-center justify-between p-1.5 sm:p-2 rounded-xl border transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
         dayCellClasses(progress, isFuture)
       } ${
         isToday
-          ? 'ring-2 ring-brand-400 ring-offset-2 ring-offset-slate-900 ring-brand-500/60 shadow-md shadow-brand-500/20'
+          ? 'ring-2 ring-brand-400 ring-offset-1 ring-offset-slate-900 shadow-md shadow-brand-500/20'
           : ''
-      } ${isSelected ? 'ring-2 ring-white border-transparent z-10 shadow-md' : ''}`}
+      } ${isSelected ? 'ring-2 ring-white/80 border-transparent z-10 shadow-md scale-[1.03]' : ''}`}
     >
-      <span
-        className={`text-sm font-bold leading-none tabular-nums sm:text-base ${
-          isToday ? 'text-brand-400' : isFuture ? 'text-slate-500' : 'text-slate-200'
-        }`}
-      >
+      <span className={`text-xs sm:text-sm tabular-nums leading-none ${numColour}`}>
         {dayIdx + 1}
       </span>
 
-      {progress.state === 'done' ? (
-        <div className="grid h-4 w-4 place-items-center rounded-full bg-state-done/20 text-state-done sm:h-4.5 sm:w-4.5">
-          <Check size={12} strokeWidth={3} className="lucide-check" />
-        </div>
-      ) : (
-        <div className="flex items-center justify-center gap-1 pb-0.5">
-          {Array.from({ length: sessionsPerDay }).map((_, sIdx) => {
-            const isFilled = sIdx < progress.completedScheduled;
-            const isInProg =
-              !isFilled && progress.hasInProgress && sIdx === progress.completedScheduled;
-            return (
-              <span
-                key={sIdx}
-                className={`h-1.5 w-1.5 rounded-full transition-all sm:h-2 sm:w-2 ${
-                  isFilled
-                    ? 'bg-state-done shadow-sm shadow-state-done/50'
-                    : isInProg
-                      ? 'bg-state-progress animate-pulse'
-                      : isFuture
-                        ? 'bg-slate-800'
-                        : 'bg-slate-700'
-                }`}
-              />
-            );
-          })}
-        </div>
-      )}
+      <div className="flex h-4 w-4 items-center justify-center">
+        {progress.state === 'done' ? (
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-state-done/25 text-state-done">
+            <Check size={10} strokeWidth={3} className="lucide-check" />
+          </span>
+        ) : progress.state === 'in-progress' ? (
+          <span className="h-2 w-2 rounded-full bg-state-progress animate-pulse shadow-sm shadow-state-progress/50" />
+        ) : progress.state === 'partial' ? (
+          <span className="h-2 w-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50" />
+        ) : isFuture ? null : (
+          <span className="h-1.5 w-1.5 rounded-full bg-slate-600/70" />
+        )}
+      </div>
     </button>
   );
 });
@@ -195,44 +151,30 @@ export const Calendar = memo(function Calendar() {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 text-sm font-semibold text-slate-300">
-          <TrendingUp size={16} className="text-brand-400" strokeWidth={2} />
-          {t('home.progress')}
-        </h2>
-        <span className="text-sm tabular-nums text-slate-400">
-          {t('home.progressValue', { done: completedCount, total: totalSessions })}
-          {' · '}
-          {pctDone}%
-        </span>
-      </div>
-
-      <ProgressSummary />
+      <ProgressSummary
+        pct={pctDone}
+        animatedPct={animatedPct}
+        missedPct={missedPct}
+        animatedMissedPct={animatedMissedPct}
+      />
 
       <section className="rounded-2xl border border-slate-700/80 bg-slate-800/75 p-3 sm:p-4 backdrop-blur-sm shadow-xl">
-        <MilestoneBar
-          pct={pctDone}
-          animatedPct={animatedPct}
-          animatedMissedPct={animatedMissedPct}
-        />
-
-        <div className="grid grid-cols-4 min-[380px]:grid-cols-5 sm:grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
           {dayInfos.map((dayInfo) => (
             <DayCell
               key={`d-${dayInfo.dayIdx}`}
               dayInfo={dayInfo}
               isSelected={selectedDay === dayInfo.dayIdx}
-              sessionsPerDay={config.sessionsPerDay}
               ariaLabel={detailForDay(dayInfo)}
               onSelect={handleSelectDay}
             />
           ))}
         </div>
 
-        <div className="mt-2.5 flex min-h-[42px] items-center justify-center rounded-xl border border-slate-700/50 bg-slate-900/50 px-3 py-2 text-center backdrop-blur-sm sm:mt-3">
+        <div className="mt-3 flex min-h-[38px] items-center justify-center rounded-full border border-slate-700/50 bg-slate-900/50 px-4 py-2 text-center">
           {selectedDay !== null ? (
-            <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-300">
-              <CalendarDays size={14} className="shrink-0 text-brand-400" />
+            <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-200">
+              <CalendarDays size={13} className="shrink-0 text-brand-400" />
               <span className="font-semibold text-white">
                 {detailForDay(dayInfos[selectedDay])}
               </span>
@@ -243,10 +185,22 @@ export const Calendar = memo(function Calendar() {
               )}
             </div>
           ) : (
-            <p className="flex items-center justify-center gap-1.5 text-xs text-slate-400">
-              <CalendarDays size={14} className="shrink-0 text-slate-500" />
-              {t('home.dayDetailHint')}
-            </p>
+            <div className="flex items-center justify-center gap-3.5 text-[11px] text-slate-400">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-state-done/25 text-state-done">
+                  <Check size={9} strokeWidth={3} />
+                </span>
+                {t('home.legendDone')}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50" />
+                {t('home.legendPartial')}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-600/70" />
+                {t('home.legendPending')}
+              </span>
+            </div>
           )}
         </div>
       </section>
