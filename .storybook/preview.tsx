@@ -2,6 +2,7 @@ import type { Preview, StoryFn, StoryContext } from '@storybook/react';
 import React, { useEffect } from 'react';
 import '@/index.css';
 import i18n from '@/i18n';
+import { brandtTheme } from './theme';
 
 export const globalTypes = {
   locale: {
@@ -43,6 +44,9 @@ const withTheme = (Story: StoryFn) => {
 const preview: Preview = {
   decorators: [withI18n, withTheme],
   parameters: {
+    docs: {
+      theme: brandtTheme,
+    },
     backgrounds: {
       default: 'app-dark',
       values: [

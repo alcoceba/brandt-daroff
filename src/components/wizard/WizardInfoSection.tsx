@@ -1,10 +1,10 @@
-import { memo } from 'react';
-import { Card } from '@/components/core/Card';
+import { memo, type ReactNode } from 'react';
+import { SectionCard } from '@/components/core/SectionCard';
 
 interface WizardInfoSectionProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const WizardInfoSection = memo(function WizardInfoSection({
@@ -13,12 +13,12 @@ export const WizardInfoSection = memo(function WizardInfoSection({
   children,
 }: WizardInfoSectionProps) {
   return (
-    <Card>
-      <div className="flex items-center gap-2">
-        {icon}
-        <h2 className="text-sm font-bold text-white">{title}</h2>
-      </div>
-      <div className="mt-2 text-xs leading-relaxed text-slate-300">{children}</div>
-    </Card>
+    <SectionCard
+      icon={icon}
+      title={title}
+      titleClassName="text-sm font-bold text-white"
+    >
+      <div className="text-xs leading-relaxed text-slate-300">{children}</div>
+    </SectionCard>
   );
 });

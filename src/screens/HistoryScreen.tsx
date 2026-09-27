@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { CircularProgress } from '@/components/core/CircularProgress';
+import { StatCard } from '@/components/core/StatCard';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { addDays, todayISO } from '@/utils/date';
 import { formatLongDuration } from '@/utils/format';
@@ -366,63 +367,49 @@ export const HistoryScreen = memo(function HistoryScreen({ onBack }: HistoryScre
         </div>
 
         <div className="grid grid-cols-2 gap-2 border-t border-slate-700/60 pt-3 min-[480px]:grid-cols-4">
-          <div className="flex flex-col items-center justify-center rounded-xl bg-slate-900/40 p-2 text-center">
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <Clock size={12} className="text-brand-400" />
-              <span>{t('history.totalInvested')}</span>
-            </div>
-            <span className="mt-0.5 text-sm font-bold text-white tabular-nums">
-              {formatLongDuration(investedSeconds)}
-            </span>
-          </div>
+          <StatCard
+            variant="compact"
+            icon={<Clock size={12} className="text-brand-400" />}
+            label={t('history.totalInvested')}
+            value={formatLongDuration(investedSeconds)}
+          />
 
-          <div className="flex flex-col items-center justify-center rounded-xl bg-slate-900/40 p-2 text-center">
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <Flame size={12} className="text-amber-400" />
-              <span>{t('history.streak')}</span>
-            </div>
-            <span className="mt-0.5 text-sm font-bold text-white tabular-nums">
-              {streak} {streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}
-            </span>
-          </div>
+          <StatCard
+            variant="compact"
+            icon={<Flame size={12} className="text-amber-400" />}
+            label={t('history.streak')}
+            value={`${streak} ${streak === 1 ? t('home.streak', { count: streak }) : t('home.streaks', { count: streak })}`}
+          />
 
-          <div className="flex flex-col items-center justify-center rounded-xl bg-slate-900/40 p-2 text-center">
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <CheckCircle2 size={12} className="text-state-done" />
-              <span>{t('history.completedSessions')}</span>
-            </div>
-            <span className="mt-0.5 text-sm font-bold text-state-done tabular-nums">
-              {completedSessions} / {totalSessions}
-            </span>
-          </div>
+          <StatCard
+            variant="compact"
+            icon={<CheckCircle2 size={12} className="text-state-done" />}
+            label={t('history.completedSessions')}
+            value={`${completedSessions} / ${totalSessions}`}
+            valueClassName="text-state-done"
+          />
 
-          <div className="flex flex-col items-center justify-center rounded-xl bg-slate-900/40 p-2 text-center">
-            <div className="flex items-center gap-1 text-[11px] text-slate-400">
-              <AlertCircle size={12} className="text-amber-400" />
-              <span>{t('history.missedSessions')}</span>
-            </div>
-            <span
-              className={`mt-0.5 text-sm font-bold tabular-nums ${
-                missedSessions > 0 ? 'text-amber-400' : 'text-slate-400'
-              }`}
-            >
-              {missedSessions}
-            </span>
-          </div>
+          <StatCard
+            variant="compact"
+            icon={<AlertCircle size={12} className="text-amber-400" />}
+            label={t('history.missedSessions')}
+            value={missedSessions}
+            valueClassName={missedSessions > 0 ? 'text-amber-400' : 'text-slate-400'}
+          />
         </div>
       </section>
 
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="flex items-center gap-1.5 text-sm font-semibold text-slate-300">
           <CalendarDays size={16} className="text-brand-400" />
           <span>{t('home.treatmentCalendar')}</span>
         </h3>
 
-        <div className="flex rounded-xl bg-slate-800/80 p-0.5 border border-slate-700/60 text-xs">
+        <div className="grid grid-cols-3 rounded-xl border border-slate-700/60 bg-slate-900/60 p-1 text-xs sm:flex sm:w-auto">
           <button
             type="button"
             onClick={() => setFilter('all')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-lg py-1.5 px-3 text-center font-medium transition-colors ${
               filter === 'all'
                 ? 'bg-brand-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -433,7 +420,7 @@ export const HistoryScreen = memo(function HistoryScreen({ onBack }: HistoryScre
           <button
             type="button"
             onClick={() => setFilter('completed')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-lg py-1.5 px-3 text-center font-medium transition-colors ${
               filter === 'completed'
                 ? 'bg-brand-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -444,7 +431,7 @@ export const HistoryScreen = memo(function HistoryScreen({ onBack }: HistoryScre
           <button
             type="button"
             onClick={() => setFilter('pending')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
+            className={`rounded-lg py-1.5 px-3 text-center font-medium transition-colors ${
               filter === 'pending'
                 ? 'bg-brand-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'

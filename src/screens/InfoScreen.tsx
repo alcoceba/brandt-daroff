@@ -1,9 +1,8 @@
 import { memo } from 'react';
-import { ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ScreenHeader } from '@/components/core/ScreenHeader';
+import { SafetyAlert } from '@/components/core/SafetyAlert';
 import { InfoContent } from '@/components/wizard/InfoContent';
-import { WizardInfoSection } from '@/components/wizard/WizardInfoSection';
 
 interface InfoScreenProps {
   onBack: () => void;
@@ -17,12 +16,12 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
       <ScreenHeader title={t('info.title')} onBack={onBack} />
 
       <div className="flex flex-1 flex-col gap-3 pb-4">
-        <WizardInfoSection
-          icon={<ShieldAlert size={18} className="shrink-0 text-amber-400" />}
+        <SafetyAlert
+          variant="warning"
           title={t('wizard.disclaimerTitle')}
         >
-          <p className="text-amber-200/90">{t('wizard.disclaimerBody')}</p>
-        </WizardInfoSection>
+          <p className="text-sm leading-relaxed">{t('wizard.disclaimerBody')}</p>
+        </SafetyAlert>
 
         <InfoContent />
       </div>

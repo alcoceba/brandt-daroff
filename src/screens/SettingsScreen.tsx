@@ -15,6 +15,7 @@ import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { Button } from '@/components/core/Button';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
+import { StoragePrivacyNotice } from '@/components/core/StoragePrivacyNotice';
 import { LanguageSettingsScreen } from '@/screens/LanguageSettingsScreen';
 
 interface SettingsScreenProps {
@@ -118,6 +119,8 @@ export const SettingsScreen = memo(function SettingsScreen({
           <span className="flex-1 text-left">{t('home.reset')}</span>
         </Button>
       </section>
+
+      <StoragePrivacyNotice className="mt-2" />
 
       <ConfirmDialog
         open={resetOpen}

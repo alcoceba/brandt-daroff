@@ -1,16 +1,20 @@
 import {
   Activity,
   CalendarDays,
-  CheckCircle2,
   Clock,
   Compass,
   Ear,
   ExternalLink,
   Move,
   Play,
-  ShieldAlert,
 } from 'lucide-react';
-import { Card } from '@/components/core/Card';
+import { Logo } from '@/components/core/Logo';
+import { LanguagePills } from '@/components/core/LanguagePills';
+import { SafetyAlert } from '@/components/core/SafetyAlert';
+import { SectionCard } from '@/components/core/SectionCard';
+import { ProtocolStepCard } from '@/components/core/ProtocolStepCard';
+import { StatCard } from '@/components/core/StatCard';
+import { FeatureListItem } from '@/components/core/FeatureListItem';
 import { getButtonClassName } from '@/components/core/buttonStyles';
 import type { StaticInfoContent } from './infoContentData';
 
@@ -136,53 +140,18 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
               className="group flex items-center gap-2.5 transition-opacity hover:opacity-95"
               title={header.appName}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-brand-500/25 bg-brand-950/50 shadow-sm shadow-brand-950/50 transition-transform group-hover:scale-105">
-                <svg
-                  width={22}
-                  height={22}
-                  viewBox="0 0 96 96"
-                  role="img"
-                  aria-label={header.appName}
-                  className="shrink-0"
-                >
-                  <circle cx="48" cy="48" r="42" fill="none" stroke="#22c55e" strokeWidth="9" />
-                  <circle cx="48" cy="48" r="7" fill="#f8fafc" />
-                </svg>
-              </div>
-              <div className="leading-tight">
-                <span className="block text-base font-extrabold tracking-tight text-white sm:text-lg">
-                  {header.appName}
-                </span>
-                <span className="hidden text-[11px] font-medium text-slate-400 sm:block">
-                  {header.appTagline}
-                </span>
-              </div>
+              <Logo
+                layout="horizontal"
+                name={header.appName}
+                tagline={header.appTagline}
+              />
             </a>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <nav
-                aria-label="Languages"
-                className="flex items-center rounded-xl border border-slate-800 bg-slate-900/80 p-0.5 shadow-inner"
-              >
-                {(['ca', 'es', 'en'] as const).map((l) => {
-                  const isActive = l === lang;
-                  return (
-                    <a
-                      key={l}
-                      href={`${siteUrl}/info/${l}/`}
-                      aria-current={isActive ? 'page' : undefined}
-                      title={l === 'ca' ? 'Català' : l === 'es' ? 'Castellano' : 'English'}
-                      className={`rounded-lg px-2 py-1 text-xs font-semibold uppercase transition-all sm:px-2.5 ${
-                        isActive
-                          ? 'bg-brand-600 text-white shadow-sm'
-                          : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-                      }`}
-                    >
-                      {l}
-                    </a>
-                  );
-                })}
-              </nav>
+              <LanguagePills
+                currentLanguage={lang}
+                getHref={(l) => `${siteUrl}/info/${l}/`}
+              />
 
               <a
                 href={homeUrl}
@@ -235,32 +204,23 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
               {/* Key Clinical Points */}
               <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {hero.keyPoints.map((point, idx) => (
-                  <Card
+                  <StatCard
                     key={idx}
                     variant="subtle"
-                    className="flex flex-col gap-1 p-3.5 border-slate-800"
-                  >
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                      {point.label}
-                    </span>
-                    <span className="text-sm font-bold text-slate-100">
-                      {point.value}
-                    </span>
-                  </Card>
+                    label={point.label}
+                    value={point.value}
+                  />
                 ))}
               </div>
             </header>
 
             {/* Safety & Medical Disclaimer Alert */}
             <aside aria-label="Avís mèdic i de seguretat">
-              <div className="rounded-xl border border-red-500/40 bg-red-950/20 p-5 backdrop-blur-sm sm:p-6">
-                <div className="flex items-center gap-2.5 text-red-400">
-                  <ShieldAlert className="h-5 w-5 shrink-0" />
-                  <h2 className="text-base font-bold text-red-300 sm:text-lg">
-                    {warning.disclaimerTitle}
-                  </h2>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-red-200/90">
+              <SafetyAlert
+                variant="danger"
+                title={warning.disclaimerTitle}
+              >
+                <p className="text-sm leading-relaxed text-red-200/90">
                   {warning.disclaimerText}
                 </p>
 
@@ -279,39 +239,35 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
                     ))}
                   </ul>
                 </div>
-              </div>
+              </SafetyAlert>
             </aside>
 
             {/* Pathophysiology: What is BPPV */}
             <section aria-labelledby="bppv-heading">
-              <Card variant="default" className="p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400">
-                    <Ear className="h-5 w-5" />
-                  </span>
-                  <h2 id="bppv-heading" className="text-xl font-bold text-white">
-                    {bppvSection.title}
-                  </h2>
-                </div>
-                <div className="mt-4 flex flex-col gap-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+              <SectionCard
+                icon={<Ear className="h-5 w-5" />}
+                iconBadgeClassName="bg-blue-500/15 text-blue-400"
+                title={bppvSection.title}
+                titleId="bppv-heading"
+                className="p-6"
+              >
+                <div className="flex flex-col gap-3 text-sm leading-relaxed text-slate-300 sm:text-base">
                   <p>{bppvSection.p1}</p>
                   <p>{bppvSection.p2}</p>
                 </div>
-              </Card>
+              </SectionCard>
             </section>
 
             {/* Mechanism & Indications */}
             <section aria-labelledby="method-heading">
-              <Card variant="default" className="p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500/15 text-brand-400">
-                    <Move className="h-5 w-5" />
-                  </span>
-                  <h2 id="method-heading" className="text-xl font-bold text-white">
-                    {methodSection.title}
-                  </h2>
-                </div>
-                <div className="mt-4 flex flex-col gap-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+              <SectionCard
+                icon={<Move className="h-5 w-5" />}
+                iconBadgeClassName="bg-brand-500/15 text-brand-400"
+                title={methodSection.title}
+                titleId="method-heading"
+                className="p-6"
+              >
+                <div className="flex flex-col gap-3 text-sm leading-relaxed text-slate-300 sm:text-base">
                   <p>{methodSection.p1}</p>
                   <p>{methodSection.p2}</p>
                 </div>
@@ -324,70 +280,47 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
                     {methodSection.indicationText}
                   </p>
                 </div>
-              </Card>
+              </SectionCard>
             </section>
 
             {/* Step-by-step Postural Protocol (5 Steps) */}
             <section aria-labelledby="steps-heading">
-              <Card variant="default" className="p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400">
-                    <Compass className="h-5 w-5" />
-                  </span>
-                  <h2 id="steps-heading" className="text-xl font-bold text-white">
-                    {stepsSection.title}
-                  </h2>
-                </div>
-                <p className="mt-3 text-sm text-slate-300 sm:text-base">
+              <SectionCard
+                icon={<Compass className="h-5 w-5" />}
+                iconBadgeClassName="bg-amber-500/15 text-amber-400"
+                title={stepsSection.title}
+                titleId="steps-heading"
+                className="p-6"
+              >
+                <p className="text-sm text-slate-300 sm:text-base">
                   {stepsSection.intro}
                 </p>
 
                 <div className="mt-5 flex flex-col gap-3.5">
                   {stepsSection.steps.map((step) => (
-                    <div
+                    <ProtocolStepCard
                       key={step.number}
-                      className="flex flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-900/60 p-4 transition-colors hover:border-slate-600"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-brand-400 border border-slate-700">
-                            {step.number}
-                          </span>
-                          <span className="text-sm font-bold text-white sm:text-base">
-                            {step.title}
-                          </span>
-                        </div>
-                        <span className="shrink-0 rounded-md bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300 border border-slate-700">
-                          {step.duration}
-                        </span>
-                      </div>
-                      <p className="pl-9 text-xs leading-relaxed text-slate-300 sm:text-sm">
-                        {step.text}
-                      </p>
-                      {step.note && (
-                        <p className="pl-9 text-xs text-slate-400">
-                          <span className="font-medium text-slate-300">Nota:</span> {step.note}
-                        </p>
-                      )}
-                    </div>
+                      number={step.number}
+                      title={step.title}
+                      duration={step.duration}
+                      text={step.text}
+                      note={step.note}
+                    />
                   ))}
                 </div>
-              </Card>
+              </SectionCard>
             </section>
 
             {/* Protocol Administration & Practical Advice */}
             <section aria-labelledby="protocol-heading">
-              <Card variant="default" className="p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400">
-                    <CalendarDays className="h-5 w-5" />
-                  </span>
-                  <h2 id="protocol-heading" className="text-xl font-bold text-white">
-                    {protocolSection.title}
-                  </h2>
-                </div>
-
-                <div className="mt-4 flex flex-col gap-3">
+              <SectionCard
+                icon={<CalendarDays className="h-5 w-5" />}
+                iconBadgeClassName="bg-purple-500/15 text-purple-400"
+                title={protocolSection.title}
+                titleId="protocol-heading"
+                className="p-6"
+              >
+                <div className="flex flex-col gap-3">
                   <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 p-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-brand-400">
                       {protocolSection.recommendedLabel}
@@ -419,35 +352,28 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
                     ))}
                   </ul>
                 </div>
-              </Card>
+              </SectionCard>
             </section>
 
             {/* Interactive Session Assistant Utility Callout (Sober, clinical tool) */}
             <section aria-labelledby="tool-heading">
-              <Card
-                variant="default"
+              <SectionCard
+                icon={<Clock className="h-5 w-5" />}
+                iconBadgeClassName="bg-emerald-500/15 text-emerald-400"
+                title={toolCallout.title}
+                titleId="tool-heading"
                 className="border-slate-700/80 bg-slate-900/70 p-6"
               >
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
-                      <Clock className="h-5 w-5" />
-                    </span>
-                    <h2 id="tool-heading" className="text-lg font-bold text-white sm:text-xl">
-                      {toolCallout.title}
-                    </h2>
-                  </div>
-
                   <p className="text-sm leading-relaxed text-slate-300">
                     {toolCallout.description}
                   </p>
 
-                  <div className="flex flex-col gap-2 py-1 text-xs text-slate-300 sm:text-sm">
+                  <div className="flex flex-col gap-2 py-1">
                     {toolCallout.featurePoints.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-400" />
-                        <span>{feat}</span>
-                      </div>
+                      <FeatureListItem key={idx}>
+                        {feat}
+                      </FeatureListItem>
                     ))}
                   </div>
 
@@ -464,7 +390,7 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
                     </a>
                   </div>
                 </div>
-              </Card>
+              </SectionCard>
             </section>
           </article>
         </main>

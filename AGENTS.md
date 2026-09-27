@@ -84,6 +84,7 @@ One cycle = 5 positions. A session = 5 cycles. Short in-screen text per position
 - **react-i18next** with `src/i18n/{en,ca,es}.ts`
 - **lucide-react** icons + custom inline SVG for position illustrations and flag badges (no Catalan flag emoji exists)
 - **Web Audio API** (beep) + **navigator.vibrate** — both configurable
+- **Storybook 8** (component workshop and visual testing for core UI components)
 - **Capacitor-ready** layout for a future mobile wrapper
 
 ### Project structure
@@ -205,6 +206,8 @@ Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 - `npm run typecheck` — `tsc --noEmit`
 - `npm run test` — run the Vitest suite once
 - `npm run test:watch` — run tests in watch mode
+- `npm run storybook` — start the Storybook dev server on port 6006
+- `npm run build-storybook` — production build of Storybook to `storybook-static/`
 - `npm run deploy` — build and deploy to GitHub Pages (`gh-pages` branch)
 
 ## Conventions
@@ -217,6 +220,7 @@ Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 - **Mobile-first, high contrast, ≥56px tap targets.**
 - **i18n every user-facing string** via react-i18next; never hardcode display text.
 - **i18n plurals**: use explicit camelCase singular/plural keys (e.g. `dayLeft` / `daysLeft`, `streak` / `streaks`) and pick in code by `count`. Never use `_one`/`_other` suffix keys (snake_case) or nested plural objects (`key: { one, other }` — i18next returns the object and warns).
+- Maintain companion `*.stories.tsx` files for reusable UI components in `src/components/core/`.
 - Session/day view-model logic lives in `src/utils/sessions.ts` (`getDaySessionsView`, `getDayProgress`, `getNextSessionId`, `getSessionNumber`, `getTreatmentSummary`); components must not re-derive what counts as an extra session.
 - Route transitions use the native **View Transitions API** (`document.startViewTransition`) in `App.tsx`; unsupported browsers fall back to instant navigation.
 - **Prefer editing existing files**; never create documentation files unless asked.
@@ -227,5 +231,6 @@ Alternatives: Netlify, Vercel, Cloudflare Pages (all free tier).
 Before finishing any task:
 - Run `npm run lint` and `npm run typecheck`; fix any errors.
 - Run `npm run build` to confirm the build passes.
+- Run `npm run build-storybook` if core UI components or their stories were modified.
 - Manually exercise the affected flow (onboarding → wizard → Home → a full cycle → tracking) at a narrow mobile viewport.
 - Use the dev scenario seeder for fast state regression: `npm run dev`, then open `http://localhost:5173/brandt-daroff/?dev=scenarios` and validate the affected scenario(s).
