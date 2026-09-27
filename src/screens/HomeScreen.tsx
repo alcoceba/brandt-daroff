@@ -1,7 +1,8 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TrendingUp } from 'lucide-react';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
-import { Calendar } from '@/components/home/Calendar';
+import { ProgressSummary } from '@/components/home/ProgressSummary';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { HomeActions } from '@/components/home/HomeActions';
 import { HomeHeader } from '@/components/home/HomeHeader';
@@ -22,12 +23,14 @@ interface HomeScreenProps {
   onStartSession: (sessionId: string) => void;
   onOpenSettings: () => void;
   onOpenInfo: () => void;
+  onOpenHistory?: () => void;
 }
 
 export const HomeScreen = memo(function HomeScreen({
   onStartSession,
   onOpenSettings,
   onOpenInfo,
+  onOpenHistory,
 }: HomeScreenProps) {
   const { t } = useTranslation();
   const { config, sessions, startDate, sessionDurations, resetTreatment } =
@@ -155,7 +158,16 @@ export const HomeScreen = memo(function HomeScreen({
         />
       )}
 
-      <Calendar />
+      <section className="flex flex-col gap-2.5 pt-2">
+        <div className="flex items-center justify-between px-0.5">
+          <h2 className="flex items-center gap-1.5 text-sm font-semibold text-slate-300">
+            <TrendingUp size={16} className="text-brand-400" strokeWidth={2} />
+            {t('home.progress')}
+          </h2>
+        </div>
+
+        <ProgressSummary onOpenHistory={onOpenHistory} />
+      </section>
 
       <HomeActions
         infoLabel={t('info.title')}

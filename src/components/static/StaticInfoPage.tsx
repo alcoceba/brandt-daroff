@@ -7,11 +7,11 @@ import {
   Ear,
   ExternalLink,
   Move,
+  Play,
   ShieldAlert,
 } from 'lucide-react';
 import { Card } from '@/components/core/Card';
 import { getButtonClassName } from '@/components/core/buttonStyles';
-import { Logo } from '@/components/core/Logo';
 import type { StaticInfoContent } from './infoContentData';
 
 export interface StaticInfoPageProps {
@@ -129,45 +129,53 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
 
       <body className="app-gradient min-h-screen text-slate-100 antialiased selection:bg-brand-500/30 selection:text-white">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/85 backdrop-blur-md">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+        <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3">
             <a
               href={homeUrl}
-              className="flex items-center gap-3 transition-opacity hover:opacity-90"
+              className="group flex items-center gap-2.5 transition-opacity hover:opacity-95"
               title={header.appName}
             >
-              <Logo
-                size={34}
-                showWordmark={false}
-                name={header.appName}
-                tagline={header.appTagline}
-              />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-brand-500/25 bg-brand-950/50 shadow-sm shadow-brand-950/50 transition-transform group-hover:scale-105">
+                <svg
+                  width={22}
+                  height={22}
+                  viewBox="0 0 96 96"
+                  role="img"
+                  aria-label={header.appName}
+                  className="shrink-0"
+                >
+                  <circle cx="48" cy="48" r="42" fill="none" stroke="#22c55e" strokeWidth="9" />
+                  <circle cx="48" cy="48" r="7" fill="#f8fafc" />
+                </svg>
+              </div>
               <div className="leading-tight">
-                <span className="block text-base font-bold text-white sm:text-lg">
+                <span className="block text-base font-extrabold tracking-tight text-white sm:text-lg">
                   {header.appName}
                 </span>
-                <span className="block text-xs font-medium text-slate-400">
+                <span className="hidden text-[11px] font-medium text-slate-400 sm:block">
                   {header.appTagline}
                 </span>
               </div>
             </a>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <nav
                 aria-label="Languages"
-                className="flex items-center gap-1 rounded-xl border border-slate-700/80 bg-slate-900/60 p-1"
+                className="flex items-center rounded-xl border border-slate-800 bg-slate-900/80 p-0.5 shadow-inner"
               >
-                {(['en', 'ca', 'es'] as const).map((l) => {
+                {(['ca', 'es', 'en'] as const).map((l) => {
                   const isActive = l === lang;
                   return (
                     <a
                       key={l}
                       href={`${siteUrl}/info/${l}/`}
                       aria-current={isActive ? 'page' : undefined}
-                      className={`rounded-lg px-2.5 py-1 text-xs font-bold uppercase transition-all ${
+                      title={l === 'ca' ? 'Català' : l === 'es' ? 'Castellano' : 'English'}
+                      className={`rounded-lg px-2 py-1 text-xs font-semibold uppercase transition-all sm:px-2.5 ${
                         isActive
                           ? 'bg-brand-600 text-white shadow-sm'
-                          : 'text-slate-400 hover:text-slate-200'
+                          : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                       }`}
                     >
                       {l}
@@ -179,12 +187,15 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
               <a
                 href={homeUrl}
                 className={getButtonClassName({
-                  variant: 'outline',
+                  variant: 'primary',
                   size: 'md',
-                  className: 'hidden sm:inline-flex text-xs py-2 px-3 min-h-[36px] font-medium border-slate-700',
+                  className:
+                    'flex min-h-[36px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold shadow-md shadow-brand-950/40 sm:min-h-[38px] sm:px-3.5',
                 })}
               >
-                {header.launchToolText}
+                <Play className="h-3.5 w-3.5 fill-current shrink-0" />
+                <span className="hidden sm:inline">{header.launchToolText}</span>
+                <span className="sm:hidden">App</span>
               </a>
             </div>
           </div>
@@ -207,6 +218,19 @@ export function StaticInfoPage({ content, siteUrl, compiledCss }: StaticInfoPage
               <p className="text-base leading-relaxed text-slate-300 sm:text-lg">
                 {hero.lead}
               </p>
+
+              <div className="pt-1">
+                <a
+                  href={homeUrl}
+                  className={getButtonClassName({
+                    variant: 'primary',
+                    size: 'lg',
+                    className: 'w-full sm:w-auto font-semibold text-center',
+                  })}
+                >
+                  {toolCallout.buttonText}
+                </a>
+              </div>
 
               {/* Key Clinical Points */}
               <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">

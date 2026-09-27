@@ -14,6 +14,7 @@ import { ReadyScreen } from '@/screens/ReadyScreen';
 import { SessionReadyScreen } from '@/screens/SessionReadyScreen';
 import { AppLayout } from '@/layouts/AppLayout';
 import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
+import { HistoryScreen } from '@/screens/HistoryScreen';
 import { trackPageView } from '@/utils/analytics';
 
 function detectLanguage(): Language {
@@ -89,6 +90,7 @@ export default function App() {
       onStartSession={handleStartSession}
       onOpenSettings={() => navigateTo('settings')}
       onOpenInfo={() => navigateTo('info')}
+      onOpenHistory={() => navigateTo('history')}
     />
   );
 
@@ -137,6 +139,9 @@ export default function App() {
       break;
     case 'info':
       screen = <InfoScreen onBack={() => navigateTo('home')} />;
+      break;
+    case 'history':
+      screen = <HistoryScreen onBack={() => navigateTo('home')} />;
       break;
     case 'home':
     default:

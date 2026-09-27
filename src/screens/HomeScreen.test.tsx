@@ -8,6 +8,7 @@ describe('HomeScreen', () => {
   const onStartSession = vi.fn();
   const onOpenSettings = vi.fn();
   const onOpenInfo = vi.fn();
+  const onOpenHistory = vi.fn();
 
   beforeEach(() => {
     useTreatmentStore.getState().fullReset();
@@ -20,6 +21,7 @@ describe('HomeScreen', () => {
         onStartSession={onStartSession}
         onOpenSettings={onOpenSettings}
         onOpenInfo={onOpenInfo}
+        onOpenHistory={onOpenHistory}
       />,
     );
   }
@@ -199,6 +201,16 @@ describe('HomeScreen', () => {
 
     fireEvent.click(screen.getByText('home.settings').closest('button') as HTMLButtonElement);
     expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens history screen from progress summary CTA', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    renderScreen();
+
+    const historyBtn = screen.getByRole('button', { name: /home\.viewFullHistory/ });
+    fireEvent.click(historyBtn);
+    expect(onOpenHistory).toHaveBeenCalledTimes(1);
   });
 
   it('handles null startDate gracefully with default day 1', () => {

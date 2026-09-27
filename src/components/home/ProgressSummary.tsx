@@ -1,6 +1,6 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flame, Clock, CalendarDays, Target, AlertCircle } from 'lucide-react';
+import { Flame, Clock, CalendarDays, Target, AlertCircle, ChevronRight } from 'lucide-react';
 import { CircularProgress } from '@/components/core/CircularProgress';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { todayISO } from '@/utils/date';
@@ -14,13 +14,15 @@ interface ProgressSummaryProps {
   animatedPct?: number;
   missedPct?: number;
   animatedMissedPct?: number;
+  onOpenHistory?: () => void;
 }
 
 export const ProgressSummary = memo(function ProgressSummary({
-  pct = 0,
-  animatedPct = 0,
-  missedPct: _missedPct = 0,
-  animatedMissedPct = 0,
+  pct,
+  animatedPct,
+  missedPct,
+  animatedMissedPct,
+  onOpenHistory,
 }: ProgressSummaryProps) {
   const { t } = useTranslation();
   const { startDate, sessions, sessionDurations, config } = useTreatmentStore((s) => ({
@@ -36,6 +38,16 @@ export const ProgressSummary = memo(function ProgressSummary({
     [startDate, sessions, sessionDurations, config, today],
   );
   const investedLabel = formatLongDuration(summary.investedSeconds);
+  const effectivePct = pct ?? summary.sessionPct;
+  const effectiveMissedPct = missedPct ?? summary.missedPct;
+
+  const [animatedDone, setAnimatedDone] = useState(animatedPct ?? 0);
+  const [animatedMissed, setAnimatedMissed] = useState(animatedMissedPct ?? 0);
+
+  useEffect(() => {
+    setAnimatedDone(animatedPct ?? effectivePct);
+    setAnimatedMissed(animatedMissedPct ?? effectiveMissedPct);
+  }, [animatedPct, animatedMissedPct, effectivePct, effectiveMissedPct]);
 
   if (!startDate) return null;
 
@@ -145,25 +157,43 @@ export const ProgressSummary = memo(function ProgressSummary({
         </div>
       </div>
 
-      <div className="relative flex h-2.5 sm:h-3 overflow-hidden rounded-full bg-slate-700 shadow-inner">
+      <div className="relative flex h-2 overflow-hidden rounded-full bg-slate-700 shadow-inner">
         <div
-          className="h-full bg-state-done transition-all duration-700"
-          style={{ width: `${animatedPct}%` }}
+          className={`h-full bg-state-done transition-all duration-700 ease-out ${
+            animatedMissed > 0 ? 'rounded-l-full' : 'rounded-full'
+          } ${animatedDone === 0 ? 'opacity-0' : 'opacity-100'}`}
+          style={{ width: `${animatedDone}%` }}
         />
         <div
-          className="h-full bg-amber-400 transition-all duration-700"
-          style={{ width: `${animatedMissedPct}%` }}
+          className={`h-full bg-amber-400 transition-all duration-700 ease-out ${
+            animatedDone > 0 ? 'rounded-r-full' : 'rounded-full'
+          } ${animatedMissed === 0 ? 'opacity-0' : 'opacity-100'}`}
+          style={{ width: `${animatedMissed}%` }}
         />
         {MILESTONES.map((pctMark) => (
           <div
             key={pctMark}
             className={`absolute top-0 h-full w-px transition-colors duration-700 ${
-              pct >= pctMark ? 'bg-state-done/70' : 'bg-slate-600'
+              effectivePct >= pctMark ? 'bg-state-done/70' : 'bg-slate-600'
             }`}
             style={{ left: `${pctMark}%` }}
           />
         ))}
       </div>
+
+      {onOpenHistory && (
+        <button
+          type="button"
+          onClick={onOpenHistory}
+          className="mt-1 flex items-center justify-between rounded-xl border border-slate-700/60 bg-slate-900/40 px-3.5 py-2.5 text-xs font-semibold text-slate-200 transition-all hover:border-brand-500/60 hover:bg-slate-900/70 hover:text-white active:scale-[0.99]"
+        >
+          <span className="flex items-center gap-2">
+            <CalendarDays size={15} className="text-brand-400" />
+            <span>{t('home.viewFullHistory')}</span>
+          </span>
+          <ChevronRight size={16} className="text-slate-400" />
+        </button>
+      )}
     </div>
   );
 });
