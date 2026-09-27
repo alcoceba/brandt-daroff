@@ -16,10 +16,10 @@ export const StoragePrivacyNotice = memo(function StoragePrivacyNotice({
       className={`flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 text-left ${className}`}
     >
       <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" />
-      <div className="flex flex-col gap-2 text-xs leading-relaxed">
-        <p className="text-slate-300">{t('wizard.storagePrivacyNotice')}</p>
-        <p className="text-amber-300/95">
-          <span className="font-bold text-amber-200">
+      <div className="flex flex-col gap-2 text-xs leading-relaxed text-slate-300">
+        <p>{t('wizard.storagePrivacyNotice')}</p>
+        <p>
+          <span className="font-bold text-white">
             {t('wizard.privateBrowsingWarningHighlight')}
           </span>
           , {t('wizard.privateBrowsingWarningReason')}
