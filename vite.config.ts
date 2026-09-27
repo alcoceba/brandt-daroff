@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
@@ -18,6 +20,30 @@ export default defineConfig(({ mode }) => {
   return {
     base: basePath,
   plugins: [
+    {
+      name: 'serve-static-info-pages',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url?.split('?')[0] || '';
+          const match = url.match(/(?:\/brandt-daroff)?\/info\/(ca|es|en)\/?$/);
+          if (match) {
+            if (!url.endsWith('/')) {
+              res.writeHead(301, { Location: `${url}/` });
+              res.end();
+              return;
+            }
+            const lang = match[1];
+            const filePath = path.resolve(process.cwd(), 'public', 'info', lang, 'index.html');
+            if (fs.existsSync(filePath)) {
+              res.setHeader('Content-Type', 'text/html; charset=utf-8');
+              res.end(fs.readFileSync(filePath, 'utf-8'));
+              return;
+            }
+          }
+          next();
+        });
+      },
+    },
     react(),
     VitePWA({
       registerType: 'autoUpdate',

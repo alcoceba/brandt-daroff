@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flame, Clock, CalendarDays, Target } from 'lucide-react';
+import { Flame, Clock, CalendarDays, Target, AlertCircle } from 'lucide-react';
 import { CircularProgress } from '@/components/core/CircularProgress';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { todayISO } from '@/utils/date';
@@ -25,13 +25,23 @@ export const ProgressSummary = memo(function ProgressSummary() {
 
   if (!startDate) return null;
 
-  const { completedSessions, totalSessions, sessionPct, streak, extrasCompleted, finished, daysLeft, sessionsToGo } =
-    summary;
+  const {
+    completedSessions,
+    totalSessions,
+    sessionPct,
+    missedSessions,
+    streak,
+    extrasCompleted,
+    finished,
+    daysLeft,
+    sessionsToGo,
+  } = summary;
 
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-slate-700/80 bg-slate-800/75 p-4 backdrop-blur-sm shadow-xl">
       <CircularProgress
         value={totalSessions > 0 ? completedSessions / totalSessions : 0}
+        secondaryValue={totalSessions > 0 ? missedSessions / totalSessions : 0}
         size={72}
         strokeWidth={6}
       >
@@ -57,6 +67,21 @@ export const ProgressSummary = memo(function ProgressSummary() {
             <Clock size={12} className="text-brand-400" />
             {investedLabel}
           </span>
+          {missedSessions > 0 && (
+            <span
+              className="inline-flex items-center gap-1 font-medium text-amber-400"
+              aria-label={
+                missedSessions === 1
+                  ? t('home.missedSessionCount', { count: missedSessions })
+                  : t('home.missedSessionsCount', { count: missedSessions })
+              }
+            >
+              <AlertCircle size={12} className="text-amber-400" />
+              {missedSessions === 1
+                ? t('home.missedSessionCount', { count: missedSessions })
+                : t('home.missedSessionsCount', { count: missedSessions })}
+            </span>
+          )}
           {extrasCompleted > 0 && (
             <span
               className="inline-flex items-center gap-1 font-medium text-brand-400"

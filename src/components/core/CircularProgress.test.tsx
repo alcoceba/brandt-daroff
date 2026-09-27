@@ -49,4 +49,19 @@ describe('CircularProgress component', () => {
     );
     expect(getByText('50%')).toBeInTheDocument();
   });
+
+  it('renders three circles when secondaryValue is provided', () => {
+    const { container } = render(<CircularProgress value={0.3} secondaryValue={0.2} />);
+    const circles = container.querySelectorAll('circle');
+    expect(circles).toHaveLength(3);
+    // Track circle is circles[0]
+    // Secondary circle (amber) is circles[1]
+    expect(circles[1]).toHaveClass('stroke-amber-400');
+    // Primary circle (green) is circles[2]
+    expect(circles[2]).toHaveClass('stroke-brand-500');
+    // Secondary circle covers total value (0.3 + 0.2 = 0.5)
+    expect(parseFloat(circles[1].getAttribute('stroke-dashoffset')!)).toBeCloseTo(CIRCUMFERENCE * 0.5, 1);
+    // Primary circle covers primary value (0.3)
+    expect(parseFloat(circles[2].getAttribute('stroke-dashoffset')!)).toBeCloseTo(CIRCUMFERENCE * 0.7, 1);
+  });
 });

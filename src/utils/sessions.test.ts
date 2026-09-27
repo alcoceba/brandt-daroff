@@ -13,6 +13,7 @@ import {
   getTreatmentDayInfos,
   chunkIntoWeeks,
   getTreatmentSummary,
+  countMissedSessions,
 } from './sessions';
 import type { SessionMap, SessionDurations, SessionStatus, TreatmentConfig } from '@/types';
 
@@ -406,6 +407,45 @@ describe('sessions utilities', () => {
       expect(summary.finished).toBe(true);
       expect(summary.completedDays).toBe(5);
       expect(summary.sessionsToGo).toBe(0);
+      expect(summary.missedSessions).toBe(0);
+      expect(summary.missedPct).toBe(0);
+    });
+
+    it('computes missedSessions and missedPct on past days', () => {
+      // 5 total days, 2 sessions/day = 10 total.
+      // Day 1 (2026-01-14): 1 completed (1 missed)
+      // Day 2 (2026-01-15): 0 completed (2 missed)
+      // Day 3 (2026-01-16, today): 1 completed (0 missed, today is active)
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed' },
+        '2026-01-16': { 'session-1': 'completed' },
+      };
+      const summary = getTreatmentSummary('2026-01-14', sessions, {}, config, '2026-01-16');
+      expect(summary.completedSessions).toBe(2);
+      expect(summary.missedSessions).toBe(3);
+      expect(summary.sessionPct).toBe(20);
+      expect(summary.missedPct).toBe(30);
+    });
+  });
+
+  describe('countMissedSessions', () => {
+    const config: TreatmentConfig = { sessionsPerDay: 3, totalDays: 4, cyclesPerSession: 5, positionDuration: 30, restBetweenPositions: 30, restBetweenCycles: 120 };
+
+    it('returns 0 when startDate is null', () => {
+      expect(countMissedSessions(null, {}, config, '2026-01-14')).toBe(0);
+    });
+
+    it('returns 0 on day 1 with no sessions completed yet', () => {
+      expect(countMissedSessions('2026-01-14', {}, config, '2026-01-14')).toBe(0);
+    });
+
+    it('correctly tallies missed sessions across past days', () => {
+      const sessions: SessionMap = {
+        '2026-01-14': { 'session-1': 'completed' }, // 2 missed
+        '2026-01-15': { 'session-1': 'completed', 'session-2': 'completed' }, // 1 missed
+        // Day 3 (2026-01-16) is today
+      };
+      expect(countMissedSessions('2026-01-14', sessions, config, '2026-01-16')).toBe(3);
     });
   });
 });

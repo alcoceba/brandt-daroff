@@ -14,7 +14,7 @@ export const WizardManualStep = memo(function WizardManualStep({ values, onChang
   return (
     <>
       <h1 className="text-xl font-bold text-white">{t('wizard.manualTitle')}</h1>
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
+      <div className="flex flex-1 flex-col gap-3">
         <TreatmentSettingsForm values={values} onChange={onChange} />
       </div>
     </>

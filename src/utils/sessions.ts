@@ -192,10 +192,35 @@ export function chunkIntoWeeks<T>(items: T[]): T[][] {
   return weeks;
 }
 
+export function countMissedSessions(
+  startDate: string | null,
+  sessions: SessionMap,
+  config: TreatmentConfig,
+  todayIso: string,
+): number {
+  if (!startDate || config.sessionsPerDay <= 0 || config.totalDays <= 0) return 0;
+
+  const todayDayNumber = dayOffset(startDate, todayIso) + 1;
+  let missed = 0;
+
+  for (let dayIdx = 0; dayIdx < config.totalDays; dayIdx++) {
+    const isPast = dayIdx + 1 < todayDayNumber;
+    if (!isPast) continue;
+
+    const iso = addDays(startDate, dayIdx);
+    const completedScheduled = getDayProgress(sessions[iso], config.sessionsPerDay).completedScheduled;
+    missed += Math.max(0, config.sessionsPerDay - completedScheduled);
+  }
+
+  return missed;
+}
+
 export interface TreatmentSummary {
   totalSessions: number;
   completedSessions: number;
   sessionPct: number;
+  missedSessions: number;
+  missedPct: number;
   completedDays: number;
   streak: number;
   investedSeconds: number;
@@ -217,6 +242,10 @@ export function getTreatmentSummary(
   const totalSessions = config.sessionsPerDay * config.totalDays;
   const completedSessions = countCompletedSessions(sessions, config.sessionsPerDay);
   const sessionPct = totalSessions ? Math.round((completedSessions / totalSessions) * 100) : 0;
+  const missedSessions = countMissedSessions(startDate, sessions, config, todayIso);
+  const missedPct = totalSessions
+    ? Math.min(Math.round((missedSessions / totalSessions) * 100), Math.max(0, 100 - sessionPct))
+    : 0;
   const completedDays = startDate ? countCompletedDays(sessions, config, startDate) : 0;
   const streak = config.sessionsPerDay > 0 ? computeStreak(sessions, config, todayIso) : 0;
   const investedSeconds = sumInvestedSeconds(sessionDurations);
@@ -236,6 +265,8 @@ export function getTreatmentSummary(
     totalSessions,
     completedSessions,
     sessionPct,
+    missedSessions,
+    missedPct,
     completedDays,
     streak,
     investedSeconds,

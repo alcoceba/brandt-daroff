@@ -9,10 +9,8 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, hideFooter = false }: AppLayoutProps) {
   return (
-    <div className="app-gradient mx-auto flex h-dvh w-full max-w-[700px] flex-col overflow-y-auto border-x border-slate-800 shadow-xl">
-      <main className="flex flex-1 flex-col">
-        <div className="flex min-h-full flex-col">{children}</div>
-      </main>
+    <div className="app-gradient mx-auto flex min-h-dvh w-full max-w-[700px] flex-col border-x border-slate-800 shadow-xl">
+      <main className="flex flex-1 flex-col">{children}</main>
       {!hideFooter && <GlobalFooter />}
     </div>
   );

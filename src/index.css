@@ -6,14 +6,15 @@
  * ── App background gradient ──────────────────────────────────────────
  * Change these two values to re-theme the entire app background.
  * Examples:
- *   Emerald  → --app-bg-from: #020617;  --app-bg-to: #022c22;
+ *   Original → --app-bg-from: #020617;  --app-bg-to: #312e81;
+ *   Emerald  → --app-bg-from: #020617;  --app-bg-to: #053f30;
  *   Amber    → --app-bg-from: #020617;  --app-bg-to: #451a03;
  *   Neutral  → --app-bg-from: #09090b;  --app-bg-to: #18181b;
  *   Purple   → --app-bg-from: #020617;  --app-bg-to: #3b0764;
  */
 :root {
   --app-bg-from: #020617;
-  --app-bg-to: #053f30;
+  --app-bg-to: #312e81;
 }
 
 @layer base {

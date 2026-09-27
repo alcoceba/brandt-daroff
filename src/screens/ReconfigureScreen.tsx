@@ -36,7 +36,7 @@ export const ReconfigureScreen = memo(function ReconfigureScreen({ onBack }: Rec
     <div className="flex flex-1 flex-col gap-4 px-3 py-5 sm:px-5">
       <ScreenHeader title={t('home.reconfigure')} onBack={onBack} />
 
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto pt-2">
+      <div className="flex flex-1 flex-col gap-3 pt-2">
         <TreatmentSettingsForm values={values} onChange={update} />
       </div>
 

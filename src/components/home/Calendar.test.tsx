@@ -78,6 +78,25 @@ describe('Calendar component', () => {
     expect(screen.getByText('2')).toHaveClass('text-brand-400');
   });
 
+  it('renders missed sessions in yellow on the progress bar', () => {
+    const store = useTreatmentStore.getState();
+    // 3 total days, 3 sessions per day = 9 total sessions
+    store.setConfig({ totalDays: 3, sessionsPerDay: 3 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+
+    // Day 1 (yesterday): 1 completed, 2 missed
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    const { container } = render(<Calendar />);
+
+    const doneBar = container.querySelector('.bg-state-done');
+    expect(doneBar).toHaveStyle({ width: '11%' });
+
+    const missedBar = container.querySelector('.bg-amber-400');
+    expect(missedBar).toBeInTheDocument();
+    expect(missedBar).toHaveStyle({ width: '22%' });
+  });
+
   it('does not show extra count inside day cells', () => {
     const store = useTreatmentStore.getState();
     store.setConfig({ totalDays: 3, sessionsPerDay: 3 });

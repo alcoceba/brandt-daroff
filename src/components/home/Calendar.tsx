@@ -6,6 +6,7 @@ import { ProgressSummary } from '@/components/home/ProgressSummary';
 import { todayISO } from '@/utils/date';
 import {
   countCompletedSessions,
+  countMissedSessions,
   getTreatmentDayInfos,
   type DayProgress,
   type TreatmentDayInfo,
@@ -32,14 +33,23 @@ function dayCellClasses(progress: DayProgress, isFuture: boolean): string {
 interface MilestoneBarProps {
   pct: number;
   animatedPct: number;
+  animatedMissedPct?: number;
 }
 
-const MilestoneBar = memo(function MilestoneBar({ pct, animatedPct }: MilestoneBarProps) {
+const MilestoneBar = memo(function MilestoneBar({
+  pct,
+  animatedPct,
+  animatedMissedPct = 0,
+}: MilestoneBarProps) {
   return (
-    <div className="relative mb-3 h-2 overflow-hidden rounded-full bg-slate-700 sm:mb-4 sm:h-2.5">
+    <div className="relative mb-3 flex h-2 overflow-hidden rounded-full bg-slate-700 sm:mb-4 sm:h-2.5">
       <div
-        className="h-full rounded-full bg-state-done transition-all duration-700"
+        className="h-full bg-state-done transition-all duration-700"
         style={{ width: `${animatedPct}%` }}
+      />
+      <div
+        className="h-full bg-amber-400 transition-all duration-700"
+        style={{ width: `${animatedMissedPct}%` }}
       />
       {MILESTONES.map((pctMark) => (
         <div
@@ -141,12 +151,18 @@ export const Calendar = memo(function Calendar() {
 
   const totalSessions = config.sessionsPerDay * config.totalDays;
   const completedCount = countCompletedSessions(sessions, config.sessionsPerDay);
+  const missedCount = startDate ? countMissedSessions(startDate, sessions, config, today) : 0;
   const pctDone = totalSessions ? Math.round((completedCount / totalSessions) * 100) : 0;
+  const missedPct = totalSessions
+    ? Math.min(Math.round((missedCount / totalSessions) * 100), Math.max(0, 100 - pctDone))
+    : 0;
   const [animatedPct, setAnimatedPct] = useState(0);
+  const [animatedMissedPct, setAnimatedMissedPct] = useState(0);
 
   useEffect(() => {
     setAnimatedPct(pctDone);
-  }, [pctDone]);
+    setAnimatedMissedPct(missedPct);
+  }, [pctDone, missedPct]);
 
   if (!startDate) return null;
 
@@ -194,7 +210,11 @@ export const Calendar = memo(function Calendar() {
       <ProgressSummary />
 
       <section className="rounded-2xl border border-slate-700/80 bg-slate-800/75 p-3 sm:p-4 backdrop-blur-sm shadow-xl">
-        <MilestoneBar pct={pctDone} animatedPct={animatedPct} />
+        <MilestoneBar
+          pct={pctDone}
+          animatedPct={animatedPct}
+          animatedMissedPct={animatedMissedPct}
+        />
 
         <div className="grid grid-cols-4 min-[380px]:grid-cols-5 sm:grid-cols-7 gap-2">
           {dayInfos.map((dayInfo) => (

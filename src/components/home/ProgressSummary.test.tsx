@@ -129,4 +129,33 @@ describe('ProgressSummary component', () => {
     expect(screen.getByText('home.streaks:{"count":2}')).toBeInTheDocument();
     expect(screen.getByText('home.sessionsToGo:{"count":2}')).toBeInTheDocument();
   });
+
+  it('shows single missed session pill when 1 session is missed', () => {
+    const store = useTreatmentStore.getState();
+    // 3 total days, 2 sessions per day.
+    // Day 1 (2026-01-14): 1 completed (1 missed)
+    // Day 2 (today 2026-01-15): 0 completed
+    store.setConfig({ totalDays: 3, sessionsPerDay: 2 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    render(<ProgressSummary />);
+
+    expect(screen.getByText('home.missedSessionCount:{"count":1}')).toBeInTheDocument();
+  });
+
+  it('shows plural missed sessions pill and renders amber circle', () => {
+    const store = useTreatmentStore.getState();
+    // 3 total days, 3 sessions per day.
+    // Day 1 (2026-01-14): 1 completed (2 missed)
+    // Day 2 (today 2026-01-15): 0 completed
+    store.setConfig({ totalDays: 3, sessionsPerDay: 3 });
+    useTreatmentStore.setState({ startDate: '2026-01-14' });
+    store.setSessionStatus('2026-01-14', 'session-1', 'completed');
+
+    const { container } = render(<ProgressSummary />);
+
+    expect(screen.getByText('home.missedSessionsCount:{"count":2}')).toBeInTheDocument();
+    expect(container.querySelector('.stroke-amber-400')).toBeInTheDocument();
+  });
 });

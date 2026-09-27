@@ -8,7 +8,7 @@ export const WizardAboutDetailStep = memo(function WizardAboutDetailStep() {
   return (
     <>
       <h1 className="text-xl font-bold text-white">{t('info.title')}</h1>
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-2">
+      <div className="flex flex-1 flex-col gap-3 pb-2">
         <InfoContent />
       </div>
     </>

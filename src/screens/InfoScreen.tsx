@@ -16,7 +16,7 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
     <div className="flex flex-1 flex-col gap-4 px-3 py-5 sm:px-5">
       <ScreenHeader title={t('info.title')} onBack={onBack} />
 
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-4">
+      <div className="flex flex-1 flex-col gap-3 pb-4">
         <WizardInfoSection
           icon={<ShieldAlert size={18} className="shrink-0 text-amber-400" />}
           title={t('wizard.disclaimerTitle')}

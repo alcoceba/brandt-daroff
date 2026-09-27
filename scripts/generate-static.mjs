@@ -2,6 +2,10 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import autoprefixer from 'autoprefixer';
+import esbuild from 'esbuild';
+import postcss from 'postcss';
+import tailwindcss from 'tailwindcss';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +41,7 @@ if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
 
+// 1. Process root text/xml templates (robots.txt, sitemap.xml, llms.txt, etc.)
 function processTemplateDir(srcDir, destDir) {
   if (!fs.existsSync(srcDir)) return;
 
@@ -62,9 +67,57 @@ function processTemplateDir(srcDir, destDir) {
 
 processTemplateDir(templatesDir, publicDir);
 
-// Check if OG images exist, if not generate them
+// 2. Generate static landing pages using React component library
+async function generateStaticInfoPages() {
+  console.log('[generate-static] Compiling Tailwind CSS for static landing pages...');
+  const cssInputPath = path.resolve(rootDir, 'src/index.css');
+  const cssInput = fs.readFileSync(cssInputPath, 'utf-8');
+  const postcssResult = await postcss([tailwindcss, autoprefixer]).process(cssInput, {
+    from: cssInputPath,
+  });
+  const compiledCss = postcssResult.css;
+
+  console.log('[generate-static] Bundling static renderer with esbuild...');
+  const cacheDir = path.resolve(rootDir, 'node_modules/.cache');
+  fs.mkdirSync(cacheDir, { recursive: true });
+  const tmpBundle = path.join(cacheDir, `static-renderer-${Date.now()}.mjs`);
+
+  try {
+    await esbuild.build({
+      entryPoints: [path.resolve(rootDir, 'src/components/static/renderStaticPages.tsx')],
+      outfile: tmpBundle,
+      bundle: true,
+      format: 'esm',
+      platform: 'node',
+      alias: {
+        '@': path.resolve(rootDir, 'src'),
+      },
+      packages: 'external',
+    });
+
+    const { renderStaticPage, getAllStaticLanguages } = await import(`file://${tmpBundle}`);
+    const languages = getAllStaticLanguages();
+
+    for (const lang of languages) {
+      const pageHtml = renderStaticPage(lang, { siteUrl, compiledCss });
+      const destDir = path.join(publicDir, 'info', lang);
+      fs.mkdirSync(destDir, { recursive: true });
+      const destFile = path.join(destDir, 'index.html');
+      fs.writeFileSync(destFile, pageHtml, 'utf-8');
+      console.log(`[generate-static] Wrote: ${path.relative(rootDir, destFile)}`);
+    }
+  } finally {
+    if (fs.existsSync(tmpBundle)) {
+      fs.unlinkSync(tmpBundle);
+    }
+  }
+}
+
+await generateStaticInfoPages();
+
+// 3. Check if OG images exist, if not generate them
 const requiredOgImages = ['og-en.png', 'og-ca.png', 'og-es.png'];
-const missingOg = requiredOgImages.some(img => !fs.existsSync(path.join(publicDir, img)));
+const missingOg = requiredOgImages.some((img) => !fs.existsSync(path.join(publicDir, img)));
 
 if (missingOg) {
   console.log('[generate-static] OG images missing. Running generate-og.mjs...');
