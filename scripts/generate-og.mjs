@@ -34,6 +34,20 @@ const variants = [
     description: 'Ejercicios vestibulares de rehabilitación con temporizador visual y seguimiento diario.',
     badge: 'VPPB · Gratuito y offline · Protocolo clínico · Ejercicios en casa',
   },
+  {
+    lang: 'fr',
+    title: 'Brandt-Daroff',
+    subtitle: 'Traitement du VPPB à domicile · Minuteur guidé',
+    description: 'Exercices de rééducation vestibulaire avec repères visuels et suivi quotidien.',
+    badge: 'VPPB · Gratuit et hors ligne · Protocole clinique · À domicile',
+  },
+  {
+    lang: 'de',
+    title: 'Brandt-Daroff',
+    subtitle: 'BPLS-Heimbehandlung · Geführter Timer',
+    description: 'Vestibuläre Rehabilitationsübungen mit visuellen Hinweisen und täglicher Verfolgung.',
+    badge: 'BPLS · Kostenlos & Offline · Klinisches Protokoll · Heimübungen',
+  },
 ];
 
 function escapeXml(str) {

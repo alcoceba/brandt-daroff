@@ -1,8 +1,9 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   ChevronRight,
   Globe,
+  Play,
   SlidersHorizontal,
   Vibrate,
   VibrateOff,
@@ -17,6 +18,8 @@ import { Button } from '@/components/core/Button';
 import { ConfirmDialog } from '@/components/core/ConfirmDialog';
 import { StoragePrivacyNotice } from '@/components/core/StoragePrivacyNotice';
 import { LanguageSettingsScreen } from '@/screens/LanguageSettingsScreen';
+import { unlockAudio } from '@/utils/sound';
+import { playDemo } from '@/utils/cues';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -41,6 +44,17 @@ export const SettingsScreen = memo(function SettingsScreen({
   const fullReset = useTreatmentStore((s) => s.fullReset);
   const [resetOpen, setResetOpen] = useState(false);
   const [showLanguage, setShowLanguage] = useState(false);
+  const cancelDemoRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => () => {
+    if (cancelDemoRef.current) cancelDemoRef.current();
+  }, []);
+
+  const handleTestSound = () => {
+    unlockAudio();
+    if (cancelDemoRef.current) cancelDemoRef.current();
+    cancelDemoRef.current = playDemo(settings);
+  };
 
   if (showLanguage) {
     return <LanguageSettingsScreen onBack={() => setShowLanguage(false)} />;
@@ -65,6 +79,16 @@ export const SettingsScreen = memo(function SettingsScreen({
           <span className={`text-sm font-bold ${settings.sound ? 'text-brand-500' : 'text-slate-400'}`}>
             {settings.sound ? t('common.yes') : t('common.no')}
           </span>
+        </Button>
+        <Button
+          variant="outline"
+          fullWidth
+          onClick={handleTestSound}
+          disabled={!settings.sound}
+          className="gap-4 px-4 text-base"
+        >
+          <Play size={20} className={settings.sound ? 'text-brand-500' : 'text-slate-500'} />
+          <span className="flex-1 text-left">{t('settings.testSound')}</span>
         </Button>
         {typeof navigator !== 'undefined' && !!navigator.vibrate && (
           <Button

@@ -113,4 +113,28 @@ describe('HistoryScreen', () => {
     expect(screen.getByText('session.slotEvening')).toBeInTheDocument();
     expect(screen.getByText('session.slotExtra:{"n":1}')).toBeInTheDocument();
   });
+
+  it('renders Day 8 as partial and Day 1 as missed when 1 session completed on day 8', () => {
+    vi.setSystemTime(new Date(2026, 9, 4, 8, 0, 0)); // 2026-10-04
+    useTreatmentStore.getState().setConfig({ totalDays: 14, sessionsPerDay: 3 });
+    useTreatmentStore.setState({
+      startDate: '2026-09-27', // 7 days ago
+      sessions: {
+        '2026-10-04': {
+          'session-1': 'completed',
+        },
+      },
+    });
+
+    const { container } = render(<HistoryScreen onBack={vi.fn()} />);
+
+    const articles = container.querySelectorAll('article');
+    expect(articles).toHaveLength(14);
+    // articles[0] is Day 1
+    // articles[7] is Day 8
+    expect(articles[0].textContent).toContain('history.statusMissed');
+    expect(articles[7].textContent).toContain('common.today');
+    expect(articles[7].textContent).toContain('history.statusPartial (1/3)');
+    expect(articles[7].textContent).toContain('history.statusDone');
+  });
 });

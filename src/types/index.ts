@@ -1,4 +1,4 @@
-export type Language = 'en' | 'ca' | 'es';
+export type Language = 'en' | 'ca' | 'es' | 'fr' | 'de';
 
 export type SessionStatus = 'pending' | 'in-progress' | 'completed';
 

@@ -149,4 +149,29 @@ describe('DevScenariosScreen', () => {
 
     vi.restoreAllMocks();
   });
+
+  it('renders sound and haptic lab with cue buttons and toggles', () => {
+    render(<DevScenariosScreen />);
+
+    expect(screen.getByText('Sound & Haptic Lab')).toBeInTheDocument();
+    expect(screen.getByText('Play Demo Sequence')).toBeInTheDocument();
+    expect(screen.getByText('Simulate Step (Fast)')).toBeInTheDocument();
+
+    const soundToggle = screen.getByRole('button', { name: /Sound: ON/i });
+    fireEvent.click(soundToggle);
+    expect(screen.getByRole('button', { name: /Sound: OFF/i })).toBeInTheDocument();
+
+    const vibeToggle = screen.getByRole('button', { name: /Vibe: ON/i });
+    fireEvent.click(vibeToggle);
+    expect(screen.getByRole('button', { name: /Vibe: OFF/i })).toBeInTheDocument();
+
+    const lieCueButton = screen.getByRole('button', { name: 'lie' });
+    fireEvent.click(lieCueButton);
+
+    const demoButton = screen.getByRole('button', { name: /Play Demo Sequence/i });
+    fireEvent.click(demoButton);
+
+    const unlockButton = screen.getByRole('button', { name: /Unlock Audio/i });
+    fireEvent.click(unlockButton);
+  });
 });

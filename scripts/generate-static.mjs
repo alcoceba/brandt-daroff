@@ -116,7 +116,7 @@ async function generateStaticInfoPages() {
 await generateStaticInfoPages();
 
 // 3. Check if OG images exist, if not generate them
-const requiredOgImages = ['og-en.png', 'og-ca.png', 'og-es.png'];
+const requiredOgImages = ['og-en.png', 'og-ca.png', 'og-es.png', 'og-fr.png', 'og-de.png'];
 const missingOg = requiredOgImages.some((img) => !fs.existsSync(path.join(publicDir, img)));
 
 if (missingOg) {

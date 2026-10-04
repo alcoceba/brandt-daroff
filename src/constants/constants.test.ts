@@ -29,6 +29,8 @@ describe('languages constants', () => {
       { code: 'en', label: 'English' },
       { code: 'ca', label: 'Català' },
       { code: 'es', label: 'Castellano' },
+      { code: 'fr', label: 'Français' },
+      { code: 'de', label: 'Deutsch' },
     ]);
   });
 

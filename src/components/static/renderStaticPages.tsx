@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import type { Language } from '@/types';
 import { StaticInfoPage } from './StaticInfoPage';
 import { staticInfoContents } from './infoContentData';
 
@@ -13,7 +14,7 @@ if (!i18n.isInitialized) {
 }
 
 export function renderStaticPage(
-  lang: 'en' | 'ca' | 'es',
+  lang: Language,
   options: { siteUrl: string; compiledCss: string }
 ): string {
   const content = staticInfoContents[lang];
@@ -32,6 +33,6 @@ export function renderStaticPage(
   return `<!DOCTYPE html>\n${html}`;
 }
 
-export function getAllStaticLanguages(): Array<'en' | 'ca' | 'es'> {
-  return ['en', 'ca', 'es'];
+export function getAllStaticLanguages(): Language[] {
+  return ['en', 'ca', 'es', 'fr', 'de'];
 }

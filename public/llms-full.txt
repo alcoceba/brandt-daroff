@@ -5,6 +5,8 @@ Web App Repository: https://github.com/alcoceba/brandt-daroff
 English Guide: https://alcoceba.github.io/brandt-daroff/info/en/
 Catalan Guide: https://alcoceba.github.io/brandt-daroff/info/ca/
 Spanish Guide: https://alcoceba.github.io/brandt-daroff/info/es/
+French Guide: https://alcoceba.github.io/brandt-daroff/info/fr/
+German Guide: https://alcoceba.github.io/brandt-daroff/info/de/
 
 ---
 
@@ -131,5 +133,5 @@ The Brandt-Daroff PWA (Progressive Web App) is engineered to meet strict medical
 - **100% Client-Side**: No user tracking, no third-party behavioral profiling, no login required. Treatment records, progress counters, and configuration parameters are stored strictly in browser `localStorage`.
 - **Offline Reliability**: Powered by a Service Worker (`vite-plugin-pwa`), the entire application functions without an internet connection once loaded.
 - **Accessible UI**: Minimum 56px touch targets, high contrast dark palette (`#0f172a`), responsive SVG circular timer, and multi-modal sensory cues (visual, auditory Web Audio beeps, and haptic vibration).
-- **Language Localization**: Full translation coverage in English, Catalan (`ca`), and Spanish (`es`).
-- **Clean URLs**: Standalone informational resources accessible at `/info/en/`, `/info/ca/`, `/info/es/`.
+- **Language Localization**: Full translation coverage in English, Catalan (`ca`), Spanish (`es`), French (`fr`), and German (`de`).
+- **Clean URLs**: Standalone informational resources accessible at `/info/en/`, `/info/ca/`, `/info/es/`, `/info/fr/`, `/info/de/`.

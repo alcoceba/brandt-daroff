@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { AlertCircle, Copy, Play, RotateCcw, TestTube } from 'lucide-react';
+import { AlertCircle, Copy, Play, RotateCcw, Shield, TestTube, Volume2 } from 'lucide-react';
 import {
   clearStoredState,
   copyCurrentState,
@@ -14,6 +14,9 @@ import { DEFAULT_CONFIG, DEFAULT_SETTINGS } from '@/constants/treatment';
 import { ButtonGroup } from '@/components/core/ButtonGroup';
 import { addDays, todayISO } from '@/utils/date';
 import type { SessionDurations, SessionMap } from '@/types';
+import { CUE_NAMES, getAudioSessionType, getAudioState, unlockAudio, type CueName } from '@/utils/sound';
+import { createCueScheduler, playDemo, triggerCue } from '@/utils/cues';
+import { isWakeLockHeld, isWakeLockSupported, releaseWakeLock, requestWakeLock } from '@/utils/wakeLock';
 
 const GROUPS: { title: string; names: ScenarioName[] }[] = [
   { title: 'Onboarding', names: ['fresh'] },
@@ -100,6 +103,55 @@ export function DevScenariosScreen() {
   const [day, setDay] = useState(1);
   const [sessions, setSessions] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [labSound, setLabSound] = useState(true);
+  const [labVibe, setLabVibe] = useState(true);
+  const [activeCue, setActiveCue] = useState<string | null>(null);
+  const [wakeHeld, setWakeHeld] = useState(isWakeLockHeld());
+  const [audioState, setAudioState] = useState(getAudioState());
+
+  const handlePlayCue = (cue: CueName) => {
+    unlockAudio();
+    setActiveCue(cue);
+    triggerCue(cue, { sound: labSound, vibration: labVibe });
+    setAudioState(getAudioState());
+    setTimeout(() => setActiveCue((c) => (c === cue ? null : c)), 600);
+  };
+
+  const handlePlayDemo = () => {
+    unlockAudio();
+    setActiveCue('demo');
+    playDemo({ sound: labSound, vibration: labVibe });
+    setAudioState(getAudioState());
+    setTimeout(() => setActiveCue((c) => (c === 'demo' ? null : c)), 2500);
+  };
+
+  const handlePlayStepSim = () => {
+    unlockAudio();
+    setActiveCue('step');
+    const scheduler = createCueScheduler();
+    const timeline = [
+      { secondsLeft: 3, cue: 'midpoint' as CueName },
+      { secondsLeft: 2, cue: 'tick' as CueName },
+      { secondsLeft: 1.5, cue: 'tick' as CueName },
+      { secondsLeft: 1, cue: 'tick' as CueName },
+      { secondsLeft: 0.5, cue: 'tickFinal' as CueName },
+    ];
+    scheduler.scheduleRemaining(timeline, 4, { sound: labSound, vibration: labVibe });
+    setAudioState(getAudioState());
+    setTimeout(() => {
+      setActiveCue((c) => (c === 'step' ? null : c));
+    }, 4500);
+  };
+
+  const handleToggleWake = async () => {
+    if (wakeHeld) {
+      await releaseWakeLock();
+      setWakeHeld(false);
+    } else {
+      await requestWakeLock();
+      setWakeHeld(isWakeLockHeld());
+    }
+  };
 
   const maxSessions = day * DEFAULT_CONFIG.sessionsPerDay;
 
@@ -214,6 +266,114 @@ export function DevScenariosScreen() {
           <Play size={20} />
           <span>Generate & go to app</span>
         </button>
+      </div>
+
+      <div className="rounded-2xl border border-slate-700/80 bg-slate-800/80 p-5 backdrop-blur-sm shadow-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Volume2 className="h-4 w-4 text-brand-500" />
+            <h2 className="text-sm font-bold text-white">Sound &amp; Haptic Lab</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setLabSound((s) => !s)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                labSound ? 'bg-brand-600 text-white' : 'bg-slate-700 text-slate-400'
+              }`}
+            >
+              Sound: {labSound ? 'ON' : 'OFF'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setLabVibe((v) => !v)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                labVibe ? 'bg-brand-600 text-white' : 'bg-slate-700 text-slate-400'
+              }`}
+            >
+              Vibe: {labVibe ? 'ON' : 'OFF'}
+            </button>
+          </div>
+        </div>
+
+        <p className="mt-1 text-xs text-slate-400">
+          Listen to individual cues, test multi-cue sequences, or inspect audio/wake lock status.
+        </p>
+
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Individual Cues</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {CUE_NAMES.map((cue) => (
+              <button
+                key={cue}
+                type="button"
+                onClick={() => handlePlayCue(cue)}
+                className={`flex min-h-touch items-center justify-center rounded-xl border px-2 py-2 text-xs font-bold transition-all active:scale-[0.98] ${
+                  activeCue === cue
+                    ? 'border-brand-500 bg-brand-500/20 text-brand-300'
+                    : 'border-slate-700/80 bg-slate-900/60 text-slate-200 hover:border-slate-500'
+                }`}
+              >
+                {cue}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={handlePlayDemo}
+            className={`flex min-h-touch items-center justify-center gap-2 rounded-xl border border-brand-500/50 bg-brand-500/10 px-3 py-2 text-xs font-bold text-brand-400 transition-all active:scale-[0.98] hover:bg-brand-500/20 ${
+              activeCue === 'demo' ? 'ring-2 ring-brand-500' : ''
+            }`}
+          >
+            <Play size={14} />
+            <span>Play Demo Sequence</span>
+          </button>
+          <button
+            type="button"
+            onClick={handlePlayStepSim}
+            className={`flex min-h-touch items-center justify-center gap-2 rounded-xl border border-yellow-500/50 bg-yellow-500/10 px-3 py-2 text-xs font-bold text-yellow-400 transition-all active:scale-[0.98] hover:bg-yellow-500/20 ${
+              activeCue === 'step' ? 'ring-2 ring-yellow-500' : ''
+            }`}
+          >
+            <Play size={14} />
+            <span>Simulate Step (Fast)</span>
+          </button>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900/80 p-3 text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-slate-300 mb-2">
+            <Shield size={14} className="text-brand-500" />
+            <span>Diagnostics</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-slate-400">
+            <div>AudioContext: <span className="font-mono text-white">{audioState}</span></div>
+            <div>iOS Session: <span className="font-mono text-white">{getAudioSessionType() ?? 'n/a'}</span></div>
+            <div>WakeLock API: <span className="font-mono text-white">{isWakeLockSupported() ? 'supported' : 'unsupported'}</span></div>
+            <div>WakeLock held: <span className="font-mono text-white">{wakeHeld ? 'YES' : 'NO'}</span></div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                unlockAudio();
+                setAudioState(getAudioState());
+              }}
+              className="rounded-lg bg-slate-800 border border-slate-600 px-2.5 py-1 text-xs font-medium text-slate-200 hover:bg-slate-700"
+            >
+              Unlock Audio
+            </button>
+            <button
+              type="button"
+              onClick={handleToggleWake}
+              className="rounded-lg bg-slate-800 border border-slate-600 px-2.5 py-1 text-xs font-medium text-slate-200 hover:bg-slate-700"
+            >
+              {wakeHeld ? 'Release Wake Lock' : 'Request Wake Lock'}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">

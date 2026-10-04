@@ -11,7 +11,7 @@ export interface LanguagePillsProps {
   ariaLabel?: string;
 }
 
-const DEFAULT_LANG_ORDER: readonly Language[] = ['ca', 'es', 'en'];
+const DEFAULT_LANG_ORDER: readonly Language[] = ['ca', 'es', 'en', 'fr', 'de'];
 
 export const LanguagePills = memo(function LanguagePills({
   currentLanguage,

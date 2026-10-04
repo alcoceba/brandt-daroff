@@ -23,7 +23,9 @@ export type ScenarioName =
   | 'treatment-complete-extra'
   | 'in-progress'
   | 'language-ca'
-  | 'language-es';
+  | 'language-es'
+  | 'language-fr'
+  | 'language-de';
 
 interface ScenarioState {
   language: Language;
@@ -255,6 +257,28 @@ function buildScenario(name: ScenarioName): ScenarioState {
         },
       };
 
+    case 'language-fr':
+      return {
+        ...base,
+        language: 'fr',
+        onboardingComplete: true,
+        startDate: today,
+        sessions: {
+          [today]: { 'session-1': 'completed' },
+        },
+      };
+
+    case 'language-de':
+      return {
+        ...base,
+        language: 'de',
+        onboardingComplete: true,
+        startDate: today,
+        sessions: {
+          [today]: { 'session-1': 'completed' },
+        },
+      };
+
     default:
       return base;
   }
@@ -275,6 +299,8 @@ export function getScenarioNames(): ScenarioName[] {
     'in-progress',
     'language-ca',
     'language-es',
+    'language-fr',
+    'language-de',
   ];
 }
 
@@ -293,6 +319,8 @@ export function getScenarioLabel(name: ScenarioName): string {
     'in-progress': 'In-progress session (resume flow)',
     'language-ca': 'Catalan language',
     'language-es': 'Spanish language',
+    'language-fr': 'French language',
+    'language-de': 'German language',
   };
   return labels[name];
 }

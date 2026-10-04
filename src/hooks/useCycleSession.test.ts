@@ -4,18 +4,32 @@ import { useCycleSession } from './useCycleSession';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { todayISO } from '@/utils/date';
 
-// Mock sound/vibration utilities to avoid console warnings / audio mock errors
-vi.mock('@/utils/sound', () => ({
-  playBeep: vi.fn().mockResolvedValue(undefined),
-  playBeepHigh: vi.fn().mockResolvedValue(undefined),
-  playPositionCue: vi.fn().mockResolvedValue(undefined),
-  playRestCue: vi.fn().mockResolvedValue(undefined),
+const cueMocks = vi.hoisted(() => ({
+  triggerCue: vi.fn(() => () => {}),
+  scheduleRemaining: vi.fn(),
+  cancel: vi.fn(),
 }));
 
-vi.mock('@/utils/vibration', () => ({
-  vibrate: vi.fn(),
-  cueChange: vi.fn(),
+vi.mock('@/utils/sound', () => ({
+  unlockAudio: vi.fn(),
+  registerAudioUnlock: vi.fn(() => () => {}),
 }));
+
+vi.mock('@/utils/cues', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/utils/cues')>();
+  return {
+    ...actual,
+    triggerCue: cueMocks.triggerCue,
+    createCueScheduler: () => ({ scheduleRemaining: cueMocks.scheduleRemaining, cancel: cueMocks.cancel }),
+  };
+});
+
+vi.mock('@/utils/wakeLock', () => ({
+  requestWakeLock: vi.fn(() => Promise.resolve()),
+  releaseWakeLock: vi.fn(() => Promise.resolve()),
+}));
+
+const cuesPlayed = () => (cueMocks.triggerCue.mock.calls as unknown as [string][]).map((c) => c[0]);
 
 describe('useCycleSession hook', () => {
   const onExit = vi.fn();
@@ -116,17 +130,50 @@ describe('useCycleSession hook', () => {
     act(() => { result.current.advance(); });
     expect(result.current.isRunning).toBe(true);
 
-    // Pause
-    await act(async () => {
-      await result.current.handlePauseResume();
+    act(() => {
+      result.current.handlePauseResume();
     });
     expect(result.current.isRunning).toBe(false);
+    expect(cuesPlayed()).toContain('pause');
+    expect(cueMocks.cancel).toHaveBeenCalled();
 
-    // Resume
-    await act(async () => {
-      await result.current.handlePauseResume();
+    cueMocks.scheduleRemaining.mockClear();
+    act(() => {
+      result.current.handlePauseResume();
     });
     expect(result.current.isRunning).toBe(true);
+    expect(cuesPlayed()).toContain('resume');
+    expect(cueMocks.scheduleRemaining).toHaveBeenCalled();
+  });
+
+  it('plays the right cue at the start of each step and schedules its timeline', () => {
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    act(() => { result.current.advance(); });
+    expect(cuesPlayed().at(-1)).toBe('lie');
+    const [timeline, remaining] = cueMocks.scheduleRemaining.mock.calls[0] as [{ cue: string }[], number];
+    expect(remaining).toBe(30);
+    expect(timeline.map((e) => e.cue)).toEqual(['midpoint', 'tick', 'tick', 'tick', 'tick', 'tickFinal']);
+
+    act(() => { result.current.advance(); });
+    expect(cuesPlayed().at(-1)).toBe('sit');
+
+    act(() => { result.current.advance(); });
+    expect(cuesPlayed().at(-1)).toBe('lie');
+
+    act(() => { result.current.advance(); });
+    expect(cuesPlayed().at(-1)).toBe('longRest');
+  });
+
+  it('plays the completion cue when the session finishes', () => {
+    useTreatmentStore.getState().setConfig({ cyclesPerSession: 1 });
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+    act(() => { result.current.advance(); });
+    act(() => { result.current.advance(); });
+    act(() => { result.current.advance(); });
+    act(() => { result.current.advance(); });
+    expect(result.current.showCompletion).toBe(true);
+    expect(cuesPlayed().at(-1)).toBe('complete');
   });
 
   it('should reset timer progress when reset is confirmed', () => {
@@ -277,4 +324,42 @@ describe('useCycleSession hook', () => {
 
     expect(result.current.showCompletion).toBe(true);
   });
+
+  it('does not restart the countdown timer when toggling sound', () => {
+    const { result } = renderHook(() => useCycleSession({ sessionId: 'session-1', onExit }));
+
+    // Advance to Lying right (30s)
+    act(() => {
+      result.current.advance();
+    });
+    expect(result.current.position.kind).toBe('lying-right');
+    expect(result.current.isRunning).toBe(true);
+
+    // Let 10 seconds pass
+    act(() => {
+      vi.advanceTimersByTime(10000);
+    });
+
+    const remainingBeforeToggle = result.current.secondsRemaining;
+    expect(remainingBeforeToggle).toBeLessThan(30);
+    expect(remainingBeforeToggle).toBeGreaterThanOrEqual(19);
+
+    // Toggle sound setting (mute)
+    act(() => {
+      useTreatmentStore.getState().toggleSound();
+    });
+
+    // Timer should NOT have restarted back to 30
+    expect(result.current.isRunning).toBe(true);
+    expect(result.current.secondsRemaining).toBe(remainingBeforeToggle);
+
+    // Toggle sound setting again (unmute)
+    act(() => {
+      useTreatmentStore.getState().toggleSound();
+    });
+
+    expect(result.current.isRunning).toBe(true);
+    expect(result.current.secondsRemaining).toBe(remainingBeforeToggle);
+  });
 });
+

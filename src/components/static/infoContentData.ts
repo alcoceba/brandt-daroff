@@ -1,5 +1,7 @@
+import type { Language } from '@/types';
+
 export interface StaticInfoContent {
-  lang: 'en' | 'ca' | 'es';
+  lang: Language;
   locale: string;
   meta: {
     title: string;
@@ -81,7 +83,7 @@ export interface StaticInfoContent {
   };
 }
 
-export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> = {
+export const staticInfoContents: Record<Language, StaticInfoContent> = {
   ca: {
     lang: 'ca',
     locale: 'ca_ES',
@@ -524,6 +526,302 @@ export const staticInfoContents: Record<'en' | 'ca' | 'es', StaticInfoContent> =
       appLink: 'Interactive Session Timer',
       llmsLink: 'Technical AI Documentation (llms.txt)',
       githubLink: 'Open Source Project on GitHub',
+    },
+  },
+  fr: {
+    lang: 'fr',
+    locale: 'fr',
+    meta: {
+      title: 'Brandt-Daroff — Application gratuite pour exercices de vertige',
+      description:
+        'Application web gratuite pour guider les exercices de Brandt-Daroff à domicile. Minuteur visuel, alertes sonores et suivi des séances pour soulager le VPPB.',
+      ogTitle: 'Brandt-Daroff — Application gratuite pour exercices de vertige',
+      ogDescription:
+        'Une application simple et respectueuse de votre vie privée pour réaliser les exercices de Brandt-Daroff sans regarder l’horloge.',
+      twitterTitle: 'Brandt-Daroff — Application d’aide aux exercices de vertige',
+      twitterDescription:
+        'Minuteur et guide gratuit pour les exercices de Brandt-Daroff à domicile.',
+    },
+    schema: {
+      webpageName: 'Brandt-Daroff — Guide des exercices de vertige',
+      webpageDescription:
+        'Application gratuite pour guider pas à pas les exercices de Brandt-Daroff pour le VPPB.',
+      conditionName: 'Vertige Positionnel Paroxystique Bénin',
+      alternateNames: ['VPPB', 'BPPV'],
+      howtoName: 'Comment utiliser l’application pour les exercices de Brandt-Daroff',
+      howtoDescription:
+        'Séquence guidée de 5 positions avec minuteurs de 30 secondes et pauses de 2 minutes.',
+      supplyName: 'Lit ou surface plane et ferme',
+    },
+    header: {
+      appName: 'Brandt-Daroff',
+      appTagline: 'Minuteur pour vos exercices de vertige',
+      launchToolText: 'Ouvrir l’application',
+    },
+    hero: {
+      badge: 'Application Web · Gratuite et confidentielle',
+      title: 'Une application simple pour guider vos exercices de Brandt-Daroff',
+      lead:
+        'En cas de vertige, compter les secondes ou fixer une horloge en bougeant sur le lit est difficile et désorientant. Cette application gratuite vous guide pas à pas avec des repères visuels clairs, des sons doux et des vibrations, vous permettant de vous concentrer sur vos exercices les yeux fermés.',
+      keyPoints: [
+        { label: 'Sans pub ni inscription', value: '100 % gratuit et privé' },
+        { label: 'Signaux sensoriels', value: 'Son et vibration les yeux fermés' },
+        { label: 'Fonctionne hors ligne', value: 'Installable sur mobile (PWA)' },
+      ],
+    },
+    toolCallout: {
+      title: 'Démarrez votre séance directement depuis votre navigateur',
+      description:
+        'Aucun téléchargement sur un magasin d’applications ni inscription requise : lancez la séance à tout moment.',
+      buttonText: 'Ouvrir l’application et commencer →',
+      featurePoints: [
+        'Grand minuteur visuel à fort contraste, lisible depuis votre lit',
+        'Signaux sonores et vibrations pour changer de position sans ouvrir les yeux',
+        'Enregistre votre progression sur votre appareil sans envoyer de données à un serveur',
+      ],
+    },
+    warning: {
+      disclaimerTitle: 'Avertissement : Cette application est un outil d’aide, pas un médecin',
+      disclaimerText:
+        'Cette application est un outil d’aide conçu pour chronométrer les positions à domicile. L’auteur n’est pas médecin, et cette application n’est pas un dispositif médical et ne fournit aucun diagnostic. N’utilisez cette application que si un professionnel de santé qualifié a diagnostiqué un VPPB et vous a recommandé ces exercices. L’utilisation se fait sous votre propre responsabilité.',
+      title: 'Signaux d’alerte : Arrêtez les exercices et consultez immédiatement un médecin si vous remarquez :',
+      intro:
+        'De brèves sensations rotatoires pendant les mouvements sont normales dans le VPPB. En revanche, si l’un des symptômes suivants apparaît, arrêtez immédiatement et consultez un service d’urgence :',
+      bullets: [
+        'Faiblesse soudaine ou affaissement du visage, d’un bras ou d’une jambe.',
+        'Engourdissement ou perte de sensation d’un côté du corps.',
+        'Vision double, perte soudaine de la vue ou vision très trouble.',
+        'Difficulté à parler, élocution pâteuse ou difficulté à avaler.',
+        'Perte d’équilibre brutale et sévère rendant la station debout impossible.',
+      ],
+    },
+    bppvSection: {
+      title: 'Qu’est-ce que le VPPB et à quoi servent ces exercices ?',
+      p1:
+        'Le vertige positionnel paroxystique bénin (VPPB) est la cause la plus courante de vertige. Il survient lorsque de minuscules cristaux de carbonate de calcium (otolithes) se détachent dans l’oreille interne et migrent dans les canaux semi-circulaires, déclenchant une vive sensation rotatoire lors des mouvements de la tête.',
+      p2:
+        'Les exercices de Brandt-Daroff consistent en des bascules latérales alternées qui aident à disperser ces particules et permettent au cerveau de s’habituer au mouvement.',
+    },
+    methodSection: {
+      title: 'Comment l’application vous aide-t-elle pendant la séance ?',
+      p1:
+        'Pendant les exercices de Brandt-Daroff, il est très fréquent d’éprouver des vertiges aigus au moment de changer de côté. Fixer un écran de téléphone ou compter 30 secondes quand tout tourne autour de vous est désagréable et accentue la désorientation.',
+      p2:
+        'L’application gère le chronométrage pour vous : elle vous avertit automatiquement par des sons discrets et des vibrations lorsque les 30 secondes de chaque position s’achèvent, ainsi que pour les 2 minutes de repos entre les cycles. Vous pouvez ainsi fermer les yeux confortablement et attendre que le vertige passe.',
+      indicationTitle: 'Quand devez-vous utiliser l’application ?',
+      indicationText:
+        'Utilisez l’application lorsque votre médecin traitant, votre ORL ou votre kinésithérapeute vous a prescrit des séances de Brandt-Daroff à domicile dans le cadre de votre rééducation.',
+    },
+    stepsSection: {
+      title: 'Les 5 positions guidées par l’application',
+      intro:
+        'L’application structure chaque séance en cycles de 5 étapes, en chronométrant chaque posture de 30 secondes et le repos final de 2 minutes :',
+      steps: [
+        {
+          number: 1,
+          title: 'Position de départ : Assis au bord du lit',
+          duration: 'Position initiale de transition',
+          text: 'Asseyez-vous bien droit au milieu du bord du lit, les pieds dans le vide. Appuyez sur le grand bouton démarrer quand vous êtes prêt.',
+          note: 'L’application attend votre appui sur démarrer avant de lancer la première bascule latérale.',
+        },
+        {
+          number: 2,
+          title: 'Allongez-vous à droite, tête tournée à 45° vers le haut',
+          duration: '30 secondes guidées',
+          text: 'Basculez sur votre côté droit en tournant la tête de 45 degrés vers le haut. L’application décompte 30 secondes et vous signale la fin par un bip et une vibration.',
+          note: 'Si le vertige cesse plus tôt, vous pouvez toucher « Vertige passé » pour avancer.',
+        },
+        {
+          number: 3,
+          title: 'Retour en position assise (Repos intermédiaire)',
+          duration: '30 secondes de repos',
+          text: 'Rasseyez-vous doucement au bord du lit. L’application compte 30 secondes de repos avant de passer du côté opposé.',
+          note: 'Cette pause permet aux fluides de l’oreille interne de se stabiliser avant le mouvement suivant.',
+        },
+        {
+          number: 4,
+          title: 'Allongez-vous à gauche, tête tournée à 45° vers le haut',
+          duration: '30 secondes guidées',
+          text: 'Basculez sur votre côté gauche avec la tête inclinée de 45 degrés vers le haut. L’application décompte 30 secondes et émet un signal une fois le temps écoulé.',
+          note: 'Même si le vertige n’est ressenti que d’un côté, la méthode nécessite toujours d’alterner les deux côtés.',
+        },
+        {
+          number: 5,
+          title: 'Repos entre les cycles',
+          duration: '2 minutes de repos',
+          text: 'Revenez en position assise. L’application lance un compte à rebours de 2 minutes complètes de repos avant de démarrer le cycle suivant.',
+          note: 'Prenez votre temps : cette pause de 2 minutes permet de limiter les nausées et la fatigue.',
+        },
+      ],
+    },
+    protocolSection: {
+      title: 'Conseils pour des séances confortables à la maison',
+      recommendedLabel: 'Fréquence couramment recommandée par les spécialistes :',
+      recommendedText:
+        'Le protocole classique prévoit généralement 3 séances par jour (5 cycles par séance) jusqu’à passer 2 jours consécutifs sans aucun vertige dans aucune des positions.',
+      managementLabel: 'En cas de vertige pendant la séance :',
+      managementText:
+        'Ressentir des vertiges lors des premières séances est normal : cela montre que les cristaux réagissent au mouvement. Vous pouvez utiliser le bouton pause si vous avez besoin de plus de temps.',
+      tipsLabel: 'Conseils pratiques d’utilisation :',
+      tips: [
+        'Posez votre téléphone sur votre table de nuit avec un volume suffisant pour ne pas avoir à regarder l’écran si vous êtes étourdi.',
+        'Basculez avec détermination mais sans à-coup brusque au niveau du cou.',
+        'En cas de nausée intense, mettez l’application en pause et prolongez le repos assis.',
+        'Vous pouvez installer l’application sur votre téléphone (ajouter à l’écran d’accueil) pour l’utiliser hors ligne à tout moment.',
+      ],
+    },
+    footer: {
+      appLink: 'Minuteur de séance interactif',
+      llmsLink: 'Documentation technique pour IA (llms.txt)',
+      githubLink: 'Projet open source sur GitHub',
+    },
+  },
+  de: {
+    lang: 'de',
+    locale: 'de',
+    meta: {
+      title: 'Brandt-Daroff — Kostenlose Begleit-App für Schwindelübungen',
+      description:
+        'Kostenlose Web-App zur Anleitung der Brandt-Daroff-Übungen zu Hause. Visueller Timer, akustische Signale und Sitzungsverlauf bei BPLS.',
+      ogTitle: 'Brandt-Daroff — Kostenlose Begleit-App für Schwindelübungen',
+      ogDescription:
+        'Eine einfache und datenschutzfreundliche App zur Durchführung der Brandt-Daroff-Übungen ohne Blick auf die Uhr.',
+      twitterTitle: 'Brandt-Daroff — App für Schwindelübungen',
+      twitterDescription:
+        'Kostenloser Timer und Leitfaden für Brandt-Daroff-Übungen zu Hause.',
+    },
+    schema: {
+      webpageName: 'Brandt-Daroff — App für Schwindelübungen',
+      webpageDescription:
+        'Kostenlose App zur Schritt-für-Schritt-Anleitung der Brandt-Daroff-Übungen bei BPLS.',
+      conditionName: 'Benigner paroxysmaler Lagerungsschwindel',
+      alternateNames: ['BPLS', 'BPPV'],
+      howtoName: 'Nutzung der App zur Durchführung der Brandt-Daroff-Übungen',
+      howtoDescription:
+        'Geführte 5-Positionen-Abfolge mit 30-Sekunden-Positions-Timern und 2-minütigen Pausen.',
+      supplyName: 'Bett oder feste, flache Unterlage',
+    },
+    header: {
+      appName: 'Brandt-Daroff',
+      appTagline: 'Timer für Ihre Schwindelübungen',
+      launchToolText: 'App öffnen',
+    },
+    hero: {
+      badge: 'Web-App-Hilfe · Kostenlos & Privat',
+      title: 'Eine einfache Begleit-App zur Anleitung Ihrer Brandt-Daroff-Übungen',
+      lead:
+        'Bei Schwindel ist es schwierig und desorientierend, während der Lagerungswechsel auf die Uhr zu schauen oder Sekunden zu zählen. Diese kostenlose App führt Sie Schritt für Schritt mit klaren visuellen Anzeigen, sanften Tönen und Vibrationen — so können Sie sich ganz mit geschlossenen Augen auf die Übung konzentrieren.',
+      keyPoints: [
+        { label: 'Keine Werbung oder Anmeldung', value: '100 % kostenlos & privat' },
+        { label: 'Sensorische Signale', value: 'Ton und Vibration mit geschlossenen Augen' },
+        { label: 'Funktioniert offline', value: 'Auf dem Smartphone installierbar (PWA)' },
+      ],
+    },
+    toolCallout: {
+      title: 'Starten Sie Ihre Sitzung direkt im Browser',
+      description:
+        'Kein Download im App Store oder Registrierung erforderlich: Öffnen Sie die App und starten Sie Ihre Übungseinheit.',
+      buttonText: 'App öffnen und starten →',
+      featurePoints: [
+        'Großer, kontrastreicher visueller Timer, bequem vom Bett aus ablesbar',
+        'Tonsignale und Vibrationen für Positionswechsel ohne die Augen öffnen zu müssen',
+        'Speichert den Behandlungsfortschritt lokal auf Ihrem Gerät ohne Serverübertragung',
+      ],
+    },
+    warning: {
+      disclaimerTitle: 'Hinweis: Diese App ist ein Hilfswerkzeug, kein Arzt',
+      disclaimerText:
+        'Diese App ist ein unabhängiges Hilfsmittel zur Zeitmessung bei Übungen zu Hause. Der Entwickler ist kein Arzt, und diese App ist kein Medizinprodukt und stellt keine Diagnosen. Verwenden Sie diese App nur, wenn eine qualifizierte medizinische Fachkraft bei Ihnen BPLS diagnostiziert und diese Übungen verordnet hat. Die Nutzung erfolgt vollständig auf eigene Verantwortung.',
+      title: 'Warnsignale: Brechen Sie die Übungen sofort ab und suchen Sie einen Notarzt auf bei:',
+      intro:
+        'Kurzer Drehschwindel bei Bewegung ist typisch für BPLS. Treten jedoch zu irgendeinem Zeitpunkt folgende Beschwerden auf, brechen Sie sofort ab und verständigen Sie den Rettungsdienst:',
+      bullets: [
+        'Plötzliche Schwäche oder Lähmungserscheinungen in Gesicht, Arm oder Bein.',
+        'Taubheitsgefühl oder Empfindungsverlust auf einer Körperseite.',
+        'Doppelbilder, plötzlicher Sehverlust oder starke Sehverschlechterung.',
+        'Sprachstörungen, verwaschene Sprache oder Schluckbeschwerden.',
+        'Plötzlicher, schwerer Gleichgewichtsverlust, der aufrechtes Stehen unmöglich macht.',
+      ],
+    },
+    bppvSection: {
+      title: 'Was ist BPLS und wozu dienen diese Übungen?',
+      p1:
+        'Der benigne paroxysmale Lagerungsschwindel (BPLS) ist die häufigste Form von Schwindel. Er entsteht, wenn sich mikroskopische Kalziumkarbonat-Kristalle (Otolithen) im Innenohr lösen und in die Bogengänge wandern. Bei Kopfbewegungen lösen sie plötzlichen Drehschwindel aus.',
+      p2:
+        'Die Brandt-Daroff-Übungen bestehen aus wiederholten seitlichen Lagerungswechseln, um die abgelagerten Kristalle zu bewegen und das Gehirn an die Bewegungsmuster zu gewöhnen (Habituation).',
+    },
+    methodSection: {
+      title: 'Wie unterstützt Sie die App während der Übungen?',
+      p1:
+        'Bei den Brandt-Daroff-Übungen tritt beim Seitenwechsel häufig heftiger Schwindel auf. Ein Handy-Display zu fixieren oder im Kopf bis 30 zu zählen, während sich alles dreht, ist anstrengend und verstärkt die Desorientierung.',
+      p2:
+        'Die App übernimmt die Zeitmessung für Sie: Sanfte Signaltöne und Vibrationen melden zuverlässig das Ende der 30 Sekunden jeder Haltung sowie die 2-minütige Pause zwischen den Zyklen. So können Sie entspannt die Augen schließen, bis der Schwindel abklingt.',
+      indicationTitle: 'Wann sollten Sie die App nutzen?',
+      indicationText:
+        'Nutzen Sie die App, wenn Ihr Arzt, HNO-Spezialist oder Physiotherapeut Ihnen Brandt-Daroff-Übungen für zu Hause empfohlen hat.',
+    },
+    stepsSection: {
+      title: 'Die 5 Positionen in der App',
+      intro:
+        'Die App strukturiert jede Sitzung in Zyklen aus 5 Positionen und misst jede 30-Sekunden-Haltung sowie die 2-minütige Abschlusspause präzise:',
+      steps: [
+        {
+          number: 1,
+          title: 'Ausgangsposition: Aufrecht an der Bettkante sitzen',
+          duration: 'Initiale Übergangsposition',
+          text: 'Setzen Sie sich aufrecht in die Mitte der Bettkante, die Beine hängen herunter. Tippen Sie auf den großen Start-Button, wenn Sie bereit sind.',
+          note: 'Die App wartet auf Ihr Startsignal, bevor die erste seitliche Lagerung beginnt.',
+        },
+        {
+          number: 2,
+          title: 'Auf die rechte Seite legen, Kopf um 45° nach oben gedreht',
+          duration: '30 Sekunden geführt',
+          text: 'Legen Sie sich zügig auf die rechte Seite und drehen Sie den Kopf um 45 Grad nach oben. Die App zählt 30 Sekunden herunter und signalisiert das Ende mit Ton und Vibration.',
+          note: 'Lässt der Schwindel früher nach, können Sie mit „Schwindel vorbei“ vorzeitig weiterspringen.',
+        },
+        {
+          number: 3,
+          title: 'Zurück in die Sitzposition (Pause innerhalb des Zyklus)',
+          duration: '30 Sekunden Pause',
+          text: 'Richten Sie sich vorsichtig wieder auf die Bettkante auf. Die App zählt 30 Sekunden Pause herunter, bevor es zur Gegenseite geht.',
+          note: 'Diese Pause gibt der Flüssigkeit im Innenohr Zeit, sich vor der nächsten Bewegung zu beruhigen.',
+        },
+        {
+          number: 4,
+          title: 'Auf die linke Seite legen, Kopf um 45° nach oben gedreht',
+          duration: '30 Sekunden geführt',
+          text: 'Legen Sie sich auf die linke Seite mit dem Kopf um 45 Grad nach oben gedreht. Die App zählt 30 Sekunden und gibt das Schlusssignal.',
+          note: 'Auch wenn der Schwindel nur auf einer Seite auftritt, müssen stets beide Seiten abwechselnd beübt werden.',
+        },
+        {
+          number: 5,
+          title: 'Pause zwischen den Zyklen',
+          duration: '2 Minuten Pause',
+          text: 'Setzen Sie sich wieder aufrecht hin. Die App startet einen 2-minütigen Countdown vor dem nächsten Zyklus.',
+          note: 'Lassen Sie sich Zeit: Diese 2-minütige Pause beugt Übelkeit und Erschöpfung vor.',
+        },
+      ],
+    },
+    protocolSection: {
+      title: 'Tipps für angenehme Übungen zu Hause',
+      recommendedLabel: 'Häufig von Fachärzten empfohlenes Schema:',
+      recommendedText:
+        'Der klassische Ablauf sieht 3 Sitzungen täglich (mit je 5 Zyklen) vor, bis Sie an 2 aufeinanderfolgenden Tagen in keiner Position mehr Schwindel verspüren.',
+      managementLabel: 'Wenn während der Übung Schwindel auftritt:',
+      managementText:
+        'Schwindel in den ersten Sitzungen ist völlig normal — er zeigt, dass die Kristalle in Bewegung geraten. Sie können jederzeit die Pause-Taste nutzen, wenn Sie mehr Zeit brauchen.',
+      tipsLabel: 'Praktische Nutzungstipps:',
+      tips: [
+        'Legen Sie das Smartphone laut genug auf den Nachttisch, damit Sie bei Schwindel nicht auf den Bildschirm schauen müssen.',
+        'Wechseln Sie die Positionen bestimmt, aber ohne ruckartige Überstreckung der Halswirbelsäule.',
+        'Bei starker Übelkeit pausieren Sie die App und verlängern die sitzende Ruhepause.',
+        'Sie können die App auf Ihrem Smartphone installieren (zum Startbildschirm hinzufügen) und jederzeit offline nutzen.',
+      ],
+    },
+    footer: {
+      appLink: 'Interaktiver Sitzungs-Timer',
+      llmsLink: 'Technische Dokumentation für KI (llms.txt)',
+      githubLink: 'Open-Source-Projekt auf GitHub',
     },
   },
 };

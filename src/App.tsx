@@ -16,11 +16,14 @@ import { AppLayout } from '@/layouts/AppLayout';
 import { DevScenariosScreen } from '@/screens/DevScenariosScreen';
 import { HistoryScreen } from '@/screens/HistoryScreen';
 import { trackPageView } from '@/utils/analytics';
+import { registerAudioUnlock, unlockAudio } from '@/utils/sound';
 
 function detectLanguage(): Language {
   const lang = (navigator.language ?? '').toLowerCase();
   if (lang.startsWith('ca')) return 'ca';
   if (lang.startsWith('es')) return 'es';
+  if (lang.startsWith('fr')) return 'fr';
+  if (lang.startsWith('de')) return 'de';
   return 'en';
 }
 
@@ -40,6 +43,10 @@ export default function App() {
     }
     setRoute(next);
   };
+
+  useEffect(() => {
+    return registerAudioUnlock();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setSplashDone(true), 1200);
@@ -62,6 +69,7 @@ export default function App() {
   }, [route, splashDone]);
 
   const handleStartSession = (id: string) => {
+    unlockAudio();
     setSessionId(id);
     navigateTo('session-ready');
   };

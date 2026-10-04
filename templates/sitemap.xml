@@ -13,6 +13,8 @@
     <xhtml:link rel="alternate" hreflang="en" href="__SITE_URL__/info/en/"/>
     <xhtml:link rel="alternate" hreflang="ca" href="__SITE_URL__/info/ca/"/>
     <xhtml:link rel="alternate" hreflang="es" href="__SITE_URL__/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="__SITE_URL__/info/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="__SITE_URL__/info/de/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_URL__/info/en/"/>
   </url>
   <url>
@@ -22,6 +24,8 @@
     <xhtml:link rel="alternate" hreflang="en" href="__SITE_URL__/info/en/"/>
     <xhtml:link rel="alternate" hreflang="ca" href="__SITE_URL__/info/ca/"/>
     <xhtml:link rel="alternate" hreflang="es" href="__SITE_URL__/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="__SITE_URL__/info/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="__SITE_URL__/info/de/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_URL__/info/en/"/>
   </url>
   <url>
@@ -31,6 +35,30 @@
     <xhtml:link rel="alternate" hreflang="en" href="__SITE_URL__/info/en/"/>
     <xhtml:link rel="alternate" hreflang="ca" href="__SITE_URL__/info/ca/"/>
     <xhtml:link rel="alternate" hreflang="es" href="__SITE_URL__/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="__SITE_URL__/info/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="__SITE_URL__/info/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_URL__/info/en/"/>
+  </url>
+  <url>
+    <loc>__SITE_URL__/info/fr/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_URL__/info/en/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="__SITE_URL__/info/ca/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="__SITE_URL__/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="__SITE_URL__/info/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="__SITE_URL__/info/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_URL__/info/en/"/>
+  </url>
+  <url>
+    <loc>__SITE_URL__/info/de/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_URL__/info/en/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="__SITE_URL__/info/ca/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="__SITE_URL__/info/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="__SITE_URL__/info/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="__SITE_URL__/info/de/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_URL__/info/en/"/>
   </url>
 </urlset>

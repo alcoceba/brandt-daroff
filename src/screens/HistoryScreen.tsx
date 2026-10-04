@@ -109,7 +109,7 @@ const DayCard = memo(function DayCard({
         </span>
       );
     }
-    if (isToday && dayProgress.hasInProgress) {
+    if (dayProgress.hasInProgress) {
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-state-progress/20 px-2.5 py-0.5 text-xs font-semibold text-state-progress animate-pulse">
           <Play size={10} className="fill-current" />
@@ -117,17 +117,17 @@ const DayCard = memo(function DayCard({
         </span>
       );
     }
-    if (isToday) {
-      return (
-        <span className="rounded-full bg-brand-500/20 px-2.5 py-0.5 text-xs font-bold text-brand-400">
-          {t('common.today')}
-        </span>
-      );
-    }
     if (dayProgress.completedScheduled > 0) {
       return (
         <span className="rounded-full bg-amber-400/20 px-2.5 py-0.5 text-xs font-semibold text-amber-400">
           {t('history.statusPartial')} ({dayProgress.completedScheduled}/{sessionsPerDay})
+        </span>
+      );
+    }
+    if (isToday) {
+      return (
+        <span className="rounded-full bg-slate-800/80 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+          {t('history.statusUpcoming')}
         </span>
       );
     }
@@ -164,9 +164,16 @@ const DayCard = memo(function DayCard({
             {dayNumber}
           </div>
           <div className="flex flex-col min-w-0">
-            <h2 className="text-sm font-bold text-white truncate">
-              {t('history.dayN', { n: dayNumber })}
-            </h2>
+            <div className="flex items-center gap-1.5">
+              <h2 className="text-sm font-bold text-white truncate">
+                {t('history.dayN', { n: dayNumber })}
+              </h2>
+              {isToday && (
+                <span className="rounded-md bg-brand-500/25 px-1.5 py-0.5 text-[10px] font-bold text-brand-400 uppercase tracking-wider">
+                  {t('common.today')}
+                </span>
+              )}
+            </div>
             <span className="text-xs text-slate-400 capitalize">{formattedDate}</span>
           </div>
         </div>

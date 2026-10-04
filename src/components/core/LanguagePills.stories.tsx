@@ -9,7 +9,7 @@ const meta: Meta<typeof LanguagePills> = {
   argTypes: {
     currentLanguage: {
       control: 'select',
-      options: ['ca', 'es', 'en'],
+      options: ['ca', 'es', 'en', 'fr', 'de'],
     },
   },
   args: {

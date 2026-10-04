@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { useCycleSession } from '@/hooks/useCycleSession';
@@ -8,6 +8,8 @@ import { CycleControls } from '@/components/cycle/CycleControls';
 import { CyclePositionView } from '@/components/cycle/CyclePositionView';
 import { CycleTopBar } from '@/components/cycle/CycleTopBar';
 import type { PositionKind } from '@/types';
+import { triggerCue } from '@/utils/cues';
+import { unlockAudio } from '@/utils/sound';
 
 const GLOW: Record<PositionKind, string> = {
   sitting: 'bg-yellow-500/25',
@@ -25,7 +27,17 @@ interface CycleSessionScreenProps {
 export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, onExit }: CycleSessionScreenProps) {
   const { t } = useTranslation();
   const soundEnabled = useTreatmentStore((s) => s.settings.sound);
+  const vibrationEnabled = useTreatmentStore((s) => s.settings.vibration);
   const toggleSound = useTreatmentStore((s) => s.toggleSound);
+
+  const handleToggleSound = useCallback(() => {
+    if (!soundEnabled) {
+      unlockAudio();
+      triggerCue('resume', { sound: true, vibration: vibrationEnabled });
+    }
+    toggleSound();
+  }, [soundEnabled, vibrationEnabled, toggleSound]);
+
   const {
     config,
     position,
@@ -85,7 +97,7 @@ export const CycleSessionScreen = memo(function CycleSessionScreen({ sessionId, 
         onBack={handleBack}
         onReset={() => setDialog('reset')}
         soundEnabled={soundEnabled}
-        onToggleSound={toggleSound}
+        onToggleSound={handleToggleSound}
         moreActionsLabel={t('cycle.moreActions')}
         muteLabel={t('cycle.mute')}
         unmuteLabel={t('cycle.unmute')}

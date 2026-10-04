@@ -3,9 +3,9 @@ import { POSITIONS, getDurationSeconds } from '@/constants/positions';
 import { useTreatmentStore } from '@/store/useTreatmentStore';
 import { getDayNumber, todayISO } from '@/utils/date';
 import { useCountdown } from '@/hooks/useCountdown';
-import { useBeepCues } from '@/hooks/useBeepCues';
-import { playBeep, playBeepHigh, playPositionCue, playRestCue } from '@/utils/sound';
-import { cueChange } from '@/utils/vibration';
+import { useWakeLock } from '@/hooks/useWakeLock';
+import { unlockAudio } from '@/utils/sound';
+import { buildStepTimeline, createCueScheduler, triggerCue, type CueScheduler, type TimelineEvent } from '@/utils/cues';
 import { countCompletedSessions, getSessionNumber } from '@/utils/sessions';
 import type { PositionDef, SessionProgress } from '@/types';
 
@@ -41,14 +41,12 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   const [intentionallyPaused, setIntentionallyPaused] = useState(false);
   const sessionStartRef = useRef(performance.now());
   const completedDurationRef = useRef<number | null>(null);
-  const { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete } = useCountdown();
+  const { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete, getRemaining } = useCountdown();
 
   const position: PositionDef = POSITIONS[positionIndex];
   const isTransition = position.durationKind === 'transition';
   const duration = getDurationSeconds(position, config);
   const dayNumber = startDate ? getDayNumber(startDate, config.totalDays) : 1;
-  const isRest = position.kind === 'rest' || position.kind === 'long-rest';
-  const midPoint = Math.floor(duration / 2);
   const cycleNumber = cycleIndex + 1;
 
   const sessionElapsedSeconds = useCallback(() => {
@@ -58,25 +56,26 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     return Math.max(0, Math.round((performance.now() - sessionStartRef.current) / 1000));
   }, []);
 
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+  const schedulerRef = useRef<CueScheduler | null>(null);
+  if (!schedulerRef.current) schedulerRef.current = createCueScheduler();
+  const scheduler = schedulerRef.current;
+  const timelineRef = useRef<TimelineEvent[]>([]);
+
+  useWakeLock(!showCompletion);
+
   const finishSession = useCallback(() => {
     stop();
+    scheduler.cancel();
+    triggerCue('complete', settingsRef.current);
     const elapsed = sessionElapsedSeconds();
     completedDurationRef.current = elapsed;
     clearSessionProgress(todayISO(), sessionId);
     setSessionStatus(todayISO(), sessionId, 'completed');
     setSessionDuration(todayISO(), sessionId, elapsed);
     setShowCompletion(true);
-  }, [stop, sessionElapsedSeconds, clearSessionProgress, setSessionStatus, setSessionDuration, sessionId]);
-
-  useBeepCues({
-    secondsRemaining,
-    isRunning,
-    isTransition,
-    duration,
-    isRest,
-    midPoint,
-    soundEnabled: settings.sound,
-  });
+  }, [stop, scheduler, sessionElapsedSeconds, clearSessionProgress, setSessionStatus, setSessionDuration, sessionId]);
 
   const goHome = useCallback(
     (status: 'pending' | 'completed') => {
@@ -93,6 +92,7 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
   }, [stop, onExit]);
 
   const advance = useCallback((skipTransition = false) => {
+    unlockAudio();
     if (showCompletion) return;
     setIntentionallyPaused(false);
     if (positionIndex < POSITIONS.length - 1) {
@@ -143,27 +143,36 @@ export function useCycleSession({ sessionId, onExit }: UseCycleSessionParams) {
     if (duration <= 0) {
       if (bypassRef.current) return;
       bypassRef.current = true;
-      advance();
+      advanceRef.current();
       bypassRef.current = false;
       return;
     }
-    const isRestPosition = position.kind === 'rest' || position.kind === 'long-rest';
-    if (isRestPosition) {
-      void playRestCue(settings.sound);
-    } else {
-      void playPositionCue(settings.sound);
-    }
-    cueChange(settings.vibration);
+    const kind = position.kind;
+    const isRestPosition = kind === 'rest' || kind === 'long-rest';
+    triggerCue(kind === 'long-rest' ? 'longRest' : kind === 'rest' ? 'sit' : 'lie', settingsRef.current);
+    timelineRef.current = buildStepTimeline(duration, isRestPosition);
     start(duration);
-  }, [cycleIndex, positionIndex, position.kind, isTransition, duration, start, advance, settings.sound, settings.vibration, showCompletion]);
+    scheduler.scheduleRemaining(timelineRef.current, duration, settingsRef.current);
+  }, [cycleIndex, positionIndex, position.kind, isTransition, duration, start, showCompletion, scheduler]);
 
-  const handlePauseResume = async () => {
+  useEffect(() => {
+    if (!isRunning || isTransition || showCompletion) {
+      scheduler.cancel();
+      return;
+    }
+    scheduler.scheduleRemaining(timelineRef.current, getRemaining(), settings);
+  }, [isRunning, isTransition, showCompletion, settings, getRemaining, scheduler]);
+
+  useEffect(() => () => scheduler.cancel(), [scheduler]);
+
+  const handlePauseResume = () => {
+    unlockAudio();
     if (isRunning) {
-      await playBeepHigh(settings.sound);
+      triggerCue('pause', settings);
       pause();
       setIntentionallyPaused(true);
     } else {
-      await playBeep(settings.sound);
+      triggerCue('resume', settings);
       resume();
       setIntentionallyPaused(false);
     }

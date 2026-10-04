@@ -8,6 +8,7 @@ export interface CountdownControls {
   pause: () => void;
   stop: () => void;
   setOnComplete: (cb?: () => void) => void;
+  getRemaining: () => number;
 }
 
 export function useCountdown(): CountdownControls {
@@ -84,6 +85,13 @@ export function useCountdown(): CountdownControls {
     setIsRunning(false);
   }, []);
 
+  const getRemaining = useCallback(() => {
+    if (endRef.current !== null) {
+      return Math.max((endRef.current - performance.now()) / 1000, 0);
+    }
+    return remainingRef.current;
+  }, []);
+
   useEffect(
     () => () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -91,5 +99,5 @@ export function useCountdown(): CountdownControls {
     [],
   );
 
-  return { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete };
+  return { secondsRemaining, isRunning, start, resume, pause, stop, setOnComplete, getRemaining };
 }

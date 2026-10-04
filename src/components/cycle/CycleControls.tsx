@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import type { PositionKind } from '@/types';
+import { unlockAudio } from '@/utils/sound';
 
 interface Theme {
   primary: string;
@@ -131,7 +132,10 @@ export const CycleControls = memo(function CycleControls({
     return (
       <button
         type="button"
-        onClick={onAdvance}
+        onClick={() => {
+          unlockAudio();
+          onAdvance();
+        }}
         className={`relative z-10 flex min-h-touch items-center justify-center gap-2 rounded-xl ${theme.primary} text-xl font-bold text-white transition-all duration-200 ${theme.primaryHover} hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg ${theme.shadow}`}
       >
         <Play size={26} /> {startLabel}
@@ -143,7 +147,10 @@ export const CycleControls = memo(function CycleControls({
     <div className="relative z-10 grid grid-cols-2 gap-1.5 mt-2 sm:gap-2 sm:mt-4">
       <button
         type="button"
-        onClick={onPauseResume}
+        onClick={() => {
+          unlockAudio();
+          onPauseResume();
+        }}
         aria-label={isRunning ? pauseLabel : resumeLabel}
         className={`flex min-h-touch items-center justify-center gap-2 rounded-xl border-2 ${theme.secondaryBorder} text-lg font-bold ${theme.secondaryText} transition-all duration-200 ${theme.secondaryHoverBg} hover:scale-[1.01] active:scale-[0.98]`}
       >
@@ -152,7 +159,10 @@ export const CycleControls = memo(function CycleControls({
       </button>
       <button
         type="button"
-        onClick={onAdvanceSkip}
+        onClick={() => {
+          unlockAudio();
+          onAdvanceSkip();
+        }}
         aria-label={nextLabel}
         className={`flex min-h-touch items-center justify-center gap-2 rounded-xl ${theme.primary} text-lg font-bold text-white transition-all duration-200 ${theme.primaryHover} hover:scale-[1.01] active:scale-[0.98] hover:shadow-lg ${theme.shadow}`}
       >

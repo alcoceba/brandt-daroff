@@ -5,10 +5,10 @@ import { staticInfoContents } from './infoContentData';
 describe('renderStaticPages', () => {
   it('returns all supported static languages', () => {
     const languages = getAllStaticLanguages();
-    expect(languages).toEqual(['en', 'ca', 'es']);
+    expect(languages).toEqual(['en', 'ca', 'es', 'fr', 'de']);
   });
 
-  it.each(['en', 'ca', 'es'] as const)('renders full static HTML for %s with SEO and components', (lang) => {
+  it.each(['en', 'ca', 'es', 'fr', 'de'] as const)('renders full static HTML for %s with SEO and components', (lang) => {
     const siteUrl = 'https://alcoceba.github.io/brandt-daroff';
     const compiledCss = '.app-gradient { background: #000; }';
 
@@ -34,7 +34,7 @@ describe('renderStaticPages', () => {
 
   it('throws error for unsupported language', () => {
     expect(() =>
-      renderStaticPage('fr' as unknown as 'en', {
+      renderStaticPage('it' as unknown as 'en', {
         siteUrl: 'https://example.com',
         compiledCss: '',
       })

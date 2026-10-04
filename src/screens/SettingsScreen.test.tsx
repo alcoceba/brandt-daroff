@@ -28,6 +28,19 @@ describe('SettingsScreen', () => {
     expect(useTreatmentStore.getState().settings.sound).toBe(true);
   });
 
+  it('triggers test sound when test sound button is clicked and is disabled when sound is off', () => {
+    render(<SettingsScreen onBack={onBack} onReconfigure={onReconfigure} onFullReset={onFullReset} />);
+    const testButton = screen.getByRole('button', { name: /settings.testSound/i });
+    expect(testButton).toBeEnabled();
+
+    fireEvent.click(testButton);
+
+    // Toggle sound off -> test sound button should be disabled
+    const soundButton = screen.getByRole('button', { name: /settings.sound/i });
+    fireEvent.click(soundButton);
+    expect(testButton).toBeDisabled();
+  });
+
   it('toggles vibration setting and updates the store', () => {
     render(<SettingsScreen onBack={onBack} onReconfigure={onReconfigure} onFullReset={onFullReset} />);
     const vibrationButton = screen.getByRole('button', { name: /settings.vibration/i });

@@ -15,7 +15,7 @@ This is a **medical guidance app** used by patients at home, typically next to t
 ## Functional spec
 
 ### Onboarding (first run)
-1. **Language selection** screen: English / Català / Castellano, shown as **flag (SVG) + text**. Language is changeable later from Home.
+1. **Language selection** screen: English / Català / Castellano / Français / Deutsch, shown as text options. Language is changeable later from Home.
 2. **Configuration wizard** with 6 fields, all pre-filled with protocol defaults. Skippable (saving defaults):
    - Position duration: **30s**
    - Rest between positions: **30s**
@@ -158,18 +158,20 @@ src/
     positions.ts
     treatment.ts
   hooks/
-    useBeepCues.ts
     useCountdown.ts
     useCycleSession.ts
+    useWakeLock.ts
   storage/
     createStorage.ts
     treatmentStorage.ts
   utils/
+    cues.ts
     date.ts
     format.ts
     sessions.ts
     sound.ts
     vibration.ts
+    wakeLock.ts
 public/
   icon.svg
   icon-192.png
@@ -180,7 +182,7 @@ public/
 ```
 
 ### State model (persisted to localStorage)
-- `language: 'en' | 'ca' | 'es'`
+- `language: 'en' | 'ca' | 'es' | 'fr' | 'de'`
 - `config: { positionDuration, restBetweenPositions, restBetweenCycles, sessionsPerDay, totalDays, cyclesPerSession }` (seconds / count / days)
 - `startDate: ISOString | null`
 - `sessions: { [isoDate]: { [sessionId]: 'pending' | 'in-progress' | 'completed' } }`

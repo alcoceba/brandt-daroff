@@ -39,6 +39,12 @@ class AudioContextMock {
     start: vi.fn(),
     stop: vi.fn(),
   });
+  createBuffer = vi.fn().mockReturnValue({});
+  createBufferSource = vi.fn().mockReturnValue({
+    buffer: null,
+    connect: vi.fn(),
+    start: vi.fn(),
+  });
   destination = {};
 }
 
