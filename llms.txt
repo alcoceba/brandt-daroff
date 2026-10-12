@@ -28,7 +28,7 @@ The application includes persistent safety warnings. Patients must stop exercise
 - Sound (Web Audio API) and vibration (navigator.vibrate) cues for position transitions
 - Early advance option ("Dizziness has passed -> Next") when vertigo subsides before 30s
 - Emergency stop and pause controls always reachable
-- Multilingual interface: English, Catalan (Català), Spanish (Castellano)
+- Multilingual interface: English, Catalan (Català), Spanish (Castellano), French (Français), German (Deutsch)
 
 ## Architecture
 
@@ -44,4 +44,6 @@ The application includes persistent safety warnings. Patients must stop exercise
 - English guide: https://alcoceba.github.io/brandt-daroff/info/en/
 - Catalan guide: https://alcoceba.github.io/brandt-daroff/info/ca/
 - Spanish guide: https://alcoceba.github.io/brandt-daroff/info/es/
+- French guide: https://alcoceba.github.io/brandt-daroff/info/fr/
+- German guide: https://alcoceba.github.io/brandt-daroff/info/de/
 - Machine-readable full clinical guide: https://alcoceba.github.io/brandt-daroff/llms-full.txt
