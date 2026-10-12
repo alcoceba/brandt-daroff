@@ -125,6 +125,19 @@ describe('App routing', () => {
     expect(screen.getByText('settings.title')).toBeInTheDocument();
   });
 
+  it('navigates from settings to legal notice and back', () => {
+    useTreatmentStore.getState().completeOnboarding();
+    render(<App />);
+    passSplash();
+
+    fireEvent.click(findButtonByText('home.settings')!);
+    fireEvent.click(findButtonByText('settings.legal')!);
+    expect(screen.getByText('legal.medicalDisclaimerTitle')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.back' }));
+    expect(screen.getByText('settings.title')).toBeInTheDocument();
+  });
+
   it('exits cycle session and returns to home', () => {
     useTreatmentStore.getState().completeOnboarding();
     render(<App />);

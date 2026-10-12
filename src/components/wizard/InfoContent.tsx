@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, Clock, Ear, Lightbulb, Move, TrendingUp } from 'lucide-react';
+import { CalendarDays, Clock, Ear, Lightbulb, Move, ShieldAlert, TrendingUp } from 'lucide-react';
 import { WizardInfoSection } from './WizardInfoSection';
 import { AboutStepCards } from '@/components/wizard/AboutStepCards';
 
@@ -33,6 +33,13 @@ export const InfoContent = memo(function InfoContent() {
 
       <WizardInfoSection icon={<Lightbulb size={18} className="text-yellow-400" />} title={t('info.tipsTitle')}>
         <p>{t('info.tipsBody')}</p>
+      </WizardInfoSection>
+
+      <WizardInfoSection
+        icon={<ShieldAlert size={18} className="text-red-400" />}
+        title={t('info.precautionsTitle')}
+      >
+        <p>{t('info.precautionsBody')}</p>
       </WizardInfoSection>
 
       <WizardInfoSection

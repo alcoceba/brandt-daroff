@@ -109,4 +109,20 @@ describe('SettingsScreen', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(onFullReset).not.toHaveBeenCalled();
   });
+
+  it('calls onOpenLegal when legal row is clicked', () => {
+    const onOpenLegal = vi.fn();
+    render(
+      <SettingsScreen
+        onBack={onBack}
+        onReconfigure={onReconfigure}
+        onFullReset={onFullReset}
+        onOpenLegal={onOpenLegal}
+      />,
+    );
+
+    const legalButton = screen.getByRole('button', { name: /settings.legal/i });
+    fireEvent.click(legalButton);
+    expect(onOpenLegal).toHaveBeenCalledTimes(1);
+  });
 });

@@ -22,6 +22,7 @@ describe('InfoScreen', () => {
     expect(screen.getByText('info.cycleTitle')).toBeInTheDocument();
     expect(screen.getByText('info.frequencyTitle')).toBeInTheDocument();
     expect(screen.getByText('info.tipsTitle')).toBeInTheDocument();
+    expect(screen.getByText('info.precautionsTitle')).toBeInTheDocument();
     expect(screen.getByText('info.effectivenessTitle')).toBeInTheDocument();
   });
 
@@ -30,5 +31,13 @@ describe('InfoScreen', () => {
     const backButton = screen.getByRole('button', { name: 'common.back' });
     fireEvent.click(backButton);
     expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onOpenLegal when the legal link button is clicked', () => {
+    const onOpenLegal = vi.fn();
+    render(<InfoScreen onBack={onBack} onOpenLegal={onOpenLegal} />);
+    const legalButton = screen.getByRole('button', { name: 'info.legalLink' });
+    fireEvent.click(legalButton);
+    expect(onOpenLegal).toHaveBeenCalledTimes(1);
   });
 });

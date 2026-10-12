@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Globe,
   Play,
+  ShieldCheck,
   SlidersHorizontal,
   Vibrate,
   VibrateOff,
@@ -25,6 +26,7 @@ interface SettingsScreenProps {
   onBack: () => void;
   onReconfigure: () => void;
   onFullReset: () => void;
+  onOpenLegal?: () => void;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -35,6 +37,7 @@ export const SettingsScreen = memo(function SettingsScreen({
   onBack,
   onReconfigure,
   onFullReset,
+  onOpenLegal,
 }: SettingsScreenProps) {
   const { t } = useTranslation();
   const language = useTreatmentStore((s) => s.language);
@@ -129,6 +132,18 @@ export const SettingsScreen = memo(function SettingsScreen({
           <span className="flex-1 text-left">{t('home.reconfigure')}</span>
           <ChevronRight size={20} className="text-slate-500" />
         </Button>
+        {onOpenLegal && (
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={onOpenLegal}
+            className="gap-4 px-4 text-lg"
+          >
+            <ShieldCheck size={24} />
+            <span className="flex-1 text-left">{t('settings.legal')}</span>
+            <ChevronRight size={20} className="text-slate-500" />
+          </Button>
+        )}
       </section>
 
       <section className="flex flex-col gap-2">

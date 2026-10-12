@@ -11,6 +11,7 @@ describe('InfoContent', () => {
     expect(screen.getByText('info.cycleTitle')).toBeInTheDocument();
     expect(screen.getByText('info.frequencyTitle')).toBeInTheDocument();
     expect(screen.getByText('info.tipsTitle')).toBeInTheDocument();
+    expect(screen.getByText('info.precautionsTitle')).toBeInTheDocument();
     expect(screen.getByText('info.effectivenessTitle')).toBeInTheDocument();
   });
 

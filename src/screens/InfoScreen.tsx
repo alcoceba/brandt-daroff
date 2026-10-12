@@ -1,14 +1,17 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ShieldCheck } from 'lucide-react';
 import { ScreenHeader } from '@/components/core/ScreenHeader';
 import { SafetyAlert } from '@/components/core/SafetyAlert';
 import { InfoContent } from '@/components/wizard/InfoContent';
+import { Button } from '@/components/core/Button';
 
 interface InfoScreenProps {
   onBack: () => void;
+  onOpenLegal?: () => void;
 }
 
-export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) {
+export const InfoScreen = memo(function InfoScreen({ onBack, onOpenLegal }: InfoScreenProps) {
   const { t } = useTranslation();
 
   return (
@@ -24,6 +27,18 @@ export const InfoScreen = memo(function InfoScreen({ onBack }: InfoScreenProps) 
         </SafetyAlert>
 
         <InfoContent />
+
+        {onOpenLegal && (
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={onOpenLegal}
+            className="mt-2 gap-3 text-sm text-slate-300 hover:text-white"
+          >
+            <ShieldCheck size={18} className="text-brand-500" />
+            <span>{t('info.legalLink')}</span>
+          </Button>
+        )}
       </div>
     </div>
   );

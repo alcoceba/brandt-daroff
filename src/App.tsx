@@ -9,6 +9,7 @@ import { HomeScreen } from '@/screens/HomeScreen';
 import { CycleSessionScreen } from '@/screens/CycleSessionScreen';
 import { SettingsScreen } from '@/screens/SettingsScreen';
 import { InfoScreen } from '@/screens/InfoScreen';
+import { LegalScreen } from '@/screens/LegalScreen';
 import { SplashScreen } from '@/screens/SplashScreen';
 import { ReadyScreen } from '@/screens/ReadyScreen';
 import { SessionReadyScreen } from '@/screens/SessionReadyScreen';
@@ -34,6 +35,7 @@ export default function App() {
   const [splashDone, setSplashDone] = useState(false);
   const [route, setRoute] = useState<Route>(onboardingComplete ? 'home' : 'wizard');
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [legalReturnRoute, setLegalReturnRoute] = useState<Route>('settings');
   const isFirstRoute = useRef(true);
 
   const navigateTo = (next: Route) => {
@@ -72,6 +74,11 @@ export default function App() {
     unlockAudio();
     setSessionId(id);
     navigateTo('session-ready');
+  };
+
+  const handleOpenLegal = (from: Route) => {
+    setLegalReturnRoute(from);
+    navigateTo('legal');
   };
 
   const showDevScenarios =
@@ -139,6 +146,7 @@ export default function App() {
           onBack={() => navigateTo('home')}
           onReconfigure={() => navigateTo('reconfigure')}
           onFullReset={() => navigateTo('wizard')}
+          onOpenLegal={() => handleOpenLegal('settings')}
         />
       );
       break;
@@ -146,7 +154,15 @@ export default function App() {
       screen = <ReconfigureScreen onBack={() => navigateTo('settings')} />;
       break;
     case 'info':
-      screen = <InfoScreen onBack={() => navigateTo('home')} />;
+      screen = (
+        <InfoScreen
+          onBack={() => navigateTo('home')}
+          onOpenLegal={() => handleOpenLegal('info')}
+        />
+      );
+      break;
+    case 'legal':
+      screen = <LegalScreen onBack={() => navigateTo(legalReturnRoute)} />;
       break;
     case 'history':
       screen = <HistoryScreen onBack={() => navigateTo('home')} />;
